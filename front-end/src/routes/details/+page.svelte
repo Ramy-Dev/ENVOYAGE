@@ -1,54 +1,4 @@
-
-
-    <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <a class="navbar-item" href="/">
-                <div class="is-size-3 ml-2">OUANIS</div>
-            </a>
-
-            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
-                data-target="navbarBasicExample">
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-            </a>
-        </div>
-
-
-        <div id="navbarBasicExample" class="navbar-menu">
-            <div class="ml-auto navbar-start">
-                <a href="/" class="navbar-item">
-                    Home
-                </a>
-
-                <a href="index.html/about" class="navbar-item">
-                    About
-                </a>
-                <a href="recherche.html" class="navbar-item">
-                    Announces
-                </a>
-                <a href="/contact" class="navbar-item">
-                    Contact
-                </a>
-
-
-            </div>
-
-       
-            <div class="navbar-end ml-0">
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <a href="singup.html" class="button bbtn">
-                            <strong>Sign up</strong>
-                        </a>
-                        <a href="login.html" class="button is-light">
-                            Log in
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
+ 
     <div class="my-6 annc">
         <h1 class="has-text-centered is-size-2 m-5">L'annonce</h1>
         <div class="details m-auto box">
@@ -108,32 +58,3 @@
 
         </div>
     </div>
-
-
-    <footer id="contact" class="footer pt-6">
-        <ul class="menu">
-            <li class="menu__item"><a class="menu__link" href="/">Home</a></li>
-            <li class="menu__item"><a class="menu__link" href="/">About</a></li>
-            <li class="menu__item"><a class="menu__link" href="/">Services</a></li>
-            <li class="menu__item"><a class="menu__link" href="/">Team</a></li>
-            <li class="menu__item"><a class="menu__link" href="/">Contact</a></li>
-
-        </ul>
-        <ul class="social-icon">
-            <li class="social-icon__item"><a class="social-icon__link" href="/">
-                    <ion-icon name="logo-facebook"></ion-icon>
-                </a></li>
-            <li class="social-icon__item"><a class="social-icon__link" href="/">
-                    <ion-icon name="logo-twitter"></ion-icon>
-                </a></li>
-            <li class="social-icon__item"><a class="social-icon__link" href="/">
-                    <ion-icon name="logo-linkedin"></ion-icon>
-                </a></li>
-            <li class="social-icon__item"><a class="social-icon__link" href="/">
-                    <ion-icon name="logo-instagram"></ion-icon>
-                </a></li>
-        </ul>
-        <p>&copy;2023 RAMY IMS / AMINE IZEM | All Rights Reserved</p>
-    </footer>
-
-    
