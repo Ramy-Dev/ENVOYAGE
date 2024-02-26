@@ -32,7 +32,7 @@
                   </p>
                   <div class="level">
                      <div class="level-item has-text-centered">
-                        <a class="button">login</a>
+                        <a class="button" href="/log-in">login</a>
                      </div>
                   </div>
                </div>
@@ -55,7 +55,7 @@
                   </p>
                   <div class="level">
                      <div class="level-item has-text-centered">
-                        <a class="button">login</a>
+                        <a class="button" href="/log-in">login</a>
                      </div>
                   </div>
                </div>
