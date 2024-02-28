@@ -17,6 +17,7 @@
                 <p>Paris</p>
                 <svg class="mt-2 mx-5" viewBox="246.554 219.198 189.9 12" width="189.9" height="12"
                     xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+                    <!-- svelte-ignore illegal-attribute-character -->
                     <path
                         d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
                         style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"

@@ -12,11 +12,12 @@
             class="field is-flex is-justify-content-space-between is-align-content-center"
          >
             <div class="control mx-3 w-100">
-               <label class="label">Email</label>
+               <label class="label" for ="email">Email</label>
                <input
                   class="input is-rounded"
                   type="email"
                   placeholder="Email"
+                  id="email"
                />
             </div>
          </div>
@@ -24,11 +25,12 @@
             class="field is-flex is-justify-content-space-between is-align-content-center"
          >
             <div class="control mx-3 w-100">
-               <label class="label">mot de passe</label>
+               <label class="label" for ="password">mot de passe</label>
                <input
                   class="input is-rounded"
                   type="password"
                   placeholder="**************"
+                  id ="password"
                />
             </div>
          </div>

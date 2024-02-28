@@ -1,39 +1,34 @@
 <script>
+   // Code to handle clicks on sender and travler buttons
    document.addEventListener("DOMContentLoaded", () => {
        // Get all elements with the class "sender"
        const senderElements = document.querySelectorAll(".sender");
        // Get all elements with the class "travler"
        const travlerElements = document.querySelectorAll(".travler");
-       
+
        // Add click event listeners to sender elements
        senderElements.forEach((sender) => {
            sender.addEventListener("click", () => {
-               // Hide elements with class "tr"
                document.querySelectorAll(".tr").forEach((element) => {
-                   element.style.display = "none";
-                   element.style.transition = "transform 1s";
+                   element.classList.add("hidden");
                });
-               // Show elements with class "sn"
                document.querySelectorAll(".sn").forEach((element) => {
-                   element.style.display = "block";
-                   element.style.transition = "transform 1s";
+                   element.classList.remove("hidden");
                });
+               console.log("Sender clicked");
            });
        });
-       
+
        // Add click event listeners to travler elements
        travlerElements.forEach((travler) => {
            travler.addEventListener("click", () => {
-               // Show elements with class "tr"
                document.querySelectorAll(".tr").forEach((element) => {
-                   element.style.display = "block";
-                   element.style.transition = "transform 1s";
+                   element.classList.remove("hidden");
                });
-               // Hide elements with class "sn"
                document.querySelectorAll(".sn").forEach((element) => {
-                   element.style.display = "none";
-                   element.style.transition = "transform 1s";
+                   element.classList.add("hidden");
                });
+               console.log("Travler clicked");
            });
        });
    });
@@ -51,7 +46,7 @@
          <button
             id=""
             class="travler button w-50 py-5 m-0 is-radiusless"
-            style="border:solid #fff 1px;">Maybe</button
+            style="border:solid #fff 1px;">Travler</button
          >
       </div>
       <form class="box is-radiusless">
@@ -59,15 +54,21 @@
             class="field is-flex is-justify-content-space-between is-align-content-center"
          >
             <div class="control mx-3 w-100">
-               <label class="label">Nom</label>
-               <input class="input is-rounded" type="text" placeholder="Nom " />
+               <label class="label" for ="nom">Nom</label>
+               <input 
+               class="input is-rounded" 
+               type="text" 
+               placeholder="Nom " 
+               id="nom" 
+               />
             </div>
             <div class="control w-100 mx-3">
-               <label class="label">Prénom</label>
+               <label class="label" for="prenom">Prénom</label>
                <input
                   class="input is-rounded"
                   type="text"
                   placeholder="Prénom"
+                  id ="prenom"
                />
             </div>
          </div>
@@ -75,16 +76,22 @@
             class="field is-flex is-justify-content-space-between is-align-content-center"
          >
             <div class="control mx-3 w-100">
-               <label class="label">Address</label>
+               <label class="label" for ="adresse">Address</label>
                <input
                   class="input is-rounded"
                   type="text"
                   placeholder="Address"
+                  id ="adresse"
                />
             </div>
             <div class="control w-100 mx-3">
-               <label class="label">Date de naissance</label>
-               <input class="input is-rounded" type="date" placeholder="" />
+               <label class="label" for ="ddn">Date de naissance</label>
+               <input 
+               class="input is-rounded" 
+               type="date" 
+               placeholder="" 
+               id ="ddn"
+               />
             </div>
          </div>
          <!-- <label class="label is-block ml-3">Photo de passport</label>
@@ -108,11 +115,12 @@
             class="field is-flex is-justify-content-space-between is-align-content-center"
          >
             <div class="control mx-3 w-100">
-               <label class="label">Passport</label>
+               <label class="label" for="passport">Passport</label>
                <input
                   class="input is-rounded"
                   type="file"
                   placeholder="Address"
+                  id="passport"
                />
             </div>
          </div>
@@ -120,11 +128,12 @@
             class="field is-flex is-justify-content-space-between is-align-content-center"
          >
             <div class="control mx-3 w-100">
-               <label class="label">Email</label>
+               <label class="label" for ="email">Email</label>
                <input
                   class="input is-rounded"
                   type="email"
                   placeholder="Email"
+                  id ="email"
                />
             </div>
          </div>
@@ -132,19 +141,21 @@
             class="field is-flex is-justify-content-space-between is-align-content-center"
          >
             <div class="control mx-3 w-100">
-               <label class="label">mot de passe</label>
+               <label class="label" for ="password">mot de passe</label>
                <input
                   class="input is-rounded"
                   type="password"
                   placeholder="**************"
+                  id ="password"
                />
             </div>
             <div class="control w-100 mx-3">
-               <label class="label">confirmer le mot de passe</label>
+               <label class="label" for="ConfirmPassword">confirmer le mot de passe</label>
                <input
                   class="input is-rounded"
                   type="password"
                   placeholder="**************"
+                  id ="ConfirmPassword"
                />
             </div>
          </div>
@@ -167,7 +178,7 @@
          <button
             id=""
             class="travler button w-50 py-5 m-0 is-radiusless"
-            style="border:solid #fff 1px;">Maybe</button
+            style="border:solid #fff 1px;">Travler</button
          >
       </div>
       <form class="box is-radiusless has-background-primary">
@@ -175,15 +186,21 @@
             class="field is-flex is-justify-content-space-between is-align-content-center"
          >
             <div class="control mx-3 w-100">
-               <label class="label">Nom</label>
-               <input class="input is-rounded" type="text" placeholder="Nom " />
+               <label class="label" for ="Sender-nom">Nom</label>
+               <input 
+               class="input is-rounded" 
+               type="text" 
+               placeholder="Nom " 
+               id ="Sender-nom"
+               />
             </div>
             <div class="control w-100 mx-3">
-               <label class="label">Prénom</label>
+               <label class="label" for ="Sender-prenom">Prénom</label>
                <input
                   class="input is-rounded"
                   type="text"
                   placeholder="Prénom"
+                  id="Sender-prenom"
                />
             </div>
          </div>
@@ -191,11 +208,12 @@
             class="field is-flex is-justify-content-space-between is-align-content-center"
          >
             <div class="control mx-3 w-100">
-               <label class="label">Email</label>
+               <label class="label" for ="Sender-email">Email</label>
                <input
                   class="input is-rounded"
                   type="email"
                   placeholder="Email"
+                  id="Sender-email"
                />
             </div>
          </div>
@@ -203,19 +221,21 @@
             class="field is-flex is-justify-content-space-between is-align-content-center"
          >
             <div class="control mx-3 w-100">
-               <label class="label">mot de passe</label>
+               <label class="label" for="Sender-password">mot de passe</label>
                <input
                   class="input is-rounded"
                   type="password"
                   placeholder="**************"
+                  id ="Sender-password"
                />
             </div>
             <div class="control w-100 mx-3">
-               <label class="label">confirmer le mot de passe</label>
+               <label class="label" for ="Sender-ConfirmPassword">confirmer le mot de passe</label>
                <input
                   class="input is-rounded"
                   type="password"
                   placeholder="**************"
+                  id="Sender-ConfirmPassword"
                />
             </div>
          </div>

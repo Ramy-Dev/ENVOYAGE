@@ -1,9 +1,11 @@
+<!-- svelte-ignore a11y-no-redundant-roles -->
 <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="/">
                 <div class="is-size-3 ml-2">OUANIS</div>
             </a>
-
+<!-- IL Y'AVAIT UN PROBLEME ICI -->
+            <!-- svelte-ignore a11y-missing-attribute -->
             <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
                 data-target="navbarBasicExample">
                 <span aria-hidden="true"></span>
