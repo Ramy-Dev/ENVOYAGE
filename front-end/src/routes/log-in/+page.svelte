@@ -1,45 +1,20 @@
-<div class="bd">
-   <div class="login m-auto">
-      <div class="box p-0 buttons has-addons m-0">
-         <button
-            id=""
-            class="sender button is-primary py-5 w-100 m-0 is-radiusless"
-            >Sing up asSender</button
-         >
-      </div>
-      <form class="box is-radiusless">
-         <div
-            class="field is-flex is-justify-content-space-between is-align-content-center"
-         >
-            <div class="control mx-3 w-100">
-               <label class="label" for ="email">Email</label>
-               <input
-                  class="input is-rounded"
-                  type="email"
-                  placeholder="Email"
-                  id="email"
-               />
-            </div>
-         </div>
-         <div
-            class="field is-flex is-justify-content-space-between is-align-content-center"
-         >
-            <div class="control mx-3 w-100">
-               <label class="label" for ="password">mot de passe</label>
-               <input
-                  class="input is-rounded"
-                  type="password"
-                  placeholder="**************"
-                  id ="password"
-               />
-            </div>
-         </div>
-         <div class="is-justify-content-center mt-5 is-flex">
-            <button
-               class="button mt-2 px-6 py-5 has-text-weight-bold bbtn is-rounded is-primary"
-               >Login</button
-            >
-         </div>
-      </form>
+<div class="container bd">
+   <div class="login mx-auto">
+       <div class="box p-0">
+           <button id="" class="sender btn btn-primary btn-block py-3 mb-0">Sign up as Sender</button>
+       </div>
+       <form class="box">
+           <div class="form-group">
+               <label for="email">Email</label>
+               <input type="email" class="form-control" id="email" placeholder="Email">
+           </div>
+           <div class="form-group">
+               <label for="password">Mot de passe</label>
+               <input type="password" class="form-control" id="password" placeholder="**************">
+           </div>
+           <div class="text-center mt-4">
+               <button type="submit" class="btn btn-primary btn-block py-3 font-weight-bold">Login</button>
+           </div>
+       </form>
    </div>
 </div>
