@@ -1,6 +1,6 @@
 <footer id="contact" class="footer pt-6">
     <div class="row">
-        <div class="col-md-6">
+        <div class="md-6">
             <ul class="menu">
                 <li class="menu__item"><a class="menu__link" href="/">Home</a></li>
                 <li class="menu__item"><a class="menu__link" href="/">About</a></li>
@@ -9,7 +9,7 @@
                 <li class="menu__item"><a class="menu__link" href="/">Contact</a></li>
             </ul>
         </div>
-        <div class="col-md-6">
+        <div class="md-6">
             <ul class="social-icon">
                 <li class="social-icon__item"><a class="social-icon__link" href="/">
                         <ion-icon name="logo-facebook"></ion-icon>
@@ -32,3 +32,8 @@
         </div>
     </div>
 </footer>
+<style>
+    .footer {
+        padding-top: 40px;
+    }
+</style>
