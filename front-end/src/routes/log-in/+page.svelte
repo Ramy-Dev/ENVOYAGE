@@ -37,10 +37,10 @@
 
 <style>
   .bg-primary {
-    background-color: #27005d;
+    background-color: #27005d !important;
   }
   .text-primary {
-    color: #27005d;
+    color: #27005d !important;
   }
   .login {
     background-color: #fff;

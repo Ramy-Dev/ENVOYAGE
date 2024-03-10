@@ -9,7 +9,7 @@
       <p class="pl-2 mb-6 py-6 fs-3 fw-normal">
         le meilleur choix pour envoyer les colis
       </p>
-      <a href="/recherche" class="btn btn-lg btn-primary mt-6">
+      <a href="/recherche" class="btn btn-lg bg-primary text-white mt-6">
         <strong>ENVOYER un colis</strong>
       </a>
     </div>
@@ -85,10 +85,10 @@
 
 <style>
   .bg-primary {
-    background-color: #27005d;
+    background-color: #27005d !important;
   }
   .text-primary {
-    color: #27005d;
+    color: #27005d !important;
   }
   header {
     margin-top: 0;
