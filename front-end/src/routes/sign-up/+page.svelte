@@ -37,25 +37,45 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="Sender-nom">Nom :</label>
-                <input type="text" class="form-control" id="Sender-nom" required/>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="Sender-nom"
+                  required
+                />
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label for="Sender-prenom">Prénom :</label>
-                <input type="text" class="form-control" id="Sender-prenom" required/>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="Sender-prenom"
+                  required
+                />
               </div>
             </div>
           </div>
           <div class="form-group">
             <label for="Sender-email">Email :</label>
-            <input type="email" class="form-control" id="Sender-email" required/>
+            <input
+              type="email"
+              class="form-control"
+              id="Sender-email"
+              required
+            />
           </div>
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
                 <label for="Sender-password">Mot de passe :</label>
-                <input type="password" class="form-control" id="Sender-password" required/>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="Sender-password"
+                  required
+                />
               </div>
             </div>
             <div class="col-md-6">
@@ -63,7 +83,12 @@
                 <label for="Sender-ConfirmPassword"
                   >Confirmer le mot de passe :</label
                 >
-                <input type="password" class="form-control" id="Sender-ConfirmPassword" required/>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="Sender-ConfirmPassword"
+                  required
+                />
               </div>
             </div>
           </div>
@@ -102,13 +127,13 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="nom">Nom :</label>
-                <input type="text" class="form-control" id="nom" required/>
+                <input type="text" class="form-control" id="nom" required />
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label for="prenom">Prénom :</label>
-                <input type="text" class="form-control" id="prenom" required/>
+                <input type="text" class="form-control" id="prenom" required />
               </div>
             </div>
           </div>
@@ -116,42 +141,53 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="adresse">Adresse :</label>
-                <input type="text" class="form-control" id="adresse" required/>
+                <input type="text" class="form-control" id="adresse" required />
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label for="ddn">Date de naissance :</label>
-                <input type="date" class="form-control" id="ddn" required/>
+                <input type="date" class="form-control" id="ddn" required />
               </div>
             </div>
           </div>
           <div class="form-group">
             <label for="passport">Passport :</label><br />
-            <input type="file" class="form-control" id="passport" required/>
+            <input type="file" class="form-control" id="passport" required />
           </div>
           <div class="form-group">
             <label for="email">Email :</label>
-            <input type="email" class="form-control" id="email" required/>
+            <input type="email" class="form-control" id="email" required />
           </div>
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
                 <label for="password">Mot de passe :</label>
-                <input type="password" class="form-control" id="password" required/>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  required
+                />
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label for="ConfirmPassword">Confirmer le mot de passe :</label>
-                <input type="password" class="form-control" id="ConfirmPassword" required/>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="ConfirmPassword"
+                  required
+                />
               </div>
             </div>
           </div>
           <div class="d-flex justify-content-center">
             <button
               type="submit"
-              class="submitSignupTravler border-0 bg-primary text-white fw-bolder mt-5">Sign in</button
+              class="submitSignupTravler border-0 bg-primary text-white fw-bolder mt-5"
+              >Sign in</button
             >
           </div>
         </form>
@@ -161,6 +197,12 @@
 </main>
 
 <style>
+  .bg-primary {
+    background-color: #27005d;
+  }
+  .text-primary {
+    color: #27005d;
+  }
   .sn {
     /* background-color: blue; */
     border-radius: 20px;
