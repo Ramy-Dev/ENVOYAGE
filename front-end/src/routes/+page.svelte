@@ -3,7 +3,7 @@
     <div class="cover position-absolute"></div>
     <div class="cover-img"></div>
     <div
-      class="containerHome container index text-center mt-6 position-relative"
+      class="containerHeader container index text-center mt-6 position-relative"
     >
       <h1 class="display-2 fw-semibold">EnvoYage</h1>
       <p class="pl-2 mb-6 py-6 fs-3 fw-normal">
@@ -31,7 +31,7 @@
                 fermentum.
               </p>
               <div class="d-grid">
-                <a class="btn btn-primary fw-bold" href="/log-in">login</a>
+                <a class="btn btn-primary fw-bold border-0" href="/log-in">login</a>
               </div>
             </div>
           </div>
@@ -50,7 +50,7 @@
                 fermentum.
               </p>
               <div class="d-grid">
-                <a class="btn btn-primary fw-bold" href="/log-in">login</a>
+                <a class="btn btn-primary fw-bold border-0" href="/log-in">login</a>
               </div>
             </div>
           </div>
@@ -84,39 +84,14 @@
 </main>
 
 <style>
-  .bg-primary {
-    background-color: #27005d !important;
-  }
-  .text-primary {
-    color: #27005d !important;
-  }
-  header {
-    margin-top: 0;
-    position: relative;
-    height: 94vh;
-  }
 
-  .containerHome {
-    position: absolute; /* Changement en position absolue */
-    top: 42%; /* Déplace le containerHome à 50% du haut du header */
-    transform: translateY(-50%); /* Centre le containerHome verticalement */
-    left: 0; /* Aligne le containerHome à gauche */
-    right: 0; /* Aligne le containerHome à droite */
-    /* background-color: black; */
-    min-height: 55vh;
-    width: 100%; /* Ajuste la largeur au container parent */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 70px;
-    place-content: center;
+  .containerHeader {
+    top: 42%; 
   }
-
-  .containerHome a {
+  .containerHeader a {
     margin-top: 30px;
     padding: 0.85rem 1.8rem;
   }
-
   .textStartHome {
     color: #4a4a4a;
     margin-top: 75px;
@@ -145,7 +120,6 @@
   .paragrapheAboutHome {
     padding-left: 20px;
   }
-
   .imageAboutHome {
     display: flex;
     justify-content: center;
