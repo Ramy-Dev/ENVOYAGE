@@ -1,3 +1,47 @@
+<!-- <script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Définir les couleurs disponibles
+    const colors = ['#FF5733', '#33FF57', '#5733FF', '#FFFF33', '#33FFFF'];
+
+    // Fonction pour obtenir une couleur aléatoire différente des couleurs voisines
+    function getRandomColor(previousColor) {
+      let color = previousColor;
+      while (color === previousColor) {
+        color = colors[Math.floor(Math.random() * colors.length)];
+      }
+      return color;
+    }
+
+    // Générer les cartes avec des couleurs uniques pour chaque carte et ses voisins
+    const cardsContainer = document.getElementById('cardsContainer');
+    const cards = cardsContainer.querySelectorAll('.card');
+    let previousColors = [];
+
+    cards.forEach((card, index) => {
+      const leftNeighborColor = (index % 3 !== 0) ? previousColors[index - 1] : null;
+      const topNeighborColor = (index >= 3) ? previousColors[index - 3] : null;
+
+      let newColor = getRandomColor(leftNeighborColor);
+      newColor = getRandomColor(topNeighborColor);
+
+      card.style.backgroundColor = newColor;
+      previousColors.push(newColor);
+    });
+  });
+</script> -->
+
+<script>
+  // Importer la fonction `navigate` de Svelte Router si vous utilisez un routeur
+  import { navigate } from "svelte-routing";
+
+  // Fonction pour effectuer la redirection
+  function redirectToPage() {
+    // Redirection vers la page souhaitée
+    // Remplacez 'url_de_la_page' par l'URL de la page vers laquelle vous souhaitez rediriger
+    navigate("/");
+  }
+</script>
+
 <main>
   <header class="section text-white bg-white">
     <div class="cover-recherche position-absolute"></div>
@@ -63,91 +107,417 @@
     <div class="">
       <h2 class="textAnnonceRecherche text-center fw-bold">Les annonces</h2>
     </div>
-    <div class="album py-5 bg-body-tertiary">
+    <div class="album py-5">
       <div class="container containerAnnonces">
-    <div class="row row-cols-1 row-cols-md-3 g-5 px-5">
-      <div class="col">
-        <div class="card cardAnnonce h-100">
-          <img src="../svg/imagesVilles/Algerie/imageAlger" class="card-img-top" alt="..." />
-          <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">
-              This is a wider card with supporting text below as a natural
-              lead-in to additional content. This content is a little bit
-              longer.
-            </p>
+        <div class="row row-cols-1 row-cols-md-3 g-5 px-5" id="cardsContainer">
+          <div class="col">
+            <a href="/details" class="card cardAnnonce h-100 redirection-div">
+              <div class="card-body">
+                <div class="topCard">
+                  <img
+                    src="../svg/photoProfile.svg"
+                    class="card-img-top"
+                    alt="..."
+                  />
+                  <div class="nomDateTopCard">
+                    <h5 class="card-title fw-bolder">Nom Prénom</h5>
+                    <h5 class="card-title DateTopCard fw-semibold">
+                      jj/mm/aaaa
+                    </h5>
+                  </div>
+                </div>
+                <div class="destinationTopCard fw-semibold fs-5">
+                  <div class="departureTopCard">Paris</div>
+                  <svg
+                    class="mt-2 mx-3"
+                    viewBox="246.554 219.198 189.9 12"
+                    width="189.9"
+                    height="12"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:bx="https://boxy-svg.com"
+                  >
+                    <!-- svelte-ignore illegal-attribute-character -->
+                    <path
+                      d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
+                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
+                      bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
+                    />
+                  </svg>
+                  <div class="arrivalTopCard">Alger</div>
+                </div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+              </div>
+              <div class="card-footer">
+                <small class="text-body-secondary"
+                  >Last updated 3 mins ago</small
+                >
+              </div>
+            </a>
           </div>
-          <div class="card-footer">
-            <small class="text-body-secondary">Last updated 3 mins ago</small>
+          <div class="col">
+            <a href="/details" class="card cardAnnonce h-100 redirection-div">
+              <div class="card-body">
+                <div class="topCard">
+                  <img
+                    src="../svg/photoProfile.svg"
+                    class="card-img-top"
+                    alt="..."
+                  />
+                  <div class="nomDateTopCard">
+                    <h5 class="card-title fw-bolder">Nom Prénom</h5>
+                    <h5 class="card-title DateTopCard fw-semibold">
+                      jj/mm/aaaa
+                    </h5>
+                  </div>
+                </div>
+                <div class="destinationTopCard fw-semibold fs-5">
+                  <div class="departureTopCard">Paris</div>
+                  <svg
+                    class="mt-2 mx-3"
+                    viewBox="246.554 219.198 189.9 12"
+                    width="189.9"
+                    height="12"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:bx="https://boxy-svg.com"
+                  >
+                    <!-- svelte-ignore illegal-attribute-character -->
+                    <path
+                      d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
+                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
+                      bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
+                    />
+                  </svg>
+                  <div class="arrivalTopCard">Alger</div>
+                </div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+              </div>
+              <div class="card-footer">
+                <small class="text-body-secondary"
+                  >Last updated 3 mins ago</small
+                >
+              </div>
+            </a>
           </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card cardAnnonce h-100">
-          <img src="..." class="card-img-top" alt="..." />
-          <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">
-              This is a wider card with supporting text below as a natural
-              lead-in to additional content. This content is a little bit
-              longer.
-            </p>
+          <div class="col">
+            <a href="/details" class="card cardAnnonce h-100 redirection-div">
+              <div class="card-body">
+                <div class="topCard">
+                  <img
+                    src="../svg/photoProfile.svg"
+                    class="card-img-top"
+                    alt="..."
+                  />
+                  <div class="nomDateTopCard">
+                    <h5 class="card-title fw-bolder">Nom Prénom</h5>
+                    <h5 class="card-title DateTopCard fw-semibold">
+                      jj/mm/aaaa
+                    </h5>
+                  </div>
+                </div>
+                <div class="destinationTopCard fw-semibold fs-5">
+                  <div class="departureTopCard">Paris</div>
+                  <svg
+                    class="mt-2 mx-3"
+                    viewBox="246.554 219.198 189.9 12"
+                    width="189.9"
+                    height="12"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:bx="https://boxy-svg.com"
+                  >
+                    <!-- svelte-ignore illegal-attribute-character -->
+                    <path
+                      d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
+                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
+                      bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
+                    />
+                  </svg>
+                  <div class="arrivalTopCard">Alger</div>
+                </div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+              </div>
+              <div class="card-footer">
+                <small class="text-body-secondary"
+                  >Last updated 3 mins ago</small
+                >
+              </div>
+            </a>
           </div>
-          <div class="card-footer">
-            <small class="text-body-secondary">Last updated 3 mins ago</small>
+          <div class="col">
+            <a href="/details" class="card cardAnnonce h-100 redirection-div">
+              <div class="card-body">
+                <div class="topCard">
+                  <img
+                    src="../svg/photoProfile.svg"
+                    class="card-img-top"
+                    alt="..."
+                  />
+                  <div class="nomDateTopCard">
+                    <h5 class="card-title fw-bolder">Nom Prénom</h5>
+                    <h5 class="card-title DateTopCard fw-semibold">
+                      jj/mm/aaaa
+                    </h5>
+                  </div>
+                </div>
+                <div class="destinationTopCard fw-semibold fs-5">
+                  <div class="departureTopCard">Paris</div>
+                  <svg
+                    class="mt-2 mx-3"
+                    viewBox="246.554 219.198 189.9 12"
+                    width="189.9"
+                    height="12"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:bx="https://boxy-svg.com"
+                  >
+                    <!-- svelte-ignore illegal-attribute-character -->
+                    <path
+                      d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
+                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
+                      bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
+                    />
+                  </svg>
+                  <div class="arrivalTopCard">Alger</div>
+                </div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+              </div>
+              <div class="card-footer">
+                <small class="text-body-secondary"
+                  >Last updated 3 mins ago</small
+                >
+              </div>
+            </a>
           </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card cardAnnonce h-100">
-          <img src="..." class="card-img-top" alt="..." />
-          <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">
-              This is a wider card with supporting text below as a natural
-              lead-in to additional content. This content is a little bit
-              longer.
-            </p>
+          <div class="col">
+            <a href="/details" class="card cardAnnonce h-100 redirection-div">
+              <div class="card-body">
+                <div class="topCard">
+                  <img
+                    src="../svg/photoProfile.svg"
+                    class="card-img-top"
+                    alt="..."
+                  />
+                  <div class="nomDateTopCard">
+                    <h5 class="card-title fw-bolder">Nom Prénom</h5>
+                    <h5 class="card-title DateTopCard fw-semibold">
+                      jj/mm/aaaa
+                    </h5>
+                  </div>
+                </div>
+                <div class="destinationTopCard fw-semibold fs-5">
+                  <div class="departureTopCard">Paris</div>
+                  <svg
+                    class="mt-2 mx-3"
+                    viewBox="246.554 219.198 189.9 12"
+                    width="189.9"
+                    height="12"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:bx="https://boxy-svg.com"
+                  >
+                    <!-- svelte-ignore illegal-attribute-character -->
+                    <path
+                      d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
+                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
+                      bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
+                    />
+                  </svg>
+                  <div class="arrivalTopCard">Alger</div>
+                </div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+              </div>
+              <div class="card-footer">
+                <small class="text-body-secondary"
+                  >Last updated 3 mins ago</small
+                >
+              </div>
+            </a>
           </div>
-          <div class="card-footer">
-            <small class="text-body-secondary">Last updated 3 mins ago</small>
+          <div class="col">
+            <a href="/details" class="card cardAnnonce h-100 redirection-div">
+              <div class="card-body">
+                <div class="topCard">
+                  <img
+                    src="../svg/photoProfile.svg"
+                    class="card-img-top"
+                    alt="..."
+                  />
+                  <div class="nomDateTopCard">
+                    <h5 class="card-title fw-bolder">Nom Prénom</h5>
+                    <h5 class="card-title DateTopCard fw-semibold">
+                      jj/mm/aaaa
+                    </h5>
+                  </div>
+                </div>
+                <div class="destinationTopCard fw-semibold fs-5">
+                  <div class="departureTopCard">Paris</div>
+                  <svg
+                    class="mt-2 mx-3"
+                    viewBox="246.554 219.198 189.9 12"
+                    width="189.9"
+                    height="12"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:bx="https://boxy-svg.com"
+                  >
+                    <!-- svelte-ignore illegal-attribute-character -->
+                    <path
+                      d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
+                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
+                      bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
+                    />
+                  </svg>
+                  <div class="arrivalTopCard">Alger</div>
+                </div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+              </div>
+              <div class="card-footer">
+                <small class="text-body-secondary"
+                  >Last updated 3 mins ago</small
+                >
+              </div>
+            </a>
           </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card cardAnnonce h-100">
-          <img src="..." class="card-img-top" alt="..." />
-          <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">
-              This card has supporting text below as a natural lead-in to
-              additional content.
-            </p>
+          <div class="col">
+            <a href="/details" class="card cardAnnonce h-100 redirection-div">
+              <div class="card-body">
+                <div class="topCard">
+                  <img
+                    src="../svg/photoProfile.svg"
+                    class="card-img-top"
+                    alt="..."
+                  />
+                  <div class="nomDateTopCard">
+                    <h5 class="card-title fw-bolder">Nom Prénom</h5>
+                    <h5 class="card-title DateTopCard fw-semibold">
+                      jj/mm/aaaa
+                    </h5>
+                  </div>
+                </div>
+                <div class="destinationTopCard fw-semibold fs-5">
+                  <div class="departureTopCard">Paris</div>
+                  <svg
+                    class="mt-2 mx-3"
+                    viewBox="246.554 219.198 189.9 12"
+                    width="189.9"
+                    height="12"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:bx="https://boxy-svg.com"
+                  >
+                    <!-- svelte-ignore illegal-attribute-character -->
+                    <path
+                      d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
+                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
+                      bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
+                    />
+                  </svg>
+                  <div class="arrivalTopCard">Alger</div>
+                </div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+              </div>
+              <div class="card-footer">
+                <small class="text-body-secondary"
+                  >Last updated 3 mins ago</small
+                >
+              </div>
+            </a>
           </div>
-          <div class="card-footer">
-            <small class="text-body-secondary">Last updated 3 mins ago</small>
+          <div class="col">
+            <a href="/details" class="card cardAnnonce h-100 redirection-div">
+              <div class="card-body">
+                <div class="topCard">
+                  <img
+                    src="../svg/photoProfile.svg"
+                    class="card-img-top"
+                    alt="..."
+                  />
+                  <div class="nomDateTopCard">
+                    <h5 class="card-title fw-bolder">Nom Prénom</h5>
+                    <h5 class="card-title DateTopCard fw-semibold">
+                      jj/mm/aaaa
+                    </h5>
+                  </div>
+                </div>
+                <div class="destinationTopCard fw-semibold fs-5">
+                  <div class="departureTopCard">Paris</div>
+                  <svg
+                    class="mt-2 mx-3"
+                    viewBox="246.554 219.198 189.9 12"
+                    width="189.9"
+                    height="12"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:bx="https://boxy-svg.com"
+                  >
+                    <!-- svelte-ignore illegal-attribute-character -->
+                    <path
+                      d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
+                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
+                      bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
+                    />
+                  </svg>
+                  <div class="arrivalTopCard">Alger</div>
+                </div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+              </div>
+              <div class="card-footer">
+                <small class="text-body-secondary"
+                  >Last updated 3 mins ago</small
+                >
+              </div>
+            </a>
           </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card cardAnnonce h-100">
-          <img src="..." class="card-img-top" alt="..." />
-          <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">
-              This is a wider card with supporting text below as a natural
-              lead-in to additional content. This card has even longer content
-              than the first to show that equal height action.
-            </p>
-          </div>
-          <div class="card-footer">
-            <small class="text-body-secondary">Last updated 3 mins ago</small>
+          <div class="col">
+            <a href="/details" class="card cardAnnonce h-100 redirection-div">
+              <div class="card-body">
+                <div class="topCard">
+                  <img
+                    src="../svg/photoProfile.svg"
+                    class="card-img-top"
+                    alt="..."
+                  />
+                  <div class="nomDateTopCard">
+                    <h5 class="card-title fw-bolder">Nom Prénom</h5>
+                    <h5 class="card-title DateTopCard fw-semibold">
+                      jj/mm/aaaa
+                    </h5>
+                  </div>
+                </div>
+                <div class="destinationTopCard fw-semibold fs-5">
+                  <div class="departureTopCard">Paris</div>
+                  <svg
+                    class="mt-2 mx-3"
+                    viewBox="246.554 219.198 189.9 12"
+                    width="189.9"
+                    height="12"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:bx="https://boxy-svg.com"
+                  >
+                    <!-- svelte-ignore illegal-attribute-character -->
+                    <path
+                      d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
+                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
+                      bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
+                    />
+                  </svg>
+                  <div class="arrivalTopCard">Alger</div>
+                </div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+              </div>
+              <div class="card-footer">
+                <small class="text-body-secondary"
+                  >Last updated 3 mins ago</small
+                >
+              </div>
+            </a>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  </div>
   </section>
 </main>
 
@@ -225,10 +595,12 @@
     border: none;
     border-radius: 20px;
   }
-  .containerAnnonces {
-    
+  .topCard {
+    display: flex;
+    flex-direction: row;
+    padding: 0 50px 30px 50px;
+    align-items: center;
+    justify-content: space-between;
   }
-  .cardAnnonce {
-    box-shadow: 0 1px 3px 0 #25201f4d;
-  }
+
 </style>

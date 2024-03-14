@@ -58,6 +58,20 @@ li {
 .text-primary {
   color: #27005d !important;
 }
+.bg-gold {
+  background-color: #ffe767 !important;
+}
+.text-gold {
+  color: #ffe767 !important;
+}
+
+/* ----------------------------------------------------------- */
+/* Usefull Objects */
+
+.card-img-top {
+  width: 75px;
+  height: 75px;
+}
 
 /* ----------------------------------------------------------- */
 /* Cover Image */
@@ -88,6 +102,34 @@ li {
   bottom: 0%;
   right: 0%;
   left: 0%;
+}
+/* ----------------------------------------------------------- */
+/* Cards */
+
+.nomDateTopCard .DateTopCard {
+  font-size: small;
+  display: flex;
+  justify-content: center;
+}
+.destinationTopCard {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.dateCard{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.cardAnnonce {
+  box-shadow: 0 1px 3px 0 #25201f4d;
+  transition: 0.2s ease;
+  text-decoration: none;
+}
+.cardAnnonce:hover {
+  box-shadow: 2px 2px 3px 2px #25201f4d;
 }
 
 /* ----------------------------------------------------------- */
@@ -224,11 +266,20 @@ header {
 }
 
 /* ----------------------------------------------------------- */
-/* Page ??? */
+/* Page Details */
 
 .annc {
-  margin-top: 150px !important;
+  margin-top: 75px !important;
 }
 .details {
   width: 50%;
+}
+.colorOriginalSwitch {
+  
+  background-color: #27005d;
+  color: white;
+}
+.colorSecondarySwitch {
+  background-color: red;
+  color: #27005d;
 }
