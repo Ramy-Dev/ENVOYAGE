@@ -1,178 +1,285 @@
-@import '../node_modules/bootstrap/scss/bootstrap.scss';
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-   li{
-      list-style: none;
-   }
+/* ----------------------------------------------------------- */
+/* The @import */
+
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+/* ----------------------------------------------------------- */
+/* Root Styling */
+
 * {
-      font-family: "Poppins" , sans-serif;
-   margin: 0;
-   padding: 0;
-   box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
+
 :root {
-   --couleur-principale : #27005D;
+  --couleur-principale: #27005d;
 }
+
+::-webkit-file-upload-button {
+  display: none;
+}
+
+/* ----------------------------------------------------------- */
+/* Global Styling */
 
 .w-50 {
-   width: 50% !important;
+  width: 50% !important;
 }
 .w-100 {
-   width: 100% !important;
+  width: 100% !important;
 }
 .h-50 {
-   height: 50% !important;
+  height: 50% !important;
 }
 .h-100 {
-   height: 100% !important;
-}
-header {
-   position: relative;
+  height: 100% !important;
 }
 .index {
-   z-index: 9;
+  z-index: 9;
 }
-header {
-   background-position: center; /* Center the image */
-   background-repeat: no-repeat; /* Do not repeat the image */
-   background-size: cover; /* Resize the background image to cover the entire container */
-   /* background-image: url(../image/plane1.jpg); */
+li {
+  list-style: none;
 }
+
+/* ----------------------------------------------------------- */
+/* Color Styling */
+
+.card-shadow {
+  border-radius: 20px;
+  box-shadow: #a186ff -5px 5px, #d0c2ff -10px 10px, #e6e0f9 -15px 15px,
+    rgba(0, 0, 0, 0.1) -10px 10px, rgba(0, 0, 0, 0.05) -0 0;
+}
+.bg-primary {
+  background-color: #27005d !important;
+}
+.text-primary {
+  color: #27005d !important;
+}
+.bg-gold {
+  background-color: #ffe767 !important;
+}
+.text-gold {
+  color: #ffe767 !important;
+}
+
+/* ----------------------------------------------------------- */
+/* Usefull Objects */
+
+.card-img-top {
+  width: 75px;
+  height: 75px;
+}
+
+/* ----------------------------------------------------------- */
+/* Cover Image */
+
 .cover {
-   -webkit-clip-path: polygon(50% 100%, 0 0, 100% 0);
-   clip-path: polygon(50% 100%, 0 0, 100% 0);
-   position: absolute;
-   top: 0%;
-   bottom: 0%;
-   right: 0%;
-   left: 0%;
-   background-color: rgb(255, 255, 255);
+  -webkit-clip-path: polygon(50% 100%, 0 0, 100% 0);
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+  position: absolute;
+  top: 0%;
+  bottom: 0%;
+  right: 0%;
+  left: 0%;
+  background-color: rgb(255, 255, 255);
 }
 .cover-recherche {
-   -webkit-clip-path: polygon(50% 100%, 0 0, 100% 0);
-   clip-path: polygon(50% 100%, 0 0, 100% 0);
-   position: absolute;
-   top: 0%;
-   bottom: 0%;
-   right: 0%;
-   left: 0%;
-   background-color: #27005D;
+  -webkit-clip-path: polygon(50% 100%, 0 0, 100% 0);
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+  position: absolute;
+  top: 0%;
+  bottom: 0%;
+  right: 0%;
+  left: 0%;
+  background-color: #27005d;
 }
 .cover-img {
-   position: absolute;
-   top: 0%;
-   bottom: 0%;
-   right: 0%;
-   left: 0%;
-   /* background-color: rgba(0, 0, 0, 0.486); */
+  position: absolute;
+  top: 0%;
+  bottom: 0%;
+  right: 0%;
+  left: 0%;
 }
-nav {
-   box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.412);
-   z-index: 99;
-}
-header.hero {
-   margin-top: 64px;
-   height: 91vh;
-}
-/* @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap"); */
+/* ----------------------------------------------------------- */
+/* Cards */
 
-footer {
-   display: flex;
+.nomDateTopCard .DateTopCard {
+  font-size: small;
+  display: flex;
+  justify-content: center;
+}
+.destinationTopCard {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.dateCard{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.cardAnnonce {
+  box-shadow: 0 1px 3px 0 #25201f4d;
+  transition: 0.2s ease;
+  text-decoration: none;
+}
+.cardAnnonce:hover {
+  box-shadow: 2px 2px 3px 2px #25201f4d;
+}
+
+/* ----------------------------------------------------------- */
+/* Nav */
+
+nav {
+  box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.412);
+  z-index: 99;
+}
+
+/* ----------------------------------------------------------- */
+/* Header */
+
+header {
+  margin-top: 0;
+  position: relative;
+  height: 94vh;
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
+}
+
+.containerHeader {
+  position: absolute; /* Changement en position absolue */
+  top: 48%; /* Déplace le containerHome à 50% du haut du header */
+  transform: translateY(-50%); /* Centre le containerHome verticalement */
+  left: 0; /* Aligne le containerHome à gauche */
+  right: 0; /* Aligne le containerHome à droite */
+  /* background-color: black; */
+  min-height: 55vh;
+  width: 100%; /* Ajuste la largeur au container parent */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 60px;
+  place-content: center;
+}
+
+/* ----------------------------------------------------------- */
+/* Footer */
+
+.footer {
+  /* Old Style */
+
+  /* display: flex;
    background: #333;
    justify-content: flex-end;
    align-items: flex-end;
-   min-height: 100vh;
-}
+   min-height: 100vh; */
 
-.footer {
-   position: relative;
-   width: 100%;
-   background: #27005d;
-   min-height: 100px;
-   padding: 20px 50px;
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   flex-direction: column;
+  position: relative;
+  width: 100%;
+  background: #27005d;
+  min-height: 100px;
+  padding: 20px 50px;
+  padding-top: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
-
+.footer p {
+  color: #fff;
+  margin: 15px 0 10px 0;
+  font-size: 1rem;
+  font-weight: 300;
+}
 .social-icon,
 .menu {
-   position: relative;
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   margin: 10px 0;
-   flex-wrap: wrap;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+  flex-wrap: wrap;
 }
 
 .social-icon__item,
 .menu__item {
-   list-style: none;
+  list-style: none;
 }
 
 .social-icon__link {
-   font-size: 2rem;
-   color: #fff;
-   margin: 0 10px;
-   display: inline-block;
-   transition: 0.5s;
+  font-size: 2rem;
+  color: #fff;
+  margin: 0 10px;
+  display: inline-block;
+  transition: 0.5s;
 }
 .social-icon__link:hover {
-   transform: translateY(-10px);
+  transform: translateY(-10px);
 }
 
 .menu__link {
-   font-size: 1.2rem;
-   color: #fff;
-   margin: 0 10px;
-   display: inline-block;
-   transition: 0.5s;
-   text-decoration: none;
-   opacity: 0.75;
-   font-weight: 300;
+  font-size: 1.2rem;
+  color: #fff;
+  margin: 0 10px;
+  display: inline-block;
+  transition: 0.5s;
+  text-decoration: none;
+  opacity: 0.75;
+  font-weight: 300;
 }
 
 .menu__link:hover {
-   opacity: 1;
+  opacity: 1;
 }
 
-.footer p {
-   color: #fff;
-   margin: 15px 0 10px 0;
-   font-size: 1rem;
-   font-weight: 300;
-}
-.bbtn {
-   background-color: #ffe767 !important;
-   color: #27005d !important;
-}
-.gold-txt {
-   color: #ffe767 !important;
+/* ----------------------------------------------------------- */
+/* Page Home */
+
+.hidden {
+  display: none;
+  transition: transform 1s;
 }
 .singup {
-   margin-top: 100px !important;
-   width: 50%;
+  margin-top: 100px !important;
+  width: 50%;
 }
 .login {
-   margin-top: 200px !important;
-   width: 50%;
-}
-::-webkit-file-upload-button {
-   display: none;
-}
-.sn {
-   margin-top: 160px !important;
+  margin-top: 200px !important;
+  width: 50%;
 }
 .bd {
-   height: 100vh;
+  height: 100vh;
 }
+
+/* ----------------------------------------------------------- */
+/* Page Sign-up Log-in */
+
+.snl {
+  border: none;
+  border-radius: 20px;
+}
+
+/* ----------------------------------------------------------- */
+/* Page Details */
+
 .annc {
-   margin-top: 150px !important;
+  margin-top: 75px !important;
 }
 .details {
-   width: 50%;
+  width: 50%;
 }
-.hidden {
-   display: none;
-   transition: transform 1s;
+.colorOriginalSwitch {
+  
+  background-color: #27005d;
+  color: white;
+}
+.colorSecondarySwitch {
+  background-color: red;
+  color: #27005d;
 }

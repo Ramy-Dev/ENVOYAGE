@@ -53,15 +53,6 @@
 </main>
 
 <style>
-  .bg-primary {
-    background-color: #27005d;
-  }
-  .text-primary {
-    color: #27005d;
-  }
-  .text {
-    font-family: "Poppins", sans-serif;
-  }
   .SignUp {
     background-color: #ffe767;
     color: #27005d;
