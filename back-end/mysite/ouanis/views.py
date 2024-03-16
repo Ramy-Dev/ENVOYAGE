@@ -1,8 +1,32 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from .models import Utilisateur, Expediteur, Voyageur, Annonce, DemandeAnnonce, DemandeColis, DemandeCourier, DemandeDeCompteVoyageur
+from .serializers import  ExpediteurSerializer, VoyageurSerializer, AnnonceSerializer, DemandeAnnonceSerializer, DemandeColisSerializer, DemandeCourierSerializer, DemandeDeCompteVoyageurSerializer
 
-# Create your views here.
-from django.http import HttpResponse
 
+class ExpediteurViewSet(viewsets.ModelViewSet):
+    queryset = Expediteur.objects.all()
+    serializer_class = ExpediteurSerializer
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+class VoyageurViewSet(viewsets.ModelViewSet):
+    queryset = Voyageur.objects.all()
+    serializer_class = VoyageurSerializer
+
+class AnnonceViewSet(viewsets.ModelViewSet):
+    queryset = Annonce.objects.all()
+    serializer_class = AnnonceSerializer
+
+class DemandeAnnonceViewSet(viewsets.ModelViewSet):
+    queryset = DemandeAnnonce.objects.all()
+    serializer_class = DemandeAnnonceSerializer
+
+class DemandeColisViewSet(viewsets.ModelViewSet):
+    queryset = DemandeColis.objects.all()
+    serializer_class = DemandeColisSerializer
+
+class DemandeCourierViewSet(viewsets.ModelViewSet):
+    queryset = DemandeCourier.objects.all()
+    serializer_class = DemandeCourierSerializer
+
+class DemandeDeCompteVoyageurViewSet(viewsets.ModelViewSet):
+    queryset = DemandeDeCompteVoyageur.objects.all()
+    serializer_class = DemandeDeCompteVoyageurSerializer

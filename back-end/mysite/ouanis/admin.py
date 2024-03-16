@@ -1,9 +1,10 @@
 from django.contrib import admin
+from .models import Utilisateur, Expediteur, Voyageur, Annonce, DemandeAnnonce, DemandeColis, DemandeCourier, DemandeDeCompteVoyageur
 
-# Register your models here.
-
-from .models import Expediteur,Voyageur,AnnonceDeCorier,AnnonceDeColies
-admin.site.register(Voyageur)
 admin.site.register(Expediteur)
-admin.site.register(AnnonceDeCorier)
-admin.site.register(AnnonceDeColies)
+admin.site.register(Voyageur)
+admin.site.register(Annonce)
+admin.site.register(DemandeAnnonce)
+admin.site.register(DemandeColis)
+admin.site.register(DemandeCourier)
+admin.site.register(DemandeDeCompteVoyageur)
