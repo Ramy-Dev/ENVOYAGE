@@ -1,45 +1,26 @@
-<!-- <script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Définir les couleurs disponibles
-    const colors = ['#FF5733', '#33FF57', '#5733FF', '#FFFF33', '#33FFFF'];
+<script>
+  import { onMount } from 'svelte';
+  import ColorGenerator from '../../components/colorGenerator.svelte';
+  import { getRandomColor } from '../../lib/functions/randomColor.js';
+  // Fonction exécutée après le rendu du composant
+  onMount(() => {
+    // Sélectionner toutes les cartes avec la classe cardAnnonce
+    const cards = document.querySelectorAll('.cardAnnonce');
 
-    // Fonction pour obtenir une couleur aléatoire différente des couleurs voisines
-    function getRandomColor(previousColor) {
-      let color = previousColor;
-      while (color === previousColor) {
-        color = colors[Math.floor(Math.random() * colors.length)];
-      }
-      return color;
-    }
+    // Parcourir chaque carte
+    cards.forEach(card => {
+      // Obtenir une couleur aléatoire pour la carte
+      const cardColor = getRandomColor();
 
-    // Générer les cartes avec des couleurs uniques pour chaque carte et ses voisins
-    const cardsContainer = document.getElementById('cardsContainer');
-    const cards = cardsContainer.querySelectorAll('.card');
-    let previousColors = [];
+      // Sélectionner les éléments colorTopAnnonce et svgArrow de la carte actuelle
+      const colorTopElement = card.querySelector('.colorTopAnnonce');
+      // const svgArrow = card.querySelector('.svgArrow');
 
-    cards.forEach((card, index) => {
-      const leftNeighborColor = (index % 3 !== 0) ? previousColors[index - 1] : null;
-      const topNeighborColor = (index >= 3) ? previousColors[index - 3] : null;
-
-      let newColor = getRandomColor(leftNeighborColor);
-      newColor = getRandomColor(topNeighborColor);
-
-      card.style.backgroundColor = newColor;
-      previousColors.push(newColor);
+      // Appliquer la couleur aléatoire aux éléments colorTopAnnonce et svgArrow de la carte
+      colorTopElement.style.backgroundColor = cardColor;
+      // svgArrow.style.fill = cardColor;
     });
   });
-</script> -->
-
-<script>
-  // Importer la fonction `navigate` de Svelte Router si vous utilisez un routeur
-  import { navigate } from "svelte-routing";
-
-  // Fonction pour effectuer la redirection
-  function redirectToPage() {
-    // Redirection vers la page souhaitée
-    // Remplacez 'url_de_la_page' par l'URL de la page vers laquelle vous souhaitez rediriger
-    navigate("/");
-  }
 </script>
 
 <main>
@@ -113,6 +94,9 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="col">
             <a href="/details" class="card cardAnnonce h-100 redirection-div">
               <div class="card-body">
+                <div class="colorTopAnnonce mb-3" 
+               
+                ></div>
                 <div class="topCard">
                   <img
                     src="../svg/photoProfile.svg"
@@ -129,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="destinationTopCard fw-semibold fs-5">
                   <div class="departureTopCard">Paris</div>
                   <svg
-                    class="mt-2 mx-3"
+                    class="svgArrow mt-2 mx-3"
                     viewBox="246.554 219.198 189.9 12"
                     width="189.9"
                     height="12"
@@ -139,14 +123,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     <!-- svelte-ignore illegal-attribute-character -->
                     <path
                       d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
-                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      style="fill-rule: nonzero;"
                       transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
                       bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
                     />
                   </svg>
                   <div class="arrivalTopCard">Alger</div>
                 </div>
-                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">
+                  Date : jj/mm/aaaa
+                </div>
               </div>
               <div class="card-footer">
                 <small class="text-body-secondary"
@@ -158,6 +144,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="col">
             <a href="/details" class="card cardAnnonce h-100 redirection-div">
               <div class="card-body">
+                <div class="colorTopAnnonce mb-3"></div>
                 <div class="topCard">
                   <img
                     src="../svg/photoProfile.svg"
@@ -174,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="destinationTopCard fw-semibold fs-5">
                   <div class="departureTopCard">Paris</div>
                   <svg
-                    class="mt-2 mx-3"
+                    class="svgArrow mt-2 mx-3"
                     viewBox="246.554 219.198 189.9 12"
                     width="189.9"
                     height="12"
@@ -184,14 +171,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     <!-- svelte-ignore illegal-attribute-character -->
                     <path
                       d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
-                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      style="fill-rule: nonzero;"
                       transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
                       bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
                     />
                   </svg>
                   <div class="arrivalTopCard">Alger</div>
                 </div>
-                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">
+                  Date : jj/mm/aaaa
+                </div>
               </div>
               <div class="card-footer">
                 <small class="text-body-secondary"
@@ -203,6 +192,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="col">
             <a href="/details" class="card cardAnnonce h-100 redirection-div">
               <div class="card-body">
+                <div class="colorTopAnnonce mb-3"></div>
                 <div class="topCard">
                   <img
                     src="../svg/photoProfile.svg"
@@ -219,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="destinationTopCard fw-semibold fs-5">
                   <div class="departureTopCard">Paris</div>
                   <svg
-                    class="mt-2 mx-3"
+                    class="svgArrow mt-2 mx-3"
                     viewBox="246.554 219.198 189.9 12"
                     width="189.9"
                     height="12"
@@ -229,14 +219,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     <!-- svelte-ignore illegal-attribute-character -->
                     <path
                       d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
-                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      style="fill-rule: nonzero;"
                       transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
                       bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
                     />
                   </svg>
                   <div class="arrivalTopCard">Alger</div>
                 </div>
-                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">
+                  Date : jj/mm/aaaa
+                </div>
               </div>
               <div class="card-footer">
                 <small class="text-body-secondary"
@@ -248,6 +240,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="col">
             <a href="/details" class="card cardAnnonce h-100 redirection-div">
               <div class="card-body">
+                <div class="colorTopAnnonce mb-3"></div>
                 <div class="topCard">
                   <img
                     src="../svg/photoProfile.svg"
@@ -264,7 +257,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="destinationTopCard fw-semibold fs-5">
                   <div class="departureTopCard">Paris</div>
                   <svg
-                    class="mt-2 mx-3"
+                    class="svgArrow mt-2 mx-3"
                     viewBox="246.554 219.198 189.9 12"
                     width="189.9"
                     height="12"
@@ -274,14 +267,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     <!-- svelte-ignore illegal-attribute-character -->
                     <path
                       d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
-                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      style="fill-rule: nonzero;"
                       transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
                       bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
                     />
                   </svg>
                   <div class="arrivalTopCard">Alger</div>
                 </div>
-                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">
+                  Date : jj/mm/aaaa
+                </div>
               </div>
               <div class="card-footer">
                 <small class="text-body-secondary"
@@ -293,6 +288,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="col">
             <a href="/details" class="card cardAnnonce h-100 redirection-div">
               <div class="card-body">
+                <div class="colorTopAnnonce mb-3"></div>
                 <div class="topCard">
                   <img
                     src="../svg/photoProfile.svg"
@@ -309,7 +305,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="destinationTopCard fw-semibold fs-5">
                   <div class="departureTopCard">Paris</div>
                   <svg
-                    class="mt-2 mx-3"
+                    class="svgArrow mt-2 mx-3"
                     viewBox="246.554 219.198 189.9 12"
                     width="189.9"
                     height="12"
@@ -319,14 +315,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     <!-- svelte-ignore illegal-attribute-character -->
                     <path
                       d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
-                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      style="fill-rule: nonzero;"
                       transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
                       bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
                     />
                   </svg>
                   <div class="arrivalTopCard">Alger</div>
                 </div>
-                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">
+                  Date : jj/mm/aaaa
+                </div>
               </div>
               <div class="card-footer">
                 <small class="text-body-secondary"
@@ -338,6 +336,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="col">
             <a href="/details" class="card cardAnnonce h-100 redirection-div">
               <div class="card-body">
+                <div class="colorTopAnnonce mb-3"></div>
                 <div class="topCard">
                   <img
                     src="../svg/photoProfile.svg"
@@ -354,7 +353,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="destinationTopCard fw-semibold fs-5">
                   <div class="departureTopCard">Paris</div>
                   <svg
-                    class="mt-2 mx-3"
+                    class="svgArrow mt-2 mx-3"
                     viewBox="246.554 219.198 189.9 12"
                     width="189.9"
                     height="12"
@@ -364,14 +363,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     <!-- svelte-ignore illegal-attribute-character -->
                     <path
                       d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
-                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      style="fill-rule: nonzero;"
                       transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
                       bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
                     />
                   </svg>
                   <div class="arrivalTopCard">Alger</div>
                 </div>
-                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">
+                  Date : jj/mm/aaaa
+                </div>
               </div>
               <div class="card-footer">
                 <small class="text-body-secondary"
@@ -383,6 +384,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="col">
             <a href="/details" class="card cardAnnonce h-100 redirection-div">
               <div class="card-body">
+                <div class="colorTopAnnonce mb-3"></div>
                 <div class="topCard">
                   <img
                     src="../svg/photoProfile.svg"
@@ -399,7 +401,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="destinationTopCard fw-semibold fs-5">
                   <div class="departureTopCard">Paris</div>
                   <svg
-                    class="mt-2 mx-3"
+                    class="svgArrow mt-2 mx-3"
                     viewBox="246.554 219.198 189.9 12"
                     width="189.9"
                     height="12"
@@ -409,14 +411,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     <!-- svelte-ignore illegal-attribute-character -->
                     <path
                       d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
-                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      style="fill-rule: nonzero;"
                       transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
                       bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
                     />
                   </svg>
                   <div class="arrivalTopCard">Alger</div>
                 </div>
-                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">
+                  Date : jj/mm/aaaa
+                </div>
               </div>
               <div class="card-footer">
                 <small class="text-body-secondary"
@@ -428,6 +432,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="col">
             <a href="/details" class="card cardAnnonce h-100 redirection-div">
               <div class="card-body">
+                <div class="colorTopAnnonce mb-3"></div>
                 <div class="topCard">
                   <img
                     src="../svg/photoProfile.svg"
@@ -444,7 +449,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="destinationTopCard fw-semibold fs-5">
                   <div class="departureTopCard">Paris</div>
                   <svg
-                    class="mt-2 mx-3"
+                    class="svgArrow mt-2 mx-3"
                     viewBox="246.554 219.198 189.9 12"
                     width="189.9"
                     height="12"
@@ -454,14 +459,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     <!-- svelte-ignore illegal-attribute-character -->
                     <path
                       d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
-                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      style="fill-rule: nonzero;"
                       transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
                       bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
                     />
                   </svg>
                   <div class="arrivalTopCard">Alger</div>
                 </div>
-                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">
+                  Date : jj/mm/aaaa
+                </div>
               </div>
               <div class="card-footer">
                 <small class="text-body-secondary"
@@ -473,6 +480,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="col">
             <a href="/details" class="card cardAnnonce h-100 redirection-div">
               <div class="card-body">
+                <div class="colorTopAnnonce mb-3"></div>
                 <div class="topCard">
                   <img
                     src="../svg/photoProfile.svg"
@@ -489,7 +497,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="destinationTopCard fw-semibold fs-5">
                   <div class="departureTopCard">Paris</div>
                   <svg
-                    class="mt-2 mx-3"
+                    class="svgArrow mt-2 mx-3"
                     viewBox="246.554 219.198 189.9 12"
                     width="189.9"
                     height="12"
@@ -499,14 +507,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     <!-- svelte-ignore illegal-attribute-character -->
                     <path
                       d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
-                      style="fill: rgba(39, 0, 93, 1); fill-rule: nonzero;"
+                      style="fill-rule: nonzero;"
                       transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
                       bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
                     />
                   </svg>
                   <div class="arrivalTopCard">Alger</div>
                 </div>
-                <div class="dateCard pt-4 pb-2 fw-semibold">Date : jj/mm/aaaa</div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">
+                  Date : jj/mm/aaaa
+                </div>
               </div>
               <div class="card-footer">
                 <small class="text-body-secondary"
@@ -520,6 +530,8 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
   </section>
 </main>
+
+<ColorGenerator />
 
 <style>
   header {
@@ -595,6 +607,9 @@ document.addEventListener("DOMContentLoaded", function() {
     border: none;
     border-radius: 20px;
   }
+  .colorTopAnnonce {
+    height: 30px;
+  }
   .topCard {
     display: flex;
     flex-direction: row;
@@ -602,5 +617,4 @@ document.addEventListener("DOMContentLoaded", function() {
     align-items: center;
     justify-content: space-between;
   }
-
 </style>

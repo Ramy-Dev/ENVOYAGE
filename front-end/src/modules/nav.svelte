@@ -22,7 +22,7 @@
             <a class="nav-link active" aria-current="page" href="/">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/">Recherche</a>
+            <a class="nav-link" href="/recherche">Recherche</a>
           </li>
           <!-- <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="/" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -41,10 +41,10 @@
         </ul>
         <ul class="SignUp-LogIn d-flex m-0 p-0">
           <li>
-            <a class="SignUp fw-semibold nav-link" href="/sign-up">Sign up</a>
+            <a class="SignUp fw-semibold nav-link text-primary" href="/sign-up">Sign up</a>
           </li>
           <li>
-            <a class="LogIn fw-semibold nav-link" href="/log-in">Log in</a>
+            <a class="LogIn fw-semibold nav-link bg-primary" href="/log-in">Log in</a>
           </li>
         </ul>
       </div>
@@ -55,17 +55,18 @@
 <style>
   .SignUp {
     background-color: #ffe767;
-    color: #27005d;
     border-radius: 5px;
     padding: 10px;
   }
   .LogIn {
-    background-color: #27005d;
     color: white;
     border-radius: 5px;
     padding: 10px;
   }
   .SignUp-LogIn {
     gap: 20px;
+  }
+  li {
+    list-style: none;
   }
 </style>

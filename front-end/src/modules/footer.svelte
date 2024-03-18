@@ -1,4 +1,4 @@
-<footer id="contact" class="footer pt-6">
+<footer id="contact" class="footer pt-6 bg-primary">
   <div class="row">
     <div class="md-6">
       <ul class="menu">
