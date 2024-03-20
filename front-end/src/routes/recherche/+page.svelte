@@ -24,7 +24,7 @@
 </script>
 
 <main>
-  <header class="section text-white bg-white">
+  <header class="section text-white bg-white fp">
     <div class="cover-recherche position-absolute"></div>
     <div class="cover-img"></div>
     <div class="containerHeader container index text-center position-relative">
@@ -84,7 +84,7 @@
       </form>
     </div>
   </header>
-  <section class="about">
+  <section class="about fp">
     <div class="">
       <h2 class="textAnnonceRecherche text-center fw-bold">Les annonces</h2>
     </div>

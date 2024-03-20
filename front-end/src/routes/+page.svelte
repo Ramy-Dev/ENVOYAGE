@@ -1,5 +1,5 @@
 <main>
-  <header class="section hero text-primary bg-primary">
+  <header class="section hero text-primary bg-primary fp">
     <div class="cover position-absolute"></div>
     <div class="cover-img"></div>
     <div
@@ -15,7 +15,7 @@
     </div>
   </header>
 
-  <div class="container mt-5 work section">
+  <div class="container mt-5 work section fp">
     <h2 class="textStartHome display-4 text-center fw-semibold">START</h2>
     <div class="row p-6 gx-5">
       <div class="col">
