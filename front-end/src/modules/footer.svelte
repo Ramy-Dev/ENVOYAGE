@@ -1,4 +1,4 @@
-<footer id="contact" class="footer pt-6">
+<footer id="contact" class="footer pt-6 bg-primary fp">
   <div class="row">
     <div class="md-6">
       <ul class="menu">
@@ -42,13 +42,5 @@
 </footer>
 
 <style>
-  .bg-primary {
-    background-color: #27005d;
-  }
-  .text-primary {
-    color: #27005d;
-  }
-  .footer {
-    padding-top: 40px;
-  }
+  
 </style>

@@ -1,6 +1,6 @@
 <main>
-  <div class="container bd">
-    <div class="login mx-auto">
+  <div class="container bd fp">
+    <div class="login card-shadow mx-auto">
       <div class="box p-0">
         <button
           id=""
@@ -12,13 +12,13 @@
         <form class="box">
           <div class="form-group">
             <label for="email">E-mail :</label>
-            <input type="email" class="form-control" id="email" required />
+            <input type="email" class="snl form-control" id="email" required />
           </div>
           <div class="form-group">
             <label for="password">Mot de passe :</label>
             <input
               type="password"
-              class="form-control"
+              class="snl form-control"
               id="password"
               required
             />
@@ -36,31 +36,16 @@
 </main>
 
 <style>
-  .bg-primary {
-    background-color: #27005d;
-  }
-  .text-primary {
-    color: #27005d;
-  }
+
   .login {
     background-color: #fff;
-    border-radius: 20px;
-    box-shadow:
-      #a186ff -5px 5px,
-      #d0c2ff -10px 10px,
-      #e6e0f9 -15px 15px,
-      rgba(0, 0, 0, 0.1) -10px 10px,
-      rgba(0, 0, 0, 0.05) -0 0;
   }
   .login label {
     color: black;
     font-weight: 650;
     margin-top: 20px;
   }
-
-  input {
-    border: none;
-    border-radius: 20px;
+  .snl {
     background-color: #f0f0f0;
   }
   .container-form {
@@ -70,7 +55,6 @@
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
   }
-
   .submitLogin {
     border-radius: 20px;
     padding: 7px 50px;
