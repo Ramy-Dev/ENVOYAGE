@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from .models import Utilisateur, Expediteur, Voyageur, Annonce, DemandeAnnonce, DemandeColis, DemandeCourier, DemandeDeCompteVoyageur
+from .models import  Expediteur, Voyageur, Annonce, DemandeAnnonce, DemandeColis, DemandeCourier, DemandeDeCompteVoyageur
 from .serializers import  ExpediteurSerializer, VoyageurSerializer, AnnonceSerializer, DemandeAnnonceSerializer, DemandeColisSerializer, DemandeCourierSerializer, DemandeDeCompteVoyageurSerializer
 
 
