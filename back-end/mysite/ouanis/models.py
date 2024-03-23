@@ -32,7 +32,6 @@ class DemandeDeCompteVoyageur(models.Model):
 
 class Voyageur(Utilisateur):
     numero_passeport = models.CharField(max_length=200)
-    photos_passeport = models.FileField(upload_to='documents/')
     adresse = models.CharField(max_length=200)
     date_de_naissance = models.DateField()
 
@@ -83,6 +82,7 @@ class DemandeCourier(models.Model):
     document = models.FileField(upload_to='documents/')
 
 class DemandeDeCompteVoyageur(models.Model):
+    photos_passeport = models.FileField(upload_to='documents/', default='default_value')  # Specify the default value here
     expediteur = models.OneToOneField(Expediteur, on_delete=models.CASCADE, primary_key=True)
     est_approuve = models.BooleanField(default=False)
     date_de_creation = models.DateTimeField(auto_now_add=True)

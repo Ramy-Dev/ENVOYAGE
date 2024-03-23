@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets,permissions
 from .models import  Expediteur, Voyageur, Annonce, DemandeAnnonce, DemandeColis, DemandeCourier, DemandeDeCompteVoyageur
 from .serializers import  ExpediteurSerializer, VoyageurSerializer, AnnonceSerializer, DemandeAnnonceSerializer, DemandeColisSerializer, DemandeCourierSerializer, DemandeDeCompteVoyageurSerializer
 
@@ -14,6 +14,7 @@ class VoyageurViewSet(viewsets.ModelViewSet):
 class AnnonceViewSet(viewsets.ModelViewSet):
     queryset = Annonce.objects.all()
     serializer_class = AnnonceSerializer
+    permission_classes = [permissions.AllowAny]
 
 class DemandeAnnonceViewSet(viewsets.ModelViewSet):
     queryset = DemandeAnnonce.objects.all()

@@ -1,4 +1,7 @@
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
 from rest_framework.routers import DefaultRouter
 from .views import ExpediteurViewSet, VoyageurViewSet, AnnonceViewSet, DemandeAnnonceViewSet, DemandeColisViewSet, DemandeCourierViewSet, DemandeDeCompteVoyageurViewSet
 
@@ -13,4 +16,4 @@ router.register(r'demandes-compte-voyageurs', DemandeDeCompteVoyageurViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-]
+] 

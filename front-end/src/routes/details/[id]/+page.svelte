@@ -1,9 +1,24 @@
 <script>
    import { onMount } from 'svelte';
-   import ColorGenerator from '../../components/colorGenerator.svelte';
-   import ColorSwitchStyles from '../../components/colorOriginalSwitchStyle.svelte';
+   import ColorGenerator from '../../../components/colorGenerator.svelte';
+   import ColorSwitchStyles from '../../../components/colorOriginalSwitchStyle.svelte';
 
 let color; // Variable pour stocker la couleur
+
+export async function load({ params }) {
+    console.log('Loading data for ID:', params.id);
+    try {
+        const response = await fetch(`http://127.0.0.1:8000/recherche/${params.id}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        console.log('Fetched data:', data);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
 
 const toggle = (event) => {
     const clickedButton = event.target.closest('button');
@@ -26,6 +41,7 @@ const toggle = (event) => {
     clickedButton.disabled = false;
 };
 onMount(() => {
+
   const urlParams = new URLSearchParams(window.location.search);
   color = urlParams.get('color'); // Récupérer la couleur à partir des paramètres d'URL
 });

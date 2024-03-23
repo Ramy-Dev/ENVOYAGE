@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import  Expediteur, Voyageur, Annonce, DemandeAnnonce, DemandeColis, DemandeCourier, DemandeDeCompteVoyageur
+from .models import Expediteur, Voyageur, Annonce, DemandeAnnonce, DemandeColis, DemandeCourier, DemandeDeCompteVoyageur
 
 class ExpediteurSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,9 +12,13 @@ class VoyageurSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AnnonceSerializer(serializers.ModelSerializer):
+    # Include nested fields for createur
+    createur_nom = serializers.ReadOnlyField(source='createur.nom')
+    createur_prenom = serializers.ReadOnlyField(source='createur.prenom')
+    createur_date_de_naissance = serializers.ReadOnlyField(source='createur.date_de_naissance') 
     class Meta:
         model = Annonce
-        fields = '__all__'
+        fields = ['id', 'createur', 'createur_nom','createur_date_de_naissance', 'createur_prenom', 'created_at', 'updated_at', 'lieu_depart', 'destination', 'poids_max', 'prix_unit']
 
 class DemandeAnnonceSerializer(serializers.ModelSerializer):
     class Meta:
