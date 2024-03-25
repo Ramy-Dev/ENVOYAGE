@@ -1,4 +1,5 @@
 <script>
+   
    import { onMount } from "svelte";
    import ColorGenerator from "../../components/colorGenerator.svelte";
    import { getRandomColor } from "../../lib/functions/randomColor.js";
