@@ -1,97 +1,112 @@
 <script>
- import Popup from "../../components/Popup.svelte";
+  import Popup from "../../components/Popup.svelte";
 
-// Déclarer des variables réactives
-let name = "Ramy";
-let isEditing = false;
-let newName = name;
-let fieldName = "";
-let title = "";
+  let userData = {
+      name: "Ramy",
+      email: "ramy@envoyage.com",
+      phone: "+213 123 45 67 89",
+      dateOfBirth: "24 / 06 / 2005 - 18 yo",
+      address: "11 rue Bainem, El Hammamet",
+      password: "**********",
+      passport: "***********************"
+  };
 
-// Ouvrir le pop-up pour éditer le champ spécifié
-function openPopup(field) {
-  isEditing = true;
-  fieldName = field;
+  let isEditing = false;
+  let newFieldValue = "";
+  let fieldName = "";
+  let title = "";
 
-  // Mettre à jour le titre du pop-up en fonction du champ à éditer
-  switch (field) {
-    case "name":
-      title = "Edit your Name";
-      break;
-    case "email":
-      title = "Edit your Email";
-      break;
-    case "phone":
-      title = "Edit your Phone Number";
-      break;
-    case "dob":
-      title = "Edit your Date of Birth / Age";
-      break;
-    case "address":
-      title = "Edit your Address";
-      break;
-    case "password":
-      title = "Change your Password";
-      break;
-    case "passport":
-      title = "Edit your Passport Number";
-      break;
-    // Ajoutez d'autres cas pour d'autres champs si nécessaire
-  }
-}
-// Enregistrer les modifications après l'édition dans le pop-up
-function saveChanges() {
-  name = newName; // Mettre à jour le nom avec la nouvelle valeur
-  isEditing = false; // Fermer le pop-up
+  function openPopup(field) {
+      isEditing = true;
+      fieldName = field;
 
-  // Mettre à jour le champ spécifique qui a été édité
-  const infoText = document.getElementById(`info-${fieldName}`);
-  infoText.textContent = newName;
-}
-
-  function editInfo(field) {
-    const inputField = document.getElementById(field);
-    const infoText = document.getElementById(`info-${field}`);
-    const editButton = document.getElementById(`edit-${field}`);
-
-    inputField.style.display = "inline-block";
-    infoText.style.display = "none";
-    editButton.style.display = "none";
-
-    inputField.focus();
-
-    inputField.addEventListener("blur", () => {
-      inputField.style.display = "none";
-      infoText.style.display = "inline-block";
-      editButton.style.display = "inline-block";
-    });
-
-    inputField.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        newName = inputField.value;
-        saveChanges();
+      switch (field) {
+          case "name":
+              title = "Edit your Name";
+              newFieldValue = userData.name;
+              break;
+          case "email":
+              title = "Edit your Email";
+              newFieldValue = userData.email;
+              break;
+          case "phone":
+              title = "Edit your Phone Number";
+              newFieldValue = userData.phone;
+              break;
+          case "dateOfBirth":
+              title = "Edit your Date of Birth / Age";
+              newFieldValue = userData.dateOfBirth;
+              break;
+          case "address":
+              title = "Edit your Address";
+              newFieldValue = userData.address;
+              break;
+          case "password":
+              title = "Change your Password";
+              newFieldValue = userData.password;
+              break;
+          case "passport":
+              title = "Edit your Passport Number";
+              newFieldValue = userData.passport;
+              break;
       }
-    });
+  }
+
+  function saveChanges() {
+      switch (fieldName) {
+          case "name":
+              userData.name = newFieldValue;
+              break;
+          case "email":
+            userData.email = newFieldValue;
+              break;
+          case "phone":
+          userData.phone = newFieldValue;
+              break;
+          case "dateOfBirth":
+          userData.dateOfBirth = newFieldValue;
+              break;
+          case "address":
+          userData.address = newFieldValue;
+              break;
+          case "password":
+          userData.password = newFieldValue;
+              break;
+          case "passport":
+          userData.passport = newFieldValue;
+              break;
+      }
+      isEditing = false;
+  }
+
+  function handleChangesSaved(event) {
+      const { fieldName, newValue } = event.detail;
+      userData[fieldName] = newValue;
+  }
+
+  $: {
+    console.log("Updated userData:", userData);
   }
 </script>
-
 <main>
   {#if isEditing}
   <div class="overlay"></div>
   <Popup
-    title={title} 
-    isOpen={isEditing}
-    onClose={() => (isEditing = false)}
-    bind:newName
+      title={title}
+      isOpen={isEditing}
+      onClose={() => (isEditing = false)}
+      bind:newFieldValue
+      fieldName={fieldName}
+      on:changesSaved={handleChangesSaved}
   >
-    <input bind:value={newName} />
-    <button on:click={saveChanges} class="ButtonEdit btn border-0 bg-primary text-white">Save</button>
+      <input class={fieldName === 'phone' || fieldName === 'dateOfBirth' ? 'numberInput' : ''} bind:value={newFieldValue} />
+      <button on:click={saveChanges} class="ButtonEdit btn border-0 bg-primary text-white">save</button>
   </Popup>
 {/if}
   <div class="Profile fp">
     <div class="Profile-background bg-primary">
       <div class="ProfileTopCard">
-        <p class="text-white fw-semibold fs-2 fontPrimary">{name}'s profile</p>
+        <p class="text-white fw-semibold fs-2 fontPrimary">{userData.name}'s profile</p>
         <img src="../svg/VerifStar.svg" alt="Verif Star" />
       </div>
     <div class="ProfileDisplay card-shadow-gray">
@@ -106,7 +121,7 @@ function saveChanges() {
         <div class="ProfileInfo fs-5">
           <p class="text-secondary">Your Name</p>
           <div class="ProfileEditInfo">
-            <span id="info-name">{name}</span>
+            <span id="info-name">{userData.name}</span>
             <button
               id="edit-name"
               class="ButtonEdit btn border-0 bg-primary text-white"
@@ -117,7 +132,7 @@ function saveChanges() {
         <div class="ProfileInfo fs-5">
           <p class="text-secondary">Email</p>
           <div class="ProfileEditInfo">
-            <p class="fw-bold">{name}@envoyage.com</p>
+            <span class="fw-bold">{userData.email}</span>
             <button
               class="ButtonEdit btn border-0 bg-primary text-white"
               on:click={() => openPopup("email")}>edit</button
@@ -127,7 +142,7 @@ function saveChanges() {
         <div class="ProfileInfo fs-5">
           <p class="text-secondary">Phone Number</p>
           <div class="ProfileEditInfo">
-            <p class="fw-bold">+213 123 45 67 89</p>
+            <span class="fw-bold">{userData.phone}</span>
             <button
               class="ButtonEdit btn border-0 bg-primary text-white"
               on:click={() => openPopup("phone")}>edit</button
@@ -137,23 +152,23 @@ function saveChanges() {
       </div>
       <div class="ProfileContainerDisplay fs">
         <p class="fs-3 mb-5">
-          About <span class="text-primary">{name}</span>
+          About <span class="text-primary">{userData.name}</span>
           <span class="text-muted">(facultatif)</span>
         </p>
         <div class="ProfileInfo fs-5">
           <p class="text-secondary">Date of birth / Age</p>
           <div class="ProfileEditInfo">
-            <p class="fw-bold">24 / 06 / 2005 - 18 yo</p>
+            <span class="fw-bold">{userData.dateOfBirth}</span>
             <button
               class="ButtonEdit btn border-0 bg-primary text-white"
-              on:click={() => openPopup("dob")}>edit</button
+              on:click={() => openPopup("dateOfBirth")}>edit</button
             >
           </div>
         </div>
         <div class="ProfileInfo fs-5">
           <p class="text-secondary">Adresse</p>
           <div class="ProfileEditInfo">
-            <p class="fw-bold">11 rue Bainem, El Hammamet</p>
+            <span class="fw-bold">{userData.address}</span>
             <button
               class="ButtonEdit btn border-0 bg-primary text-white"
               on:click={() => openPopup("address")}>edit</button
@@ -166,7 +181,7 @@ function saveChanges() {
         <div class="ProfileInfo fs-5">
           <p class="text-secondary">Password</p>
           <div class="ProfileEditInfo">
-            <p class="fw-bold">**********</p>
+            <span class="fw-bold">{userData.password}</span>
             <button
               class="ButtonEdit btn border-0 bg-primary text-white"
               on:click={() => openPopup("password")}>edit</button
@@ -176,7 +191,7 @@ function saveChanges() {
         <div class="ProfileInfo fs-5">
           <p class="text-secondary">Passport Number</p>
           <div class="ProfileEditInfo">
-            <p class="fw-bold">***********************</p>
+            <p class="fw-bold"><span class="fw-bold">{userData.passport}</span></p>
             <button
               class="ButtonEdit btn border-0 bg-primary text-white"
               on:click={() => openPopup("passport")}>edit</button
@@ -208,14 +223,14 @@ function saveChanges() {
   .Profile-background {
     border-radius: 40px;
     width: 90%;
-    height: 250px;
+    height: 300px;
     display: block;
     justify-content: center;
     margin: auto;
   }
 
   .ProfileTopCard {
-    padding: 40px 50px;
+    padding: 40px 50px 80px 50px;
     display: flex;
     justify-content: space-between;
   }
@@ -250,13 +265,17 @@ function saveChanges() {
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
   }
 
-  .ProfileInfo fs-5 {
-    margin: 10px 0;
+  .ProfileInfo {
+    margin: 0 0 20px;
   }
 
   .ProfileEditInfo {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
+  }
+  p {
+    margin-bottom: 0;
   }
 </style>

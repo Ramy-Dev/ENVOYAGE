@@ -1,19 +1,25 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
+
+const dispatch = createEventDispatcher();
+
   export let isOpen = false;
   export let onClose = () => {};
-  export let newName = ""; // Déclaration de newName en tant que prop
+  export let newFieldValue = ""; // Déclaration de newFieldValue en tant que prop
   export let title = ""; // Autres props, comme title, si nécessaire
+  export let fieldName = ""; // Champ correspondant
 
-  let name = newName;
+  let name = newFieldValue;
 
   function handleOverlayClick(event) {
-    // Vérifier si l'événement de clic provient de l'overlay
     if (event.target.classList.contains('overlay')) {
       onClose();
     }
   }
+
   function saveChanges() {
-    onClose(); // Fermer le popup
+    onClose();
+    dispatch('changesSaved', { fieldName, newValue: newFieldValue });
   }
 </script>
 
@@ -22,21 +28,22 @@
     <div class="overlay" on:click={handleOverlayClick}>
       <div class="popup">
         <div class="popup-header">
-          <h2 class="fw-bold">{title}</h2>
+          <h2 class="fw-bold fs">{title}</h2>
         </div>
         <div class="popup-content">
           <div class="EditText">
-          <p class="text-secondary fw-bold">Your Name</p>
-          <p class="text-secondary fw-bold">Your new Name</p>
-        </div>
+            <p class="text-secondary fw-bold fs-5 fs">Your {fieldName}</p>
+            <p class="text-secondary fw-bold fs-5 fs">New {fieldName}</p>
+          </div>
           <div class="EditNew">
-            <span class="text-primary fw-bold">{name}</span>
-          <div class="input-box">
-            <input class="" bind:value={newName} />
-            <button on:click={saveChanges} class="ButtonEdit btn border-0 bg-primary text-white">save</button>
+            <p class="fw-bold text-primary fs fs-5">{name}</p>
+            <div class="input-box">
+              <input class="fs fs-5" bind:value={newFieldValue} />
+              <button on:click={saveChanges} class="ButtonEdit btn border-0 bg-primary text-white fs-5 fs">save</button>
+            </div>
           </div>
         </div>
-        </div>
+        
       </div>
     </div>
   {/if}
@@ -96,11 +103,11 @@
   .EditText {
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 35px;
   }
   .EditNew {
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 28px;
   }
 </style>
