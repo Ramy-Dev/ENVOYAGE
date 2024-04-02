@@ -47,7 +47,7 @@ onMount(() => {
 });
 </script>
 <main>
-  <div class="mb-5 pb-5 annc fp">
+  <div class="mb-5 pb-5 annc fontPrimary">
     <h1 class="text-center display-4 m-5 fw-bold">L'annonce</h1>
     <div class="details mx-auto fw-semibold">
       <div class="colorTopAnnonce" style="background-color: {color};"></div>

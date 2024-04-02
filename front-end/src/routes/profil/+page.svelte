@@ -2,205 +2,410 @@
   import Popup from "../../components/Popup.svelte";
 
   let userData = {
-      name: "Ramy",
-      email: "ramy@envoyage.com",
-      phone: "+213 123 45 67 89",
-      dateOfBirth: "24 / 06 / 2005 - 18 yo",
-      address: "11 rue Bainem, El Hammamet",
-      password: "**********",
-      passport: "***********************"
+    name: "Ramy",
+    email: "ramy@envoyage.com",
+    phone: "+213 123 45 67 89",
+    dateOfBirth: "24 / 06 / 2005 - 18 yo",
+    address: "11 rue Bainem, El Hammamet",
+    password: "**********",
+    passport: "***********************",
   };
 
   let isEditing = false;
   let newFieldValue = "";
   let fieldName = "";
   let title = "";
+  let isProfileActive = true;
 
+  function toggleProfile() {
+    isProfileActive = true;
+  }
+
+  function toggleHistory() {
+    isProfileActive = false;
+  }
+  function toggleProfileAndToggle() {
+    toggleProfile();
+    toggle();
+  }
+
+  function toggleHistoryAndToggle() {
+    toggleHistory();
+    toggle();
+  }
+  const toggle = (event) => {
+    const clickedButton = event.target.closest("button");
+    const clickedTarif = clickedButton.querySelector(".choiceProfileBtn");
+    const otherTarif =
+      clickedTarif.id === "c1"
+        ? document.getElementById("c2")
+        : document.getElementById("c1");
+
+    if (clickedTarif.classList.contains("colorProfileOriginalSwitch")) return;
+
+    // Désactiver toutes les classes colorOriginalSwitch
+    document
+      .querySelectorAll(".choiceProfileBtn.colorProfileOriginalSwitch")
+      .forEach((tarif) => {
+        tarif.classList.remove("colorProfileOriginalSwitch");
+        tarif.classList.add("colorProfileSecondarySwitch");
+      });
+
+    // Activer la classe colorOriginalSwitch pour le bouton cliqué
+    clickedTarif.classList.add("colorProfileOriginalSwitch");
+    clickedTarif.classList.remove("colorProfileSecondarySwitch");
+
+    // Activer le bouton cliqué
+    clickedButton.disabled = false;
+  };
   function openPopup(field) {
-      isEditing = true;
-      fieldName = field;
+    isEditing = true;
+    fieldName = field;
 
-      switch (field) {
-          case "name":
-              title = "Edit your Name";
-              newFieldValue = userData.name;
-              break;
-          case "email":
-              title = "Edit your Email";
-              newFieldValue = userData.email;
-              break;
-          case "phone":
-              title = "Edit your Phone Number";
-              newFieldValue = userData.phone;
-              break;
-          case "dateOfBirth":
-              title = "Edit your Date of Birth / Age";
-              newFieldValue = userData.dateOfBirth;
-              break;
-          case "address":
-              title = "Edit your Address";
-              newFieldValue = userData.address;
-              break;
-          case "password":
-              title = "Change your Password";
-              newFieldValue = userData.password;
-              break;
-          case "passport":
-              title = "Edit your Passport Number";
-              newFieldValue = userData.passport;
-              break;
-      }
+    switch (field) {
+      case "name":
+        title = "Edit your Name";
+        newFieldValue = userData.name;
+        break;
+      case "email":
+        title = "Edit your Email";
+        newFieldValue = userData.email;
+        break;
+      case "phone":
+        title = "Edit your Phone Number";
+        newFieldValue = userData.phone;
+        break;
+      case "dateOfBirth":
+        title = "Edit your Date of Birth / Age";
+        newFieldValue = userData.dateOfBirth;
+        break;
+      case "address":
+        title = "Edit your Address";
+        newFieldValue = userData.address;
+        break;
+      case "password":
+        title = "Change your Password";
+        newFieldValue = userData.password;
+        break;
+      case "passport":
+        title = "Edit your Passport Number";
+        newFieldValue = userData.passport;
+        break;
+    }
   }
 
   function saveChanges() {
-      switch (fieldName) {
-          case "name":
-              userData.name = newFieldValue;
-              break;
-          case "email":
-            userData.email = newFieldValue;
-              break;
-          case "phone":
-          userData.phone = newFieldValue;
-              break;
-          case "dateOfBirth":
-          userData.dateOfBirth = newFieldValue;
-              break;
-          case "address":
-          userData.address = newFieldValue;
-              break;
-          case "password":
-          userData.password = newFieldValue;
-              break;
-          case "passport":
-          userData.passport = newFieldValue;
-              break;
-      }
-      isEditing = false;
+    switch (fieldName) {
+      case "name":
+        userData.name = newFieldValue;
+        break;
+      case "email":
+        userData.email = newFieldValue;
+        break;
+      case "phone":
+        userData.phone = newFieldValue;
+        break;
+      case "dateOfBirth":
+        userData.dateOfBirth = newFieldValue;
+        break;
+      case "address":
+        userData.address = newFieldValue;
+        break;
+      case "password":
+        userData.password = newFieldValue;
+        break;
+      case "passport":
+        userData.passport = newFieldValue;
+        break;
+    }
+    isEditing = false;
   }
 
   function handleChangesSaved(event) {
-      const { fieldName, newValue } = event.detail;
-      userData[fieldName] = newValue;
+    const { fieldName, newValue } = event.detail;
+    userData[fieldName] = newValue;
   }
 
   $: {
     console.log("Updated userData:", userData);
   }
 </script>
+
 <main>
   {#if isEditing}
-  <div class="overlay"></div>
-  <Popup
-      title={title}
+    <div class="overlay"></div>
+    <Popup
+      {title}
       isOpen={isEditing}
       onClose={() => (isEditing = false)}
       bind:newFieldValue
-      fieldName={fieldName}
+      {fieldName}
       on:changesSaved={handleChangesSaved}
-  >
-      <input class={fieldName === 'phone' || fieldName === 'dateOfBirth' ? 'numberInput' : ''} bind:value={newFieldValue} />
-      <button on:click={saveChanges} class="ButtonEdit btn border-0 bg-primary text-white">save</button>
-  </Popup>
-{/if}
+    >
+      <input
+        class={fieldName === "phone" || fieldName === "dateOfBirth"
+          ? "numberInput"
+          : ""}
+        bind:value={newFieldValue}
+      />
+      <button
+        on:click={saveChanges}
+        class="ButtonEdit btn border-0 bg-primary text-white">save</button
+      >
+    </Popup>
+  {/if}
+
   <div class="Profile fp">
     <div class="Profile-background bg-primary">
       <div class="ProfileTopCard">
-        <p class="text-white fw-semibold fs-2 fontPrimary">{userData.name}'s profile</p>
+        <p class="text-white fw-semibold fs-2 fontPrimary">
+          {#if isProfileActive}
+            {userData.name}'s profile
+          {:else}
+            {userData.name}'s history
+          {/if}
+        </p>
         <img src="../svg/VerifStar.svg" alt="Verif Star" />
       </div>
-    <div class="ProfileDisplay card-shadow-gray">
-      <div class="ProfileDisplayTopCard">
-        <img src="../svg/image_profil.svg" alt="Photo de profile" />
-        <button class="ButtonEdit btn border-0 bg-primary text-white fs"
-          >upload image</button
+
+      <div class="choiceProfile" id="tarifs">
+        <button
+          class="border-0"
+          type="button"
+          on:click={toggleProfileAndToggle}
         >
+          <div
+            class="choiceProfileBtn {isProfileActive
+              ? 'colorProfileOriginalSwitch'
+              : 'colorProfileSecondarySwitch'} fw-bold fs-5"
+            id="c1"
+          >
+            Profile
+          </div>
+        </button>
+        <button
+          class="border-0"
+          type="button"
+          on:click={toggleHistoryAndToggle}
+        >
+          <div
+            class="choiceProfileBtn {!isProfileActive
+              ? 'colorProfileOriginalSwitch'
+              : 'colorProfileSecondarySwitch'} fw-bold fs-5"
+            id="c2"
+          >
+            History
+          </div>
+        </button>
       </div>
-      <div class="ProfileContainerDisplay fs">
-        <p class="fs-2 mb-5">Importants informations</p>
-        <div class="ProfileInfo fs-5">
-          <p class="text-secondary">Your Name</p>
-          <div class="ProfileEditInfo">
-            <span id="info-name">{userData.name}</span>
-            <button
-              id="edit-name"
-              class="ButtonEdit btn border-0 bg-primary text-white"
-              on:click={() => openPopup("name")}>edit</button
+
+      {#if isProfileActive}
+        <div class="ProfileDisplay card-shadow-gray">
+          <div class="ProfileDisplayTopCard">
+            <img src="../svg/image_profil.svg" alt="Photo de profile" />
+            <button class="ImageEdit btn text-primary fontSecondary"
+              >upload image</button
             >
           </div>
-        </div>
-        <div class="ProfileInfo fs-5">
-          <p class="text-secondary">Email</p>
-          <div class="ProfileEditInfo">
-            <span class="fw-bold">{userData.email}</span>
-            <button
-              class="ButtonEdit btn border-0 bg-primary text-white"
-              on:click={() => openPopup("email")}>edit</button
-            >
+          <div class="ProfileContainerDisplay fontSecondary">
+            <p class="fs-2 mb-5">Importants informations</p>
+            <div class="ProfileInfo fs-5">
+              <p class="text-secondary">Your Name</p>
+              <div class="ProfileEditInfo">
+                <span id="info-name">{userData.name}</span>
+                <button
+                  id="edit-name"
+                  class="ButtonEdit btn border-0 bg-primary text-white"
+                  on:click={() => openPopup("name")}>edit</button
+                >
+              </div>
+            </div>
+            <div class="ProfileInfo fs-5">
+              <p class="text-secondary">Email</p>
+              <div class="ProfileEditInfo">
+                <span class="fw-bold">{userData.email}</span>
+                <button
+                  class="ButtonEdit btn border-0 bg-primary text-white"
+                  on:click={() => openPopup("email")}>edit</button
+                >
+              </div>
+            </div>
+            <div class="ProfileInfo fs-5">
+              <p class="text-secondary">Phone Number</p>
+              <div class="ProfileEditInfo">
+                <span class="fw-bold">{userData.phone}</span>
+                <button
+                  class="ButtonEdit btn border-0 bg-primary text-white"
+                  on:click={() => openPopup("phone")}>edit</button
+                >
+              </div>
+            </div>
+          </div>
+          <div class="ProfileContainerDisplay fontSecondary">
+            <p class="fs-3 mb-5">
+              About <span class="text-primary">{userData.name}</span>
+              <span class="text-muted">(facultatif)</span>
+            </p>
+            <div class="ProfileInfo fs-5">
+              <p class="text-secondary">Date of birth / Age</p>
+              <div class="ProfileEditInfo">
+                <span class="fw-bold">{userData.dateOfBirth}</span>
+                <button
+                  class="ButtonEdit btn border-0 bg-primary text-white"
+                  on:click={() => openPopup("dateOfBirth")}>edit</button
+                >
+              </div>
+            </div>
+            <div class="ProfileInfo fs-5">
+              <p class="text-secondary">Adresse</p>
+              <div class="ProfileEditInfo">
+                <span class="fw-bold">{userData.address}</span>
+                <button
+                  class="ButtonEdit btn border-0 bg-primary text-white"
+                  on:click={() => openPopup("address")}>edit</button
+                >
+              </div>
+            </div>
+          </div>
+          <div class="ProfileContainerDisplay fontSecondary">
+            <p class="fs-3 mb-5">Security</p>
+            <div class="ProfileInfo fs-5">
+              <p class="text-secondary">Password</p>
+              <div class="ProfileEditInfo">
+                <span class="fw-bold">{userData.password}</span>
+                <button
+                  class="ButtonEdit btn border-0 bg-primary text-white"
+                  on:click={() => openPopup("password")}>edit</button
+                >
+              </div>
+            </div>
+            <div class="ProfileInfo fs-5">
+              <p class="text-secondary">Passport Number</p>
+              <div class="ProfileEditInfo">
+                <p class="fw-bold">
+                  <span class="fw-bold">{userData.passport}</span>
+                </p>
+                <button
+                  class="ButtonEdit btn border-0 bg-primary text-white"
+                  on:click={() => openPopup("passport")}>edit</button
+                >
+              </div>
+            </div>
           </div>
         </div>
-        <div class="ProfileInfo fs-5">
-          <p class="text-secondary">Phone Number</p>
-          <div class="ProfileEditInfo">
-            <span class="fw-bold">{userData.phone}</span>
-            <button
-              class="ButtonEdit btn border-0 bg-primary text-white"
-              on:click={() => openPopup("phone")}>edit</button
-            >
+      {:else}
+        <!-- Afficher le contenu de le partie history -->
+
+        <div class="ProfileDisplay card-shadow-gray">
+          <p class="profileTitle text-primary fs-2 fw-bold mb-2">My Ads</p>
+          <div class="album py-5">
+            <div class="container containerAnnonces">
+               <div
+                  class="row row-cols-1 row-cols-md-2 g-5 px-5"
+                  id="cardsContainer"
+               >
+          <div class="col">
+            <a href="" class="card cardAnnonce h-100 redirection-div">
+              <div class="card-body">
+                <div class="colorTopAnnonce mb-3"></div>
+                <div class="topCard">
+                  <img src="../svg/photoProfile.svg" class="card-img-top" alt="..." />
+                  <div class="nomDateTopCard">
+                    <h5 class="card-title fw-bold">
+                      Amine Izem
+                    </h5>
+                    <h5 class="card-title DateTopCard fw-semibold">
+                        24/06/2005
+                    </h5>
+                  </div>
+                </div>
+                <div class="destinationTopCard fw-semibold fs-5">
+                  <div class="departureTopCard">Alger</div>
+                  <svg class="svgArrow mt-2 mx-3" viewBox="246.554 219.198 189.9 12" width="189.9" height="12" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+                    <!-- svelte-ignore illegal-attribute-character -->
+                    <path d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z" style="fill-rule: nonzero;" transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)" bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb" />
+                  </svg>
+                  <div class="arrivalTopCard">Paris</div>
+                </div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">
+                  Date : 30/03/2024
+                </div>
+              </div>
+              <div class="card-footer">
+                <small class="text-body-secondary">Last updated mins ago</small>
+              </div>
+            </a>
           </div>
-        </div>
-      </div>
-      <div class="ProfileContainerDisplay fs">
-        <p class="fs-3 mb-5">
-          About <span class="text-primary">{userData.name}</span>
-          <span class="text-muted">(facultatif)</span>
-        </p>
-        <div class="ProfileInfo fs-5">
-          <p class="text-secondary">Date of birth / Age</p>
-          <div class="ProfileEditInfo">
-            <span class="fw-bold">{userData.dateOfBirth}</span>
-            <button
-              class="ButtonEdit btn border-0 bg-primary text-white"
-              on:click={() => openPopup("dateOfBirth")}>edit</button
-            >
+          <div class="col">
+            <a href="" class="card cardAnnonce h-100 redirection-div">
+              <div class="card-body">
+                <div class="colorTopAnnonce mb-3"></div>
+                <div class="topCard">
+                  <img src="../svg/photoProfile.svg" class="card-img-top" alt="..." />
+                  <div class="nomDateTopCard">
+                    <h5 class="card-title fw-bold">
+                      Amine Izem
+                    </h5>
+                    <h5 class="card-title DateTopCard fw-semibold">
+                        24/06/2005
+                    </h5>
+                  </div>
+                </div>
+                <div class="destinationTopCard fw-semibold fs-5">
+                  <div class="departureTopCard">Alger</div>
+                  <svg class="svgArrow mt-2 mx-3" viewBox="246.554 219.198 189.9 12" width="189.9" height="12" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+                    <!-- svelte-ignore illegal-attribute-character -->
+                    <path d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z" style="fill-rule: nonzero;" transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)" bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb" />
+                  </svg>
+                  <div class="arrivalTopCard">Paris</div>
+                </div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">
+                  Date : 30/03/2024
+                </div>
+              </div>
+              <div class="card-footer">
+                <small class="text-body-secondary">Last updated mins ago</small>
+              </div>
+            </a>
           </div>
-        </div>
-        <div class="ProfileInfo fs-5">
-          <p class="text-secondary">Adresse</p>
-          <div class="ProfileEditInfo">
-            <span class="fw-bold">{userData.address}</span>
-            <button
-              class="ButtonEdit btn border-0 bg-primary text-white"
-              on:click={() => openPopup("address")}>edit</button
-            >
-          </div>
-        </div>
-      </div>
-      <div class="ProfileContainerDisplay fs">
-        <p class="fs-3 mb-5">Security</p>
-        <div class="ProfileInfo fs-5">
-          <p class="text-secondary">Password</p>
-          <div class="ProfileEditInfo">
-            <span class="fw-bold">{userData.password}</span>
-            <button
-              class="ButtonEdit btn border-0 bg-primary text-white"
-              on:click={() => openPopup("password")}>edit</button
-            >
-          </div>
-        </div>
-        <div class="ProfileInfo fs-5">
-          <p class="text-secondary">Passport Number</p>
-          <div class="ProfileEditInfo">
-            <p class="fw-bold"><span class="fw-bold">{userData.passport}</span></p>
-            <button
-              class="ButtonEdit btn border-0 bg-primary text-white"
-              on:click={() => openPopup("passport")}>edit</button
-            >
+          <div class="col">
+            <a href="" class="card cardAnnonce h-100 redirection-div">
+              <div class="card-body">
+                <div class="colorTopAnnonce mb-3"></div>
+                <div class="topCard">
+                  <img src="../svg/photoProfile.svg" class="card-img-top" alt="..." />
+                  <div class="nomDateTopCard">
+                    <h5 class="card-title fw-bold">
+                      Amine Izem
+                    </h5>
+                    <h5 class="card-title DateTopCard fw-semibold">
+                        24/06/2005
+                    </h5>
+                  </div>
+                </div>
+                <div class="destinationTopCard fw-semibold fs-5">
+                  <div class="departureTopCard">Alger</div>
+                  <svg class="svgArrow mt-2 mx-3" viewBox="246.554 219.198 189.9 12" width="189.9" height="12" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+                    <!-- svelte-ignore illegal-attribute-character -->
+                    <path d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z" style="fill-rule: nonzero;" transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)" bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb" />
+                  </svg>
+                  <div class="arrivalTopCard">Paris</div>
+                </div>
+                <div class="dateCard pt-4 pb-2 fw-semibold">
+                  Date : 30/03/2024
+                </div>
+              </div>
+              <div class="card-footer">
+                <small class="text-body-secondary">Last updated mins ago</small>
+              </div>
+            </a>
           </div>
         </div>
       </div>
     </div>
   </div>
+      {/if}
+    </div>
   </div>
 </main>
 
@@ -215,25 +420,7 @@
     z-index: 999; /* Assure que la superposition est au-dessus de tout */
   }
 
-  .Profile {
-    padding: 120px 0 0 0;
-    margin: 0 0 2000px 0;
-  }
-
-  .Profile-background {
-    border-radius: 40px;
-    width: 90%;
-    height: 300px;
-    display: block;
-    justify-content: center;
-    margin: auto;
-  }
-
-  .ProfileTopCard {
-    padding: 40px 50px 80px 50px;
-    display: flex;
-    justify-content: space-between;
-  }
+ 
 
   .ProfileDisplay {
     width: 80%;
@@ -250,6 +437,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0px 90px 0 60px;
   }
 
   .ButtonEdit {
@@ -257,7 +445,12 @@
     border-radius: 20px;
     font-size: 1.25rem;
   }
-
+  .ImageEdit {
+    border: 2px dashed #5A02D4;
+    padding: 0.5rem 2.5rem;
+    border-radius: 20px;
+    font-size: 1.25rem;
+  }
   .ProfileContainerDisplay {
     padding: 40px 60px;
     border: 2px solid #b6b3b3;
@@ -266,7 +459,7 @@
   }
 
   .ProfileInfo {
-    margin: 0 0 20px;
+    margin: 0 30px 20px 30px;
   }
 
   .ProfileEditInfo {
@@ -275,7 +468,27 @@
     justify-content: space-between;
     align-items: center;
   }
+  
   p {
     margin-bottom: 0;
   }
+  .profileTitle {
+    display: flex;
+    justify-content: center;
+  }
+  .card {
+      border: none;
+      border-radius: 20px;
+   }
+   .colorTopAnnonce {
+      height: 30px;
+   }
+   .topCard {
+      display: flex;
+      flex-direction: row;
+      padding: 0 50px 30px 50px;
+      align-items: center;
+      justify-content: space-between;
+   }
+
 </style>

@@ -57,7 +57,7 @@
 </script>
 
 <main>
-   <header class="section text-white bg-white fp">
+   <header class="section text-white bg-white fontPrimary">
       <div class="cover-recherche position-absolute"></div>
       <div class="cover-img"></div>
       <div
@@ -121,7 +121,7 @@
          </form>
       </div>
    </header>
-   <section class="about fp">
+   <section class="about fontPrimary">
       <div class="">
          <h2 class="textAnnonceRecherche text-center fw-bold">Les annonces</h2>
       </div>
@@ -207,23 +207,6 @@
       color: white;
    }
 
-   /* code mao albanie */
-
-   .input-box {
-      display: flex;
-      width: 100%;
-      gap: 90px;
-      align-items: center;
-   }
-
-   .input-box input {
-      width: 100%;
-   }
-
-   .input-box input::placeholder {
-      text-align: center;
-   }
-   /* -------------------------- */
 
    .submitRecherche {
       background-color: #ffe767;

@@ -2,7 +2,7 @@
 </script>
 
 <main>
-  <nav class="navbar navbar-expand-lg bg-body-tertiary fp">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary fontPrimary">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">EnvoYage</a>
       <button
@@ -40,6 +40,9 @@
               </li> -->
         </ul>
         <ul class="SignUp-LogIn d-flex m-0 p-0">
+          <li>
+            <a class="LogIn fw-semibold nav-link bg-primary" href="/creation">Créer une annonce +</a>
+          </li>
           <li>
             <a class="LogIn fw-semibold nav-link" href="/profil">
               <img class="Profil-img-top-nav-bar" src="../svg/utilisateur.png" alt="profil-icon">

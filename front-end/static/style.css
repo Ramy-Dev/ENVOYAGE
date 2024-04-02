@@ -44,7 +44,11 @@
 .index {
   z-index: 9;
 }
-
+input[type="date"]::placeholder,
+input[type="time"]::placeholder {
+  text-align: center;
+  align-items: center;
+}
 
 /* ----------------------------------------------------------- */
 /* Color and fonts Styling */
@@ -66,16 +70,25 @@
 .text-primary {
   color: var(--couleur-principale) !important;
 }
+.bg-secondary {
+  background-color: var(--couleur-secondaire) !important;
+}
+.text-darkPrimary {
+  color: var(--couleur-secondaire) !important;
+}
+.bg-third {
+  background-color: #D8D9DB !important;
+}
 .bg-gold {
   background-color: var(--couleur-gold) !important;
 }
 .text-gold {
   color: var(--couleur-gold) !important;
 }
-.fs {
+.fontSecondary {
   font-family: "Outfit", sans-serif !important;
 }
-.fp {
+.fontPrimary {
 font-family: "Poppins", sans-serif;
 }
 /* ----------------------------------------------------------- */
@@ -109,6 +122,7 @@ font-family: "Poppins", sans-serif;
   left: 0%;
   background-color: var(--couleur-principale);
 }
+
 .cover-img {
   position: absolute;
   top: 0%;
@@ -293,6 +307,28 @@ header {
 }
 
 /* ----------------------------------------------------------- */
+/* Page Recherche */
+
+ /* code mao albanie */
+
+ .input-box {
+  display: flex;
+  width: 100%;
+  gap: 90px;
+  align-items: center;
+}
+
+.input-box input {
+  width: 100%;
+}
+
+.input-box input::placeholder {
+  text-align: center;
+}
+/* -------------------------- */
+
+/* ----------------------------------------------------------- */
+
 /* Page Details */
 
 .annc {
@@ -328,3 +364,68 @@ header {
 .colorSecondarySwitch .categorieTarifCard {
   color: var(--couleur-gold);
 }
+
+/* ----------------------------------------------------------- */
+/* Page Profile */
+
+.Profile {
+  padding: 120px 0 0 0;
+  margin: 0 0 2000px 0;
+  
+}
+
+.Profile-background {
+  border-radius: 40px;
+  width: 90%;
+  height: 400px;
+  display: block;
+  justify-content: center;
+  margin: auto;
+}
+
+.ProfileTopCard {
+  padding: 40px 50px 80px 50px;
+  display: flex;
+  justify-content: space-between;
+}
+.choiceProfile {
+  display: flex;
+  justify-content: center;
+  gap: 70px;
+  margin-bottom: 50px;
+}
+.choiceProfile button {
+  background: none;
+}
+.choiceProfileBtn {
+  padding: 10px 20px;
+  appearance: none;
+  border-radius: 20px;
+}
+.colorProfileOriginalSwitch {
+  color: #5A02D4;
+  background-color: white;
+}
+
+.colorProfileSecondarySwitch {
+  color: white;
+  background-color: var(--couleur-secondaire);
+}
+
+/* ----------------------------------------------------------- */
+/* Page Creation */
+
+
+.tagBadge {
+  font-family: "Outfit", sans-serif !important;
+  font-size: 1.2rem;
+  background-color: var(--couleur-principale);
+  color: white;
+  padding: 1.5rem 4rem;
+  border-radius: 20px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+}
+
+
+/* ----------------------------------------------------------- */
