@@ -4,7 +4,7 @@
 <main>
   <nav class="navbar navbar-expand-lg bg-body-tertiary fontPrimary">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">EnvoYage</a>
+      <a class="navbar-brand" href="/">Envoyage</a>
       <button
         class="navbar-toggler"
         type="button"

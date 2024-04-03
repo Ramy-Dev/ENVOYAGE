@@ -1,81 +1,63 @@
 <script>
-  import Popup from "../../components/Popup.svelte";
+  import { onMount } from "svelte";
+  import TagPopup from "../../components/TagPopup.svelte";
+  import { conditions } from "../../lib/tagList.js";
+  import { alreadySelectedConditions } from "../../stores/alreadySelectedConditions.js"
 
-  let userData = {
-    name: "Ramy",
-    email: "ramy@envoyage.com",
-    phone: "+213 123 45 67 89",
-    dateOfBirth: "24 / 06 / 2005 - 18 yo",
-    address: "11 rue Bainem, El Hammamet",
-    password: "**********",
-    passport: "***********************",
-  };
-
+  let availableConditions = conditions;
   let isEditing = false;
   let newFieldValue = "";
-  let fieldName = "";
   let title = "";
-  let isProfileActive = true;
-
-  //*************************************/
-
   let newTag = "";
   let tags = [];
+  let Addedconditions = [];
 
   function handleTagInput(event) {
     if (event.key === "Enter" && newTag.trim() !== "") {
-      tags = [...tags, newTag.trim()];
+      if (!tags.includes(newTag.trim())) {
+        tags = [...tags, newTag.trim()];
+      } else {
+        console.log("This condition has already been added.");
+      }
       newTag = "";
     }
   }
 
   function removeTag(tagToRemove) {
-    tags = tags.filter((tag) => tag !== tagToRemove);
-  }
-  //*************************************/
+    tags = tags.filter((tag) => {
+        const notRemoved = tag !== tagToRemove;
+        if (!notRemoved) {
+            alreadySelectedConditions.remove(tagToRemove); // Appeler la méthode pour supprimer le tag du store
+        }
+        return notRemoved;
+    });
+}
 
-  function toggleColis() {
-    isProfileActive = true;
-  }
-
-  function toggleCourrier() {
-    isProfileActive = false;
-  }
-  function toggleProfileAndToggle() {
-    toggleColis();
-    toggle();
+  function openTagPopup() {
+    isEditing = true;
+    title = "Add Tags";
   }
 
-  function toggleHistoryAndToggle() {
-    toggleCourrier();
-    toggle();
+  function saveChanges() {
+    if (Addedconditions.length > 0) {
+        Addedconditions.forEach(condition => {
+            alreadySelectedConditions.add(condition);
+        });
+        Addedconditions = []; // Réinitialiser Addedconditions après l'ajout
+    }
+    isEditing = false; // Fermer le popup après avoir ajouté les conditions
+}
+  function handleSelectedConditionsAdded(event) {
+    // Stocker temporairement les éléments sélectionnés
+    Addedconditions = event.detail.conditions;
   }
 
-  const toggle = (event) => {
-    const clickedButton = event.target.closest("button");
-    const clickedTarif = clickedButton.querySelector(".choiceProfileBtn");
-    const otherTarif =
-      clickedTarif.id === "c1"
-        ? document.getElementById("c2")
-        : document.getElementById("c1");
-
-    if (clickedTarif.classList.contains("colorProfileOriginalSwitch")) return;
-
-    // Désactiver toutes les classes colorOriginalSwitch
-    document
-      .querySelectorAll(".choiceProfileBtn.colorProfileOriginalSwitch")
-      .forEach((tarif) => {
-        tarif.classList.remove("colorProfileOriginalSwitch");
-        tarif.classList.add("colorProfileSecondarySwitch");
-      });
-
-    // Activer la classe colorOriginalSwitch pour le bouton cliqué
-    clickedTarif.classList.add("colorProfileOriginalSwitch");
-    clickedTarif.classList.remove("colorProfileSecondarySwitch");
-
-    // Activer le bouton cliqué
-    clickedButton.disabled = false;
-  };
+  onMount(() => {
+    const unsubscribe = alreadySelectedConditions.subscribe(value => {
+      tags = value;
+    });
+    return unsubscribe;
+  });
 </script>
 
 <main>
@@ -84,8 +66,7 @@
       <div class="ProfileTopCard">
         <p class="text-primary fw-semibold fs-2 fontPrimary">
           Post your Ad
-          <span class="text-white bg-primary rounded px-2">{userData.name}</span
-          >
+          <span class="text-white bg-primary rounded px-2">Ramy</span>
         </p>
       </div>
 
@@ -202,25 +183,58 @@
               Conditions :
             </p>
             <div class="ProfileContainerDisplay">
-              <div class="tagInputBox">
-                <input
-                  class="fs-5 fw-normal text-primary fontSecondary"
-                  type="text"
-                  placeholder="Enter tags..."
-                  bind:value={newTag}
-                  on:keydown={handleTagInput}
-                />
-              </div>
+              <!-- Bouton pour ouvrir le tagPopup -->
+
+              <!-- TagPopup -->
+              {#if isEditing}
+              <div class="overlay"></div>
+              <TagPopup
+    isOpen={isEditing}
+    onClose={() => (isEditing = false)}
+    {availableConditions}
+    on:selectedConditionsAdded={handleSelectedConditionsAdded}
+    {title}
+    on:addClick={saveChanges} 
+/>
+            {/if}
+
+              <!-- Affichage des tags sélectionnés -->
               <div class="tagContainer">
                 {#each tags as tag}
-                  <div class="tagBadge">
-                    {tag}
-                    <button class="removeTagBtn fontSecondary" on:click={() => removeTag(tag)}
+                  <div
+                    class="tagItem bg-primary text-white fs-5 fontSecondary"
+                    key={tag}
+                  >
+                    <p class="m-0">{tag}</p>
+                    <button class="removeTagBtn" on:click={() => removeTag(tag)}
                       >.x.</button
                     >
                   </div>
                 {/each}
               </div>
+              <div class="buttonAddTag">
+                <button
+                  class="ButtonEdit btn border-0 bg-primary text-white w-50 fs-5 fontSecondary"
+                  on:click={openTagPopup}
+                >
+                  Ajouter une condition +
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="pt-5 ProfileDisplayTopCard">
+            <p class="fs-1 fw-bold text-darkPrimary fontPrimary">
+              Pricing informations
+            </p>
+          </div>
+          <div class="pricingCreation">
+           
+            <p class="fs-3 fw-bold text-primary fontPrimary my-4">
+              Pricing :
+            </p>
+            <div class="ProfileContainerDisplay">
+           
+              
             </div>
           </div>
         </div>
@@ -230,6 +244,18 @@
 </main>
 
 <style>
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Opacité réduite */
+    z-index: 999; /* Assure que la superposition est au-dessus de tout */
+  }
+  .Profile {
+    margin-bottom: 4000px;
+  }
   .ProfileTopCard {
     padding: 40px 50px 50px 0;
   }
@@ -269,7 +295,6 @@
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
-    gap: 50px;
   }
 
   .input-box-creation input {
@@ -346,10 +371,18 @@
   .tagInputBox {
     margin-bottom: 20px;
   }
-
+  .tagItem {
+    display: flex;
+    padding: 1rem 1.5rem;
+    border-radius: 20px;
+    box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.25);
+    text-align: center; /* Centrer le contenu */
+    margin-bottom: 30px;
+  }
   .tagContainer {
     display: flex;
     flex-wrap: wrap;
+    column-gap: 30px;
   }
 
   .removeTagBtn {
@@ -358,5 +391,12 @@
     color: white;
     margin-left: 5px;
     cursor: pointer;
+  }
+  .buttonAddTag {
+    display: flex;
+    justify-content: center;
+  }
+  .buttonAddTag button {
+    border-radius: 20px;
   }
 </style>

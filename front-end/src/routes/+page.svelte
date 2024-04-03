@@ -5,9 +5,9 @@
     <div
       class="containerHeader container index text-center mt-6 position-relative"
     >
-      <h1 class="display-2 fw-semibold">EnvoYage</h1>
+      <h1 class="display-2 fw-semibold">Envoyage</h1>
       <p class="pl-2 mb-6 py-6 fs-3 fw-normal">
-        gagnez de l'argent en voYagant
+        gagnez de l'argent en voyagant
       </p>
       <a href="/recherche" class="btn btn-lg bg-primary text-white mt-6">
         <strong>ENVOYER un colis</strong>
