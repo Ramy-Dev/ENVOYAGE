@@ -41,7 +41,9 @@
 	"types": "./dist/index.d.ts",
 	"type": "module",
 	"dependencies": {
+		"aos": "^2.3.4",
 		"bootstrap": "^5.3.3",
+		"dragscroll": "^0.0.8",
 		"svelte-routing": "^2.12.0"
 	}
 }

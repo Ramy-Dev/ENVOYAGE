@@ -1,8 +1,16 @@
 <script>
   import { onMount } from "svelte";
   import TagPopup from "../../components/TagPopup.svelte";
+  import PricingByWeight from "../../components/Pricings/PricingByWeight.svelte";
+  import PricingByNumber from "../../components/Pricings/PricingByNumber.svelte";
+  import PricingByVolume from "../../components/Pricings/PricingByVolume.svelte";
   import { conditions } from "../../lib/tagList.js";
-  import { alreadySelectedConditions } from "../../stores/alreadySelectedConditions.js"
+  import { alreadySelectedConditions } from "../../stores/alreadySelectedConditions.js";
+  import { calculatePricing } from "../../lib/calculatePricing.js";
+  import {
+    poidsPaliersStore,
+    prixPaliersStore,
+  } from "../../stores/pricingStore.js";
 
   let availableConditions = conditions;
   let isEditing = false;
@@ -11,7 +19,58 @@
   let newTag = "";
   let tags = [];
   let Addedconditions = [];
+  let isKgActive = true;
+  let isNumberActive = false;
+  let isVolumeActive = false;
+  let isAirportActive = true;
+  let isPortActive = false;
+  let poidsMax = 0;
+  let poidsPaliers = [];
+  let prixPaliers = [];
 
+  const poidsPaliersUnsubscribe = poidsPaliersStore.subscribe((value) => {
+    poidsPaliers = value;
+  });
+
+  const prixPaliersUnsubscribe = prixPaliersStore.subscribe((value) => {
+    prixPaliers = value;
+  });
+
+  function toggleAirport() {
+    isAirportActive = true;
+    isPortActive = false;
+  }
+  function togglePort() {
+    isAirportActive = false;
+    isPortActive = true;
+  }
+  // Fonction pour basculer sur le profil Kg
+  function toggleKg() {
+    isKgActive = true;
+    isNumberActive = false;
+    isVolumeActive = false;
+    console.log("Poids");
+  }
+
+  function toggleNumber() {
+    isKgActive = false;
+    isNumberActive = true;
+    isVolumeActive = false;
+    console.log("Number");
+  }
+
+  function toggleVolume() {
+    isKgActive = false;
+    isNumberActive = false;
+    isVolumeActive = true;
+    console.log("Volume");
+  }
+  function updatePricing() {
+    // Appelez la fonction pour recalculer les paliers de poids et les prix associés
+    console.log("Updating pricing...");
+    let { poidsPaliers, prixPaliers } = calculatePricing("weight", poidsMax);
+    console.log(poidsMax, poidsPaliers, prixPaliers);
+  }
   function handleTagInput(event) {
     if (event.key === "Enter" && newTag.trim() !== "") {
       if (!tags.includes(newTag.trim())) {
@@ -25,13 +84,18 @@
 
   function removeTag(tagToRemove) {
     tags = tags.filter((tag) => {
-        const notRemoved = tag !== tagToRemove;
-        if (!notRemoved) {
-            alreadySelectedConditions.remove(tagToRemove); // Appeler la méthode pour supprimer le tag du store
-        }
-        return notRemoved;
+      const notRemoved = tag !== tagToRemove;
+      if (!notRemoved) {
+        alreadySelectedConditions.remove(tagToRemove); // Appeler la méthode pour supprimer le tag du store
+      }
+      return notRemoved;
     });
-}
+  }
+
+  function removeAllConditions() {
+    alreadySelectedConditions.set([]); // Remplacez le contenu du store par un tableau vide
+    tags = []; // Effacez également les tags dans le composant
+  }
 
   function openTagPopup() {
     isEditing = true;
@@ -40,20 +104,20 @@
 
   function saveChanges() {
     if (Addedconditions.length > 0) {
-        Addedconditions.forEach(condition => {
-            alreadySelectedConditions.add(condition);
-        });
-        Addedconditions = []; // Réinitialiser Addedconditions après l'ajout
+      Addedconditions.forEach((condition) => {
+        alreadySelectedConditions.add(condition);
+      });
+      Addedconditions = []; // Réinitialiser Addedconditions après l'ajout
     }
     isEditing = false; // Fermer le popup après avoir ajouté les conditions
-}
+  }
   function handleSelectedConditionsAdded(event) {
     // Stocker temporairement les éléments sélectionnés
     Addedconditions = event.detail.conditions;
   }
 
   onMount(() => {
-    const unsubscribe = alreadySelectedConditions.subscribe(value => {
+    const unsubscribe = alreadySelectedConditions.subscribe((value) => {
       tags = value;
     });
     return unsubscribe;
@@ -77,102 +141,143 @@
               General informations
             </p>
           </div>
-          <div class="departureCreation">
-            <p class="fs-3 fw-bold text-primary fontPrimary my-4">
-              Departure :
-            </p>
-            <div class="ProfileContainerDisplay">
-              <div class="parentGridCreation">
-                <div class="airportDepartureCreation">
-                  <div class="airportDepartureCreation">
-                    <p class="fs-3 fw-bold text-darkPrimary fontPrimary">
-                      Airport :
-                    </p>
+          <div class="placeCreationTransport">
+            <div class="choiceTranspor">
+              <p class="fs-3 fw-bold text-primary fontPrimary my-4">
+                Transport :
+              </p>
+              <div class="choiceTransportToggle">
+                <button class="border-0" type="button" on:click={toggleAirport}>
+                  <div
+                    class="{isAirportActive
+                      ? 'colorTransportOriginalSwitch'
+                      : 'colorTransportSecondarySwitch'} choiceTransportBtn fw-bold fs-3 fontSecondary"
+                    id="c1"
+                  >
+                    Airport
                   </div>
-                </div>
-                <div class="airportDepartureCreationInput">
-                  <div class="input-box-creation">
-                    <input
-                      class="fs-5 fw-normal text-primary fontSecondary"
-                      type="text"
-                      placeholder="choose an airport"
-                      required
-                    />
+                </button>
+
+                <button class="border-0" type="button" on:click={togglePort}>
+                  <div
+                    class="{isPortActive
+                      ? 'colorTransportOriginalSwitch'
+                      : 'colorTransportSecondarySwitch'} choiceTransportBtn fw-bold fs-3 fontSecondary"
+                    id="c2"
+                  >
+                    Port
                   </div>
-                </div>
-                <div class="dateDepartureCreation">
-                  <div class="dateDepartureCreation">
-                    <p class="fs-3 fw-bold text-darkPrimary fontPrimary">
-                      Date :
-                    </p>
-                  </div>
-                </div>
-                <div class="DateDepartureCreationInput">
-                  <div class="input-box-date-creation">
-                    <input
-                      class="DateInput fs-5 fw-normal text-primary fontSecondary"
-                      type="date"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="hoursMinutesDateDepartureCreationInput">
-                  <div class="input-box-date-creation">
-                    <input
-                      class="DateInput fs-5 fw-normal text-primary fontSecondary"
-                      type="time"
-                      required
-                    />
+                </button>
+              </div>
+            </div>
+            <div class="placeCreation">
+              <div class="departureCreation cardCreation">
+                <p class="fs-3 fw-bold text-primary fontPrimary my-4">
+                  Departure :
+                </p>
+                <div class="placeCreationContainer">
+                  <div class="parentGridCreation">
+                    <div class="airportDepartureCreation">
+                      <div class="airportDepartureCreation">
+                        <p class="fs-5 fw-bold text-darkPrimary fontPrimary">
+                          {#if isAirportActive}
+                            Airport :
+                          {:else}
+                            Port :
+                          {/if}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="airportDepartureCreationInput">
+                      <div class="input-box-creation">
+                        <input
+                          class=" fw-normal text-primary fontSecondary"
+                          type="text"
+                          placeholder={`choose an ${isAirportActive ? "airport" : "port"}`}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="dateDepartureCreation">
+                      <div class="dateDepartureCreation">
+                        <p class="fs-5 fw-bold text-darkPrimary fontPrimary">
+                          Date :
+                        </p>
+                      </div>
+                    </div>
+                    <div class="DateDepartureCreationInput">
+                      <div class="input-box-date-creation">
+                        <input
+                          class="DateInput fw-normal text-primary fontSecondary"
+                          type="date"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="hoursMinutesDateDepartureCreationInput">
+                      <div class="input-box-date-creation">
+                        <input
+                          class="DateInput fw-normal text-primary fontSecondary"
+                          type="time"
+                          required
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="arrivalCreation">
-            <p class="fs-3 fw-bold text-primary fontPrimary my-4">Arrival :</p>
-
-            <div class="ProfileContainerDisplay">
-              <div class="parentGridCreation">
-                <div class="airportDepartureCreation">
-                  <div class="airportDepartureCreation">
-                    <p class="fs-3 fw-bold text-darkPrimary fontPrimary">
-                      Airport :
-                    </p>
-                  </div>
-                </div>
-                <div class="airportDepartureCreationInput">
-                  <div class="input-box-creation">
-                    <input
-                      class="fs-5 fw-normal text-primary fontSecondary"
-                      type="text"
-                      placeholder="choose an airport"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="dateDepartureCreation">
-                  <div class="dateDepartureCreation">
-                    <p class="fs-3 fw-bold text-darkPrimary fontPrimary">
-                      Date :
-                    </p>
-                  </div>
-                </div>
-                <div class="DateDepartureCreationInput">
-                  <div class="input-box-date-creation">
-                    <input
-                      class="DateInput fs-5 fw-normal text-primary fontSecondary"
-                      type="date"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="hoursMinutesDateDepartureCreationInput">
-                  <div class="input-box-date-creation">
-                    <input
-                      class="DateInput fs-5 fw-normal text-primary fontSecondary"
-                      type="time"
-                      required
-                    />
+              <div class="arrivalCreation cardCreation">
+                <p class="fs-3 fw-bold text-primary fontPrimary my-4">
+                  Arrival :
+                </p>
+                <div class="placeCreationContainer">
+                  <div class="parentGridCreation">
+                    <div class="airportDepartureCreation">
+                      <div class="airportDepartureCreation">
+                        <p class="fs-5 fw-bold text-darkPrimary fontPrimary">
+                          {#if isAirportActive}
+                            Airport :
+                          {:else}
+                            Port :
+                          {/if}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="airportDepartureCreationInput">
+                      <div class="input-box-creation">
+                        <input
+                          class=" fw-normal text-primary fontSecondary"
+                          type="text"
+                          placeholder={`choose an ${isAirportActive ? "airport" : "port"}`}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="dateDepartureCreation">
+                      <div class="dateDepartureCreation">
+                        <p class="fs-5 fw-bold text-darkPrimary fontPrimary">
+                          Date :
+                        </p>
+                      </div>
+                    </div>
+                    <div class="DateDepartureCreationInput">
+                      <div class="input-box-date-creation">
+                        <input
+                          class="DateInput fw-normal text-primary fontSecondary"
+                          type="date"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="hoursMinutesDateDepartureCreationInput">
+                      <div class="input-box-date-creation">
+                        <input
+                          class="DateInput fw-normal text-primary fontSecondary"
+                          type="time"
+                          required
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -187,16 +292,16 @@
 
               <!-- TagPopup -->
               {#if isEditing}
-              <div class="overlay"></div>
-              <TagPopup
-    isOpen={isEditing}
-    onClose={() => (isEditing = false)}
-    {availableConditions}
-    on:selectedConditionsAdded={handleSelectedConditionsAdded}
-    {title}
-    on:addClick={saveChanges} 
-/>
-            {/if}
+                <div class="overlay"></div>
+                <TagPopup
+                  isOpen={isEditing}
+                  onClose={() => (isEditing = false)}
+                  {availableConditions}
+                  on:selectedConditionsAdded={handleSelectedConditionsAdded}
+                  {title}
+                  on:addClick={saveChanges}
+                />
+              {/if}
 
               <!-- Affichage des tags sélectionnés -->
               <div class="tagContainer">
@@ -212,13 +317,25 @@
                   </div>
                 {/each}
               </div>
-              <div class="buttonAddTag">
-                <button
-                  class="ButtonEdit btn border-0 bg-primary text-white w-50 fs-5 fontSecondary"
-                  on:click={openTagPopup}
-                >
-                  Ajouter une condition +
-                </button>
+              <div class="buttonsCreationConditions">
+                <div class="buttonAddTag">
+                  <button
+                    class="ButtonEdit btn border-0 bg-primary text-white fs-5 fontSecondary"
+                    on:click={openTagPopup}
+                  >
+                    Ajouter une condition +
+                  </button>
+                </div>
+                {#if tags.length >= 2}
+                  <div class="buttonAddTag">
+                    <button
+                      class="ButtonEdit btn border-0 bg-primary text-white fs-5 fontSecondary"
+                      on:click={removeAllConditions}
+                    >
+                      Tout retirer
+                    </button>
+                  </div>
+                {/if}
               </div>
             </div>
           </div>
@@ -228,14 +345,60 @@
             </p>
           </div>
           <div class="pricingCreation">
-           
-            <p class="fs-3 fw-bold text-primary fontPrimary my-4">
-              Pricing :
-            </p>
-            <div class="ProfileContainerDisplay">
-           
-              
+            <p class="fs-3 fw-bold text-primary fontPrimary my-4">Pricing :</p>
+            <div class="pricingCreationDisplay">
+              <div class="choicePricing" id="tarifs">
+                <button class="border-0" type="button" on:click={toggleKg}>
+                  <div
+                    class="{isKgActive
+                      ? 'colorProfileOriginalSwitch'
+                      : 'colorProfileSecondarySwitch'} choiceProfileBtn fw-bold fs-5 fontSecondary"
+                    id="c1"
+                  >
+                    Weight
+                  </div>
+                </button>
+
+                <button class="border-0" type="button" on:click={toggleNumber}>
+                  <div
+                    class="{isNumberActive
+                      ? 'colorProfileOriginalSwitch'
+                      : 'colorProfileSecondarySwitch'} choiceProfileBtn fw-bold fs-5 fontSecondary"
+                    id="c2"
+                  >
+                    Unité
+                  </div>
+                </button>
+
+                <button class="border-0" type="button" on:click={toggleVolume}>
+                  <div
+                    class="{isVolumeActive
+                      ? 'colorProfileOriginalSwitch'
+                      : 'colorProfileSecondarySwitch'} choiceProfileBtn fw-bold fs-5 fontSecondary"
+                    id="c3"
+                  >
+                    Volume
+                  </div>
+                </button>
+              </div>
+              <div class={isKgActive ? "active" : "inactive"}>
+                <PricingByWeight />
+              </div>
+              <div class={isNumberActive ? "active" : "inactive"}>
+                <PricingByNumber />
+              </div>
+              <div class={isVolumeActive ? "active" : "inactive"}>
+                
+                <PricingByVolume />
+              </div>
             </div>
+          </div>
+          <div class="postCreation">
+            <button
+              class="PostBtn ButtonEdit btn border-0 text-primary fw-bold fs-3 fontSecondary"
+            >
+              Post
+            </button>
           </div>
         </div>
       </div>
@@ -252,9 +415,6 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5); /* Opacité réduite */
     z-index: 999; /* Assure que la superposition est au-dessus de tout */
-  }
-  .Profile {
-    margin-bottom: 4000px;
   }
   .ProfileTopCard {
     padding: 40px 50px 50px 0;
@@ -289,7 +449,43 @@
   }
 
   .ProfileContainerDisplay {
-    padding: 50px 100px;
+    padding: 30px 40px;
+    border: 2px solid #b6b3b3;
+    border-radius: 40px;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+  }
+  .pricingCreationDisplay {
+    padding: 40px 160px;
+    background-color: #5a02d4;
+    border-radius: 40px;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .placeCreation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .placeCreationTransport {
+    display: flex;
+    flex-direction: column;
+  }
+  .choiceTransportToggle {
+    padding-inline: 20%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  .cardCreation {
+    width: 47%;
+  }
+  .placeCreationContainer {
+    padding: 30px 40px;
     border: 2px solid #b6b3b3;
     border-radius: 40px;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
@@ -298,8 +494,8 @@
   }
 
   .input-box-creation input {
+    padding: 1rem 0.5rem;
     width: 100%;
-    padding: 1.5rem 7rem;
     border-radius: 20px;
     border: 2px solid #b6b3b3;
     box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.25);
@@ -308,13 +504,18 @@
   .input-box-creation input::placeholder {
     text-align: center;
   }
+  .input-box-creation input:focus {
+    border: 2px solid transparent;
+    outline: 3px solid #5a02d4;
+  }
+
   .input-box-date-creation {
     display: flex;
     justify-content: center; /* Centrer horizontalement */
     align-items: center; /* Centrer verticalement */
   }
   .input-box-date-creation input {
-    padding: 1.5rem 2rem;
+    padding: 1rem 0.5rem;
     width: 50%;
     border-radius: 20px;
     border: 2px solid #b6b3b3;
@@ -322,6 +523,10 @@
   }
   .input-box-date-creation input::placeholder {
     text-align: center;
+  }
+  .input-box-date-creation input:focus {
+    border: 2px solid transparent;
+    outline: 3px solid #5a02d4;
   }
   .airportDepartureCreation {
     display: flex;
@@ -341,29 +546,29 @@
   }
   .parentGridCreation {
     display: grid;
-    grid-template-columns: repeat(2, 1fr) 2fr 1fr;
-    grid-template-rows: repeat(3, 1fr);
-    grid-column-gap: 50px;
-    grid-row-gap: 0px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-column-gap: 20px;
+    grid-row-gap: 40px;
   }
 
   .airportDepartureCreation {
     grid-area: 1 / 1 / 2 / 2;
   }
   .airportDepartureCreationInput {
-    grid-area: 1 / 3 / 2 / 5;
+    grid-area: 1 / 2 / 2 / 4;
   }
   .dateDepartureCreation {
-    grid-area: 3 / 1 / 4 / 2;
+    grid-area: 2 / 1 / 3 / 2;
   }
   .DateDepartureCreationInput {
-    grid-area: 3 / 3 / 4 / 4;
+    grid-area: 2 / 2 / 3 / 3;
   }
   .DateDepartureCreationInput input {
     width: 100%;
   }
   .hoursMinutesDateDepartureCreationInput {
-    grid-area: 3 / 4 / 4 / 5;
+    grid-area: 2 / 3 / 3 / 4;
   }
   .hoursMinutesDateDepartureCreationInput input {
     width: 100%;
@@ -378,6 +583,7 @@
     box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.25);
     text-align: center; /* Centrer le contenu */
     margin-bottom: 30px;
+    transition: 0.2 ease;
   }
   .tagContainer {
     display: flex;
@@ -392,11 +598,40 @@
     margin-left: 5px;
     cursor: pointer;
   }
+  .buttonsCreationConditions {
+    display: flex;
+  }
   .buttonAddTag {
     display: flex;
     justify-content: center;
+    width: 100%;
   }
   .buttonAddTag button {
     border-radius: 20px;
+    width: 50%;
+  }
+  .choicePricing {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr;
+    grid-column-gap: 100px;
+    grid-row-gap: 0px;
+  }
+  .postCreation {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+  }
+  .PostBtn {
+    border-radius: 40px;
+    padding: 1rem 4rem;
+    background-color: #ffe767;
+  }
+  .active {
+    display: block;
+  }
+
+  .inactive {
+    display: none;
   }
 </style>

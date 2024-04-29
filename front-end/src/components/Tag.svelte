@@ -26,7 +26,7 @@
   <button
     class="{isSelected
       ? 'selected conditionTagBtn'
-      : 'conditionTagBtn'} border-0 text-white fs-5 fontSecondary"
+      : 'conditionTagBtn'} text-primary fs-5 fontSecondary"
     on:click={handleClick}
   >
     <p class="m-0">{name}</p>
@@ -34,16 +34,23 @@
 </main>
 
 <style>
+   .conditionTagBtn {
+    transition: 0.2s ease;
+  }
   .selected {
-    box-shadow: 0px 3px 0px 5px #BFACFE !important;
-    background-color:  #27005d !important; /* Couleur de fond lorsque sélectionné */
+ 
+    border: 3px solid transparent !important;
+    box-shadow: 0 3px 3px 1px rgba(0, 0, 0, 0.25) !important;
+    background-color: #5a02d4 !important; /* Couleur de fond par défaut */
+    color: white !important;
   }
 
   .conditionTagBtn {
     padding: 1.5rem 2rem;
     border-radius: 20px;
-    box-shadow: 0 3px 3px 1px rgba(0, 0, 0, 0.25);
     text-align: center; /* Centrer le contenu */
-    background-color: #5a02d4; /* Couleur de fond par défaut */
+    box-shadow: 0px 5px 0px 0px #5a02d4;
+    border: 3px solid #5a02d4;
+
   }
 </style>
