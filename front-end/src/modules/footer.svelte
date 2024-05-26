@@ -13,22 +13,22 @@
       <ul class="social-icon">
         <li class="social-icon__item">
           <a class="social-icon__link" href="/">
-            <ion-icon name="logo-facebook"></ion-icon>
+            <i class="bi bi-facebook"></i>
           </a>
         </li>
         <li class="social-icon__item">
           <a class="social-icon__link" href="/">
-            <ion-icon name="logo-twitter"></ion-icon>
+            <i class="bi bi-twitter"></i>
           </a>
         </li>
         <li class="social-icon__item">
           <a class="social-icon__link" href="/">
-            <ion-icon name="logo-linkedin"></ion-icon>
+            <i class="bi bi-linkedin"></i>
           </a>
         </li>
         <li class="social-icon__item">
           <a class="social-icon__link" href="/">
-            <ion-icon name="logo-instagram"></ion-icon>
+            <i class="bi bi-instagram"></i>
           </a>
         </li>
       </ul>
