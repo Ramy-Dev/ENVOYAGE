@@ -61,6 +61,10 @@
 </main>
 
 <style>
+  nav {
+    position: fixed;
+    width: 100%;
+  }
   .SignUp {
     background-color: #ffe767;
     border-radius: 5px;

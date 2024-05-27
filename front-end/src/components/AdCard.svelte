@@ -4,7 +4,7 @@
 
 <div class="ad-card">
   <div class="col">
-    <div href="" class="card h-100 redirection-div">
+    <div href="" class="card h-100 redirection-div card-shadow-gray">
       <div class="card-body">
         <div class="colorTopAnnonce mb-3"></div>
         <div class="topCard">
@@ -54,9 +54,12 @@
 </div>
 
 <style>
+  .col {
+    background-color: transparent;
+  }
   .card {
     border: none;
-    border-radius: 20px;
+    border-radius: 40px;
     min-width: 450px; /* Ajuster la largeur de vos cartes */
     pointer-events: auto;
   }
@@ -82,7 +85,7 @@
     flex-direction: row;
     padding: 0 50px 30px 50px;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
   }
 
   .colorTopAnnonce {

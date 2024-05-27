@@ -60,7 +60,7 @@
       <div class="recherche_cover">
          <img class="image_bg_recherche" src="../svg/bg_recherche.svg">
          <div class="textIntro text-white fontSecondary">
-            Explorez des milliers d'annonces en toute simplicité
+            Explorez des milliers d'annonces en toute <span class="simpl-text">simplicité </span>
          </div>
          <div class="">
             <SearchForm />
@@ -69,8 +69,8 @@
       </div>
       
    </div>
-   <section class="section-annonces">
-      <div class="textIntro text-secondary fontSecondary">
+   <section class="section-annonces mt-5">
+      <div class="textIntro text-secondary fontSecondary mb-5">
          annonce trouvées
       </div>
       <div class="ads-container">
@@ -97,6 +97,8 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      padding: 100px;
+      gap: 30px;
    }
    .image_bg_recherche {
       width: 100%;
@@ -108,9 +110,21 @@
       z-index: -1;
    }
    .textIntro {
-      font-size: 3.5rem;
+      margin-top: 90px;
+      font-size: 3rem;
       font-weight: 700;
       text-align: center;
+   }
+
+   .simpl-text {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #FFFFFF; /* White color for the main text */
+    text-shadow: 
+        -1px -7px 0 #4FE1F9, /* Shadow effect to the top-left */
+        1px -1px 0 #40c5de,  /* Shadow effect to the top-right */
+        -1px 1px 0 #40c5de,  /* Shadow effect to the bottom-left */
+        1px 7px 0 #4FE1F9;   /* Shadow effect to the bottom-right */
    }
    .section-annonces {
       padding: 20px;
