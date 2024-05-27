@@ -1,19 +1,25 @@
 from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
-
 from rest_framework.routers import DefaultRouter
-from .views import ExpediteurViewSet, VoyageurViewSet, AnnonceViewSet, DemandeAnnonceViewSet, DemandeColisViewSet, DemandeCourierViewSet, DemandeDeCompteVoyageurViewSet
+from django.contrib import admin
+
+from .views import (
+    ExpediteurViewSet, DemandeDeCompteVoyageurViewSet, 
+    VoyageurViewSet, AnnonceViewSet, DemandeAnnonceViewSet, TagViewSet, 
+    AnnonceTagViewSet, PalierViewSet, AnnoncePalierViewSet
+)
 
 router = DefaultRouter()
 router.register(r'expediteurs', ExpediteurViewSet)
+router.register(r'demandes_compte_voyageur', DemandeDeCompteVoyageurViewSet)
 router.register(r'voyageurs', VoyageurViewSet)
-router.register(r'recherche', AnnonceViewSet)
-router.register(r'demandes-annonces', DemandeAnnonceViewSet)
-router.register(r'demandes-colis', DemandeColisViewSet)
-router.register(r'deman des-couriers', DemandeCourierViewSet)
-router.register(r'demandes-compte-voyageurs', DemandeDeCompteVoyageurViewSet)
+router.register(r'annonces', AnnonceViewSet)
+router.register(r'demandes_annonce', DemandeAnnonceViewSet)
+router.register(r'tags', TagViewSet)
+router.register(r'annonce_tags', AnnonceTagViewSet)
+router.register(r'paliers', PalierViewSet)
+router.register(r'annonce_paliers', AnnoncePalierViewSet)
 
 urlpatterns = [
+    
     path('', include(router.urls)),
-] 
+]
