@@ -1,7 +1,7 @@
 <!-- Tag.svelte -->
 <script>
   import { createEventDispatcher } from "svelte";
-  import { alreadySelectedConditions } from "../stores/alreadySelectedConditions.js"; // Import du store
+  import { alreadySelectedConditions } from "../../stores/alreadySelectedConditions.js"; // Import du store
 
   const dispatch = createEventDispatcher();
 
@@ -9,15 +9,9 @@
   export let isSelected;
 
 
-  $: {
-    isSelected = $alreadySelectedConditions.includes(name);
-  }
-
-
   function handleClick() {
     isSelected = !isSelected; // Inverser l'état actuel du tag
     dispatch("tagClick", { name, isSelected }); // Émettre un événement avec le nouvel état du tag
-    alreadySelectedConditions.toggle(name); // Mettre à jour le store avec l'état mis à jour du tag
   }
 </script>
 

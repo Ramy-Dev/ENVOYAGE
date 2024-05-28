@@ -4,45 +4,60 @@
    import { getRandomColor } from "../../lib/functions/randomColor.js";
    import SearchForm from "../../components/Recherche/SearchForm.svelte";
    import AdCard from "../../components/AdCard.svelte";
+   import { fakeUsers } from "../../lib/generatedUsers.js";
 
-   let ads = [
-      { id: 1, name: 'John Doe', dob: '01/01/1990', from: 'Paris', to: 'Marseille', date: 'September 5th', updated: '3 mins ago' },
-      { id: 2, name: 'Jane Smith', dob: '02/02/1995', from: 'Lyon', to: 'Toulouse', date: 'September 6th', updated: '5 mins ago' },
-      { id: 3, name: 'David Johnson', dob: '03/03/1985', from: 'Algiers', to: 'Oran', date: 'September 7th', updated: '10 mins ago' },
-      { id: 4, name: 'Emma Brown', dob: '04/04/1992', from: 'Nice', to: 'Bordeaux', date: 'September 8th', updated: '15 mins ago' },
-      { id: 5, name: 'Michael Wilson', dob: '05/05/1988', from: 'Marseille', to: 'Paris', date: 'September 9th', updated: '20 mins ago' },
-      { id: 6, name: 'Sophia Taylor', dob: '06/06/1993', from: 'Toulouse', to: 'Lyon', date: 'September 10th', updated: '25 mins ago' },
-      { id: 7, name: 'Daniel Anderson', dob: '07/07/1987', from: 'Oran', to: 'Algiers', date: 'September 11th', updated: '30 mins ago' },
-      { id: 8, name: 'Olivia Martinez', dob: '08/08/1998', from: 'Bordeaux', to: 'Nice', date: 'September 12th', updated: '35 mins ago' },
-      { id: 9, name: 'William Thomas', dob: '09/09/1991', from: 'Paris', to: 'Marseille', date: 'September 13th', updated: '40 mins ago' },
-      // Add more random data here
-   ];
+   let ads = fakeUsers;
    let annonces = [];
+   let currentPage = 1;
+   const itemsPerPage = 12; // 3 rows of 3 ads
+   let totalPages = Math.ceil(ads.length / itemsPerPage);
+
    async function get_annonce() {
-      let response;
       try {
-         response = await fetch("http://127.0.0.1:8000/recherche/", {
+         const response = await fetch("http://127.0.0.1:8000/recherche/", {
             method: "GET",
             headers: {
                "Content-Type": "application/json",
             },
          });
+
+         if (!response.ok) {
+            throw new Error(`An error has occurred: ${response.status}`);
+         }
+
+         annonces = await response.json();
+         annonces = annonces.map(annonce => ({
+            ...annonce,
+            created_at: annonce.created_at.split('T')[0],
+            updated_at: annonce.updated_at.split('T')[0]
+         }));
+         totalPages = Math.ceil(annonces.length / itemsPerPage);
       } catch (error) {
          console.error("Error:", error);
       }
-
-      if (!response.ok) {
-         const message = `An error has occured: ${response.status}`;
-         throw new Error(message);
-      }
-      annonces = await response.json();
-      annonces = annonces.map(annonce => ({
-         ...annonce,
-         created_at: annonce.created_at.split('T')[0],
-         updated_at: annonce.updated_at.split('T')[0]
-      }));
-      console.log(annonces);
    }
+
+   function nextPage() {
+      if (currentPage < totalPages) {
+         currentPage += 1;
+         // scrollToAnnonces();
+         animateSVG(false, -1);
+      }
+   }
+
+   function prevPage() {
+      if (currentPage > 1) {
+         currentPage -= 1;
+         // scrollToAnnonces();
+         animateSVG(false, 1);
+      }
+   }
+
+   function scrollToAnnonces() {
+      document.querySelector('.search-container').scrollIntoView({ behavior: 'smooth' });
+   }
+
+   $: paginatedAds = ads.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
    onMount(() => {
       get_annonce();
@@ -53,85 +68,242 @@
          colorTopElement.style.backgroundColor = cardColor;
       });
    });
+
+   // SVG animation function
+   function animateSVG(reset = true, side) {
+      const svgContainer = document.getElementById('svg-bg');
+      let currentTransform = svgContainer.style.transform.match(/translateX\((-?\d+)px\)/);
+      let currentX = currentTransform ? parseInt(currentTransform[1], 10) : 0;
+   
+      if (side === 1) {
+          currentX -= 50; // Move the SVG to the right
+      } else if (side === -1) {
+          currentX += 50; // Move the SVG to the left
+      }
+   
+      svgContainer.style.transform = `translateX(${currentX}px)`;
+   
+      if (reset) {
+          setTimeout(() => {
+               // Reset the SVG position after a short delay for visual effect
+               svgContainer.style.transform = '';
+          }, 1000); // Match this duration with the CSS transition duration
+      }
+   }
 </script>
 
-<main>
+<main class="bg-main">
+   <img id="svg-bg" class="image_bg_recherche_ads" src="../svg/bg-recherche-ads.svg">
    <div class="header">
       <div class="recherche_cover">
          <img class="image_bg_recherche" src="../svg/bg_recherche.svg">
          <div class="textIntro text-white fontSecondary">
-            Explorez des milliers d'annonces en toute <span class="simpl-text">simplicité </span>
+            Explorez des milliers d'annonces en toute <span class="simpl-text">simplicité</span>
          </div>
-         <div class="">
+         <div class="search-container">
             <SearchForm />
          </div>
-        
       </div>
-      
    </div>
-   <section class="section-annonces mt-5">
-      <div class="textIntro text-secondary fontSecondary mb-5">
+   <section class="section-annonces">
+      <div class="textAnnonces text-secondary fontSecondary">
          annonce trouvées
       </div>
       <div class="ads-container">
-         {#each ads as ad}
+         {#each paginatedAds as ad}
             <AdCard {ad} />
          {/each}
       </div>
+      <div class="pagination fontSecondary">
+         <button class="btnPage fontPrimary" on:click={() => { prevPage(); }} disabled={currentPage === 1}>
+            <lord-icon
+               class="animated-arrow animated-arrow-left"
+               src="https://cdn.lordicon.com/vduvxizq.json"
+               colors="primary:white"
+               style="background-color: none;"
+               trigger="hover">
+            </lord-icon>
+         </button>
+         <span>Page <span class="text-primary">{currentPage}</span> sur {totalPages}</span>
+         <button id="nextPageBtn" class="btnPage fs-3 fontPrimary" on:click={() => { nextPage();}} disabled={currentPage === totalPages}>
+            <lord-icon
+               class="animated-arrow"
+               src="https://cdn.lordicon.com/vduvxizq.json"
+               colors="primary:white"
+               style="background-color: none;"
+               trigger="hover">
+            </lord-icon>
+         </button>      
+      </div>
    </section>
+   <img class="image_bottom" src="../svg/bottom_recherche.svg">
 </main>
 
-<!-- <ColorGenerator /> -->
-
 <style>
-   .header {
-      margin-top: 0;
-      position: relative;
-      height: 50vh;
-   }
-   .recherche_cover {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 100px;
-      gap: 30px;
-   }
-   .image_bg_recherche {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: -1;
-   }
-   .textIntro {
-      margin-top: 90px;
-      font-size: 3rem;
-      font-weight: 700;
-      text-align: center;
-   }
+   html, body {
+   height: 100%;
+   margin: 0;
+   padding: 0;
+}
 
-   .simpl-text {
-    font-size: 3rem;
-    font-weight: 700;
-    color: #FFFFFF; /* White color for the main text */
-    text-shadow: 
-        -1px -7px 0 #4FE1F9, /* Shadow effect to the top-left */
-        1px -1px 0 #40c5de,  /* Shadow effect to the top-right */
-        -1px 1px 0 #40c5de,  /* Shadow effect to the bottom-left */
-        1px 7px 0 #4FE1F9;   /* Shadow effect to the bottom-right */
-   }
-   .section-annonces {
-      padding: 20px;
-   }
-   .ads-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-   }
+body {
+   display: flex;
+   flex-direction: column;
+}
+
+main {
+   flex: 1;
+   position: relative;
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between; /* This ensures that the footer image is pushed to the bottom */
+}
+
+#svg-bg {
+   transition: transform 2s ease;
+}
+
+.bg-main {
+   position: relative;
+   overflow: hidden;
+   margin: 0;
+}
+
+.header {
+   margin-top: 0;
+   position: relative;
+   height: 50vh;
+}
+
+.recherche_cover {
+   position: relative;
+   width: 100%;
+   height: 100%;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   padding: 100px;
+   gap: 30px;
+}
+
+.image_bg_recherche {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+   position: absolute;
+   top: 0;
+   left: 0;
+   z-index: -1;
+}
+
+.image_bg_recherche_ads {
+   margin-top: 20%;
+   width: 120%;
+   height: 100%;
+   object-fit: cover;
+   position: absolute;
+   top: -10%;
+   left: -10%;
+   z-index: -2;
+   transition: transform 0.5s ease;
+}
+
+.image_bottom {
+   width: 100%;
+   z-index: -1;
+}
+
+.textIntro {
+   margin-top: 90px;
+   font-size: 3rem;
+   font-weight: 700;
+   text-align: center;
+}
+
+.textAnnonces {
+   margin-top: 50px;
+   font-size: 3rem;
+   font-weight: 700;
+   text-align: center;
+}
+
+.simpl-text {
+   font-size: 3rem;
+   font-weight: 700;
+   color: #FFFFFF;
+   text-shadow: 
+      -1px -7px 0 #4FE1F9,
+      1px -1px 0 #40c5de,
+      -1px 1px 0 #40c5de,
+      1px 7px 0 #4FE1F9;
+}
+
+.search-container {
+   position: relative;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+}
+
+.section-annonces {
+   padding: 0 80px;
+   position: relative;
+   flex: 1;
+}
+
+.ads-container {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   margin-top: 10px;
+}
+
+.pagination {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   gap: 10px;
+   margin-top: 20px;
+}
+
+.pagination button {
+   appearance: none;
+   border: 0;
+   border-radius: 12px;
+   background-color: #21A5C3;
+   color: white;
+   padding: 0px 20px;
+   font-size: 1rem;
+   cursor: pointer;
+   box-shadow: 0 7px 4px 0 rgba(0, 0, 0, 0.29);
+   transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+   background-color: #4FE1F9;
+}
+
+.pagination button:disabled {
+   background-color: #0D434F;
+   cursor: not-allowed;
+}
+
+.pagination button:disabled:hover {
+   background-color: #0D434F;
+}
+
+.btnPage {
+   display: flex;
+}
+
+.pagination span {
+   font-size: 1.2rem;
+   font-weight: 600;
+}
+
+.animated-arrow-left {
+   transform: rotate(180deg);
+}
+
 </style>
