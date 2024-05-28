@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import TagPanel from './TagPanel.svelte';
+  import TarifPanel from './TarifPanel.svelte';
   import { conditions } from '../../lib/tagList.js'
   import { clickOutside } from '../../lib/functions/clickOutside.js';
 
@@ -13,9 +14,14 @@
   let tariff = '';
   let critères = '';
 
+  let poids = "";
+  let quantite = "";
+  let volume = "";
+
   let input1, input2, input3, input4, input5;
   let isFocused1 = false, isFocused2 = false, isFocused3 = false, isFocused4 = false, isFocused5 = false;
   let showPanel = false;
+  let showTarifPanel = false;
   let tags = conditions; // Example tags
 
   let tagPanelContainer;
@@ -23,7 +29,9 @@
   function togglePanel() {
     showPanel = !showPanel;
   }
-
+  function toggleTarifPanel() {
+    showTarifPanel = !showTarifPanel;
+  }
   function search() {
     console.log({ from, to, date, tariff, critères });
   }
@@ -124,8 +132,13 @@
           Tarifs<br>
       </label>
       <input bind:this={input4} class="custom-placeholder input4" type="text" bind:value={tariff} data-placeholder="poids, volume, quantité"
-        on:focus={() => isFocused4 = true} on:blur={() => onBlur(value => isFocused4 = value)} />
-      {#if tariff}
+      on:focus={() => { isFocused5 = true; toggleTarifPanel(); }} />
+
+    <!-- {#if showPanel}
+      <div bind:this={tagPanelContainer} use:clickOutside={{ enabled: showPanel, callback: () => showPanel = false }}> -->
+        <TarifPanel poids={poids} quantite={quantite} volume={volume} visible={showTarifPanel} />
+       
+        {#if tariff}
       <button class="clear-button" on:click={() => clearInput(input4, value => tariff = value)}>
         <lord-icon
             class="animated-cross"
