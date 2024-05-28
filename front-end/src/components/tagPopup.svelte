@@ -104,7 +104,8 @@ let popupRef;
             <div class="resultsTagSearch">
               {#each filteredConditions as condition}
                 <Tag name={condition} selected={selectedConditions.includes(condition)} on:tagClick={toggleCondition} />
-              {/each}
+             
+                {/each}
             </div>
           </div>
         {:else}

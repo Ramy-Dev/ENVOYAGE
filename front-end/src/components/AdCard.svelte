@@ -2,65 +2,92 @@
   export let ad;
 
   // Function to get a random color from the given list
-  function getRandomColor() {
+  function getRandomColor(excludeColor) {
     const colors = ['#21A5C3', '#1A849C', '#0D434F', '#4FE1F9'];
-    return colors[Math.floor(Math.random() * colors.length)];
+    let newColor;
+    do {
+      newColor = colors[Math.floor(Math.random() * colors.length)];
+    } while (newColor === excludeColor);
+    return newColor;
   }
 
   // Variable to store the random color
   let randomColor = getRandomColor();
+  let colorChanged = false; // Flag to track color change
+
+  // Function to change color on hover
+  function changeColorOnHover(event) {
+    if (!colorChanged) {
+      const newColor = getRandomColor(randomColor);
+      event.currentTarget.querySelector('.colorTopAnnonce').style.backgroundColor = newColor;
+      event.currentTarget.querySelector('.svgArrow path').style.fill = newColor;
+      colorChanged = true; // Set flag to true
+      randomColor = newColor;
+    }
+  }
+
+  // Function to reset color when hover ends
+  function resetColor(event) {
+    event.currentTarget.querySelector('.colorTopAnnonce').style.backgroundColor = randomColor;
+    event.currentTarget.querySelector('.svgArrow path').style.fill = randomColor;
+    colorChanged = false; // Reset flag
+  }
 </script>
 
-<div class="ad-card">
-  <div class="col">
-    <div href="" class="card h-100 redirection-div card-shadow-gray">
-      <div class="card-body">
-        <div class="colorTopAnnonce mb-3" style="background-color: {randomColor};"></div>
-        <div class="topCard">
-          <img
-            src="../svg/photoProfile.svg"
-            class="card-img-top"
-            alt="Profile Picture"
-          />
-          <div class="nomDateTopCard">
-            <h5 class="card-title fw-bold">{ad.name}</h5>
-            <h5 class="card-title DateTopCard fw-semibold">
-              {ad.dob}
-            </h5>
+
+<main>
+  <div class="ad-card fontSecondary" on:mouseover={changeColorOnHover} on:mouseleave={resetColor}>
+    <div class="col">
+      <div href="" class="card h-100 redirection-div card-shadow-gray">
+        <div class="card-body">
+          <div class="colorTopAnnonce mb-3" style="background-color: {randomColor};"></div>
+          <div class="topCard">
+            <img
+              src="../svg/photoProfile.svg"
+              class="card-img-top"
+              alt="Profile Picture"
+            />
+            <div class="nomDateTopCard">
+              <h5 class="card-title fw-bold">{ad.name}</h5>
+              <h5 class="card-title DateTopCard fw-semibold">
+                {ad.dob}
+              </h5>
+            </div>
+          </div>
+          <div class="destinationTopCard fw-semibold fs-5 fontSecondary">
+            <div class="departureTopCard fw-bold">{ad.from}</div>
+            <svg
+              class="svgArrow mt-2 mx-3"
+              viewBox="0 0 100 12"
+              preserveAspectRatio="none"
+              width="100"
+              height="12"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:bx="https://boxy-svg.com"
+            >
+              <!-- svelte-ignore illegal-attribute-character -->
+              <path
+                d="M 0 4 H 90 L 90 0 L 100 6 L 90 12 L 90 8 H 0 V 4 Z"
+                style="fill-rule: nonzero; fill: {randomColor};"
+                transform="matrix(1, 0, 0, 1, 0, 0)"
+              />
+            </svg>
+            <div class="arrivalTopCard fw-bold">{ad.to}</div>
+          </div>
+          <div class="dateCard pt-4 pb-2 text-darkSecondary fw-semibold">
+            Date : {ad.date}
           </div>
         </div>
-        <div class="destinationTopCard fw-semibold fs-5 fontSecondary">
-          <div class="departureTopCard fw-bold">{ad.from}</div>
-          <svg
-            class="svgArrow mt-2 mx-3"
-            viewBox="246.554 219.198 189.9 12"
-            width="189.9"
-            height="12"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:bx="https://boxy-svg.com"
-          >
-            <!-- svelte-ignore illegal-attribute-character -->
-            <path
-              d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
-              style="fill-rule: nonzero; fill: {randomColor};"
-              transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
-              bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
-            />
-          </svg>
-          <div class="arrivalTopCard fw-bold">{ad.to}</div>
-        </div>
-        <div class="dateCard pt-4 pb-2 text-darkSecondary fw-semibold">
-          Date : {ad.date}
-        </div>
-      </div>
-      <div class="card-footer border-0">
-        <div class="text-body-secondary px-3 pb-3 text-midSecondary">
-          last updated {ad.updated}
+        <div class="card-footer border-0">
+          <div class="text-body-secondary px-3 pb-3 text-midSecondary">
+            last updated {ad.updated}
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</main>
+
 
 <style>
   .col {
@@ -69,12 +96,19 @@
   .card {
     border: none;
     border-radius: 40px;
-    min-width: 400px; /* Adjust the width of your cards */
+    width: 400px; /* Set a fixed width for the cards */
     pointer-events: auto;
   }
-
-  .cardAnnonce {
+  .card-shadow-gray {
     box-shadow: 0 1px 3px 0 #25201f4d;
+    transition: box-shadow .2s ease-in-out; /* Add transition for box-shadow */
+}
+
+.card-shadow-gray:hover {
+    box-shadow: 0 4px 14px 0 #25201f40;
+}
+  .cardAnnonce {
+    box-shadow: 0 1px 3px 0 #24251ffe;
     transition: 0.2s ease;
     text-decoration: none;
   }

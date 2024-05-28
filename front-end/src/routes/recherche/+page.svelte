@@ -4,45 +4,60 @@
    import { getRandomColor } from "../../lib/functions/randomColor.js";
    import SearchForm from "../../components/Recherche/SearchForm.svelte";
    import AdCard from "../../components/AdCard.svelte";
+   import { fakeUsers } from "../../lib/generatedUsers.js";
 
-   let ads = [
-      { id: 1, name: 'John Doe', dob: '01/01/1990', from: 'Paris', to: 'Marseille', date: 'September 5th', updated: '3 mins ago' },
-      { id: 2, name: 'Jane Smith', dob: '02/02/1995', from: 'Oran', to: 'Toulouse', date: 'September 6th', updated: '5 mins ago' },
-      { id: 3, name: 'David Johnson', dob: '03/03/1985', from: 'Algiers', to: 'Oran', date: 'September 7th', updated: '10 mins ago' },
-      { id: 4, name: 'Emma Brown', dob: '04/04/1992', from: 'Nice', to: 'Bordeaux', date: 'September 8th', updated: '15 mins ago' },
-      { id: 5, name: 'Michael Wilson', dob: '05/05/1988', from: 'Marseille', to: 'Algiers', date: 'September 9th', updated: '20 mins ago' },
-      { id: 6, name: 'Sophia Taylor', dob: '06/06/1993', from: 'Toulouse', to: 'Lyon', date: 'September 10th', updated: '25 mins ago' },
-      { id: 7, name: 'Daniel Anderson', dob: '07/07/1987', from: 'Oran', to: 'Algiers', date: 'September 11th', updated: '30 mins ago' },
-      { id: 8, name: 'Olivia Martinez', dob: '08/08/1998', from: 'Bordeaux', to: 'Nice', date: 'September 12th', updated: '35 mins ago' },
-      { id: 9, name: 'William Thomas', dob: '09/09/1991', from: 'Paris', to: 'Béjaïa', date: 'September 13th', updated: '40 mins ago' },
-      // Add more random data here
-   ];
+   let ads = fakeUsers;
    let annonces = [];
+   let currentPage = 1;
+   const itemsPerPage = 12; // 3 rows of 3 ads
+   let totalPages = Math.ceil(ads.length / itemsPerPage);
+
    async function get_annonce() {
-      let response;
       try {
-         response = await fetch("http://127.0.0.1:8000/recherche/", {
+         const response = await fetch("http://127.0.0.1:8000/recherche/", {
             method: "GET",
             headers: {
                "Content-Type": "application/json",
             },
          });
+
+         if (!response.ok) {
+            throw new Error(`An error has occurred: ${response.status}`);
+         }
+
+         annonces = await response.json();
+         annonces = annonces.map(annonce => ({
+            ...annonce,
+            created_at: annonce.created_at.split('T')[0],
+            updated_at: annonce.updated_at.split('T')[0]
+         }));
+         totalPages = Math.ceil(annonces.length / itemsPerPage);
       } catch (error) {
          console.error("Error:", error);
       }
-
-      if (!response.ok) {
-         const message = `An error has occured: ${response.status}`;
-         throw new Error(message);
-      }
-      annonces = await response.json();
-      annonces = annonces.map(annonce => ({
-         ...annonce,
-         created_at: annonce.created_at.split('T')[0],
-         updated_at: annonce.updated_at.split('T')[0]
-      }));
-      console.log(annonces);
    }
+
+   function nextPage() {
+      if (currentPage < totalPages) {
+         currentPage += 1;
+         // scrollToAnnonces();
+         animateSVG(false, -1);
+      }
+   }
+
+   function prevPage() {
+      if (currentPage > 1) {
+         currentPage -= 1;
+         // scrollToAnnonces();
+         animateSVG(false, 1);
+      }
+   }
+
+   function scrollToAnnonces() {
+      document.querySelector('.search-container').scrollIntoView({ behavior: 'smooth' });
+   }
+
+   $: paginatedAds = ads.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
    onMount(() => {
       get_annonce();
@@ -53,24 +68,40 @@
          colorTopElement.style.backgroundColor = cardColor;
       });
    });
+
+   // SVG animation function
+   function animateSVG(reset = true, side) {
+      const svgContainer = document.getElementById('svg-bg');
+      let currentTransform = svgContainer.style.transform.match(/translateX\((-?\d+)px\)/);
+      let currentX = currentTransform ? parseInt(currentTransform[1], 10) : 0;
+   
+      if (side === 1) {
+          currentX -= 50; // Move the SVG to the right
+      } else if (side === -1) {
+          currentX += 50; // Move the SVG to the left
+      }
+   
+      svgContainer.style.transform = `translateX(${currentX}px)`;
+   
+      if (reset) {
+          setTimeout(() => {
+               // Reset the SVG position after a short delay for visual effect
+               svgContainer.style.transform = '';
+          }, 1000); // Match this duration with the CSS transition duration
+      }
+   }
 </script>
 
-<main>
+<main class="bg-main">
+   <img id="svg-bg" class="image_bg_recherche_ads" src="../svg/bg-recherche-ads.svg">
    <div class="header">
       <div class="recherche_cover">
          <img class="image_bg_recherche" src="../svg/bg_recherche.svg">
          <div class="textIntro text-white fontSecondary">
-            Explorez des milliers d'annonces en toute <span class="simpl-text">simplicité </span>
+            Explorez des milliers d'annonces en toute <span class="simpl-text">simplicité</span>
          </div>
          <div class="search-container">
             <SearchForm />
-            <!-- <div class="arrow">
-               <svg 
-               class="arrowSVG"
-               fill="#4FE1F9" height="347" viewBox="0 0 198 347" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M191.36 137.224L197.302 138.06L191.36 137.224ZM30.402 346.498C27.3654 347.825 23.8283 346.439 22.5017 343.402L0.883889 293.918C-0.44269 290.881 0.943544 287.344 3.98013 286.018C7.01671 284.691 10.5538 286.077 11.8803 289.114L31.0962 333.1L75.082 313.884C78.1186 312.557 81.6556 313.944 82.9822 316.98C84.3088 320.017 82.9226 323.554 79.886 324.88L30.402 346.498ZM54.2748 0.140731C56.056 3.42689 58.2611 6.59445 60.8525 9.6692L51.6767 17.4025C48.6316 13.7894 45.9442 9.95333 43.725 5.85927L54.2748 0.140731ZM78.7967 25.8217C85.2231 30.4903 92.3572 34.9216 99.9037 39.2694L93.9132 49.6671C86.1706 45.2064 78.6406 40.5405 71.7438 35.5304L78.7967 25.8217ZM122.232 51.5547C129.839 55.6513 137.517 59.7965 144.862 64.0812L138.816 74.4466C131.674 70.2806 124.171 66.2285 116.542 62.1201L122.232 51.5547ZM166.921 78.4814C174.47 84.1764 181.242 90.4144 186.514 97.4448L176.914 104.644C172.53 98.7987 166.68 93.3313 159.694 88.0609L166.921 78.4814ZM197.485 123.684C198.049 128.278 198.005 133.066 197.302 138.06L185.419 136.388C185.983 132.383 186.005 128.65 185.575 125.147L197.485 123.684ZM197.302 138.06C196.626 142.863 195.693 147.461 194.524 151.876L182.924 148.803C183.969 144.858 184.808 140.727 185.419 136.388L197.302 138.06ZM183.935 177.922C179.299 186.156 173.757 193.617 167.596 200.559L158.621 192.594C164.319 186.174 169.331 179.401 173.479 172.034L183.935 177.922ZM147.942 219.734C141.234 225.558 134.171 231.182 127.004 236.78L119.618 227.323C126.745 221.756 133.609 216.286 140.074 210.673L147.942 219.734ZM106.025 253.191C99.2238 258.623 92.4752 264.221 85.9115 270.17L77.8534 261.278C84.6674 255.103 91.6246 249.334 98.5369 243.814L106.025 253.191ZM67.4889 288.597C61.8516 294.902 56.5018 301.647 51.5558 308.967L41.6126 302.249C46.8934 294.433 52.5845 287.264 58.5432 280.599L67.4889 288.597ZM38.7419 331.319C36.9191 335.127 35.1968 339.08 33.5863 343.189L22.4137 338.811C24.1311 334.429 25.9698 330.208 27.918 326.138L38.7419 331.319Z"/>
-               </svg>
-            </div> -->
          </div>
       </div>
    </div>
@@ -79,18 +110,66 @@
          annonce trouvées
       </div>
       <div class="ads-container">
-         {#each ads as ad}
+         {#each paginatedAds as ad}
             <AdCard {ad} />
          {/each}
       </div>
+      <div class="pagination fontSecondary">
+         <button class="btnPage fontPrimary" on:click={() => { prevPage(); }} disabled={currentPage === 1}>
+            <lord-icon
+               class="animated-arrow animated-arrow-left"
+               src="https://cdn.lordicon.com/vduvxizq.json"
+               colors="primary:white"
+               style="background-color: none;"
+               trigger="hover">
+            </lord-icon>
+         </button>
+         <span>Page <span class="text-primary">{currentPage}</span> sur {totalPages}</span>
+         <button id="nextPageBtn" class="btnPage fs-3 fontPrimary" on:click={() => { nextPage();}} disabled={currentPage === totalPages}>
+            <lord-icon
+               class="animated-arrow"
+               src="https://cdn.lordicon.com/vduvxizq.json"
+               colors="primary:white"
+               style="background-color: none;"
+               trigger="hover">
+            </lord-icon>
+         </button>      
+      </div>
    </section>
+   <img class="image_bottom" src="../svg/bottom_recherche.svg">
 </main>
 
-
-<!-- <ColorGenerator /> -->
-
 <style>
-  .header {
+   html, body {
+   height: 100%;
+   margin: 0;
+   padding: 0;
+}
+
+body {
+   display: flex;
+   flex-direction: column;
+}
+
+main {
+   flex: 1;
+   position: relative;
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between; /* This ensures that the footer image is pushed to the bottom */
+}
+
+#svg-bg {
+   transition: transform 2s ease;
+}
+
+.bg-main {
+   position: relative;
+   overflow: hidden;
+   margin: 0;
+}
+
+.header {
    margin-top: 0;
    position: relative;
    height: 50vh;
@@ -118,18 +197,37 @@
    z-index: -1;
 }
 
+.image_bg_recherche_ads {
+   margin-top: 20%;
+   width: 120%;
+   height: 100%;
+   object-fit: cover;
+   position: absolute;
+   top: -10%;
+   left: -10%;
+   z-index: -2;
+   transition: transform 0.5s ease;
+}
+
+.image_bottom {
+   width: 100%;
+   z-index: -1;
+}
+
 .textIntro {
    margin-top: 90px;
    font-size: 3rem;
    font-weight: 700;
    text-align: center;
 }
-.textAnnonces{
+
+.textAnnonces {
    margin-top: 50px;
    font-size: 3rem;
    font-weight: 700;
    text-align: center;
 }
+
 .simpl-text {
    font-size: 3rem;
    font-weight: 700;
@@ -148,23 +246,10 @@
    align-items: center;
 }
 
-.arrow {
-   position: absolute;
-   bottom: -20%;
-   left: 50%;
-   transform: translateX(-50%);
-   z-index: -1;
-}
-
-.arrowSVG {
-   width: 250px;
-   height: 250px;
-   transform: rotate(20deg);
-}
-
 .section-annonces {
-  padding: 0 80px;
-
+   padding: 0 80px;
+   position: relative;
+   flex: 1;
 }
 
 .ads-container {
@@ -172,6 +257,53 @@
    flex-wrap: wrap;
    justify-content: center;
    margin-top: 10px;
+}
+
+.pagination {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   gap: 10px;
+   margin-top: 20px;
+}
+
+.pagination button {
+   appearance: none;
+   border: 0;
+   border-radius: 12px;
+   background-color: #21A5C3;
+   color: white;
+   padding: 0px 20px;
+   font-size: 1rem;
+   cursor: pointer;
+   box-shadow: 0 7px 4px 0 rgba(0, 0, 0, 0.29);
+   transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+   background-color: #4FE1F9;
+}
+
+.pagination button:disabled {
+   background-color: #0D434F;
+   cursor: not-allowed;
+}
+
+.pagination button:disabled:hover {
+   background-color: #0D434F;
+}
+
+.btnPage {
+   display: flex;
+}
+
+.pagination span {
+   font-size: 1.2rem;
+   font-weight: 600;
+}
+
+.animated-arrow-left {
+   transform: rotate(180deg);
 }
 
 </style>

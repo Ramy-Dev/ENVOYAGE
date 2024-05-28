@@ -45,6 +45,7 @@
   function handleTagSelected(event) {
     // Update selected tags array
     selectedTags = [...selectedTags, event.detail];
+    console.log(selectedTags);
   }
   onMount(() => {
     const inputs = document.querySelectorAll('.custom-placeholder');
@@ -147,22 +148,25 @@
 
   <!-- {#if showPanel}
     <div bind:this={tagPanelContainer} use:clickOutside={{ enabled: showPanel, callback: () => showPanel = false }}> -->
-      <TagPanel tags={tags} searchCriteria={searchCriteria} visible={showPanel} />
-
+      <TagPanel tags={tags} searchCriteria={critères} visible={showPanel} />
+     
+     
+     
+      {#if critères}
+      <button class="clear-button" on:click={() => clearInput(input5, value => critères = value)}>
+        <lord-icon
+            class="animated-cross"
+            src="https://cdn.lordicon.com/zxvuvcnc.json"
+            colors="primary:#4FE1F9"
+            style="background-color: white;"
+            trigger="hover">
+        </lord-icon>
+      </button>
+      {/if}
     <!-- </div>
   {/if} -->
 
-  {#if critères}
-  <button class="clear-button" on:click={() => clearInput(input5, value => critères = value)}>
-    <lord-icon
-        class="animated-cross"
-        src="https://cdn.lordicon.com/zxvuvcnc.json"
-        colors="primary:#4FE1F9"
-        style="background-color: white;"
-        trigger="hover">
-    </lord-icon>
-  </button>
-  {/if}
+
 
   <!-- <div class="input-container container5">
     <label class="custom-label">Conditions<br></label>
