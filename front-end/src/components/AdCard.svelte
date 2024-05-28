@@ -1,12 +1,21 @@
 <script>
   export let ad;
+
+  // Function to get a random color from the given list
+  function getRandomColor() {
+    const colors = ['#21A5C3', '#1A849C', '#0D434F', '#4FE1F9'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  // Variable to store the random color
+  let randomColor = getRandomColor();
 </script>
 
 <div class="ad-card">
   <div class="col">
     <div href="" class="card h-100 redirection-div card-shadow-gray">
       <div class="card-body">
-        <div class="colorTopAnnonce mb-3"></div>
+        <div class="colorTopAnnonce mb-3" style="background-color: {randomColor};"></div>
         <div class="topCard">
           <img
             src="../svg/photoProfile.svg"
@@ -33,7 +42,7 @@
             <!-- svelte-ignore illegal-attribute-character -->
             <path
               d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z"
-              style="fill-rule: nonzero; fill: #4FE1F9;"
+              style="fill-rule: nonzero; fill: {randomColor};"
               transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)"
               bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb"
             />
@@ -60,7 +69,7 @@
   .card {
     border: none;
     border-radius: 40px;
-    min-width: 450px; /* Ajuster la largeur de vos cartes */
+    min-width: 400px; /* Adjust the width of your cards */
     pointer-events: auto;
   }
 
@@ -73,7 +82,9 @@
   .cardAnnonce:hover {
     box-shadow: 2px 2px 3px 2px #25201f4d;
   }
-
+  .card-body {
+    padding: 16px 28px;
+  }
   .card-footer {
     width: 100%;
     border-radius: 0 0 40px 40px;
@@ -85,7 +96,7 @@
     flex-direction: row;
     padding: 0 50px 30px 50px;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
   }
 
   .colorTopAnnonce {
@@ -96,7 +107,6 @@
     width: 100%;
     height: 40px;
     border-radius: 30px;
-    background-color: var(--couleur-principale);
   }
 
   .ad-card {

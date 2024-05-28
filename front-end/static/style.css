@@ -191,7 +191,6 @@ font-family: "Poppins", sans-serif;
   width: 100%;
   height: 40px;
   border-radius: 30px;
-  background-color: var(--couleur-principale);
 }
 .cardAnnonce {
   box-shadow: 0 1px 3px 0 #25201f4d;

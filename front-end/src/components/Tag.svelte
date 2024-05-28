@@ -41,7 +41,7 @@
  
     border: 3px solid transparent !important;
     box-shadow: 0 3px 3px 1px rgba(0, 0, 0, 0.25) !important;
-    background-color: #5a02d4 !important; /* Couleur de fond par défaut */
+    background-color: #21A5C3 !important; /* Couleur de fond par défaut */
     color: white !important;
   }
 
@@ -49,8 +49,8 @@
     padding: 1.5rem 2rem;
     border-radius: 20px;
     text-align: center; /* Centrer le contenu */
-    box-shadow: 0px 5px 0px 0px #5a02d4;
-    border: 3px solid #5a02d4;
+    box-shadow: 0px 5px 0px 0px #21A5C3;
+    border: 3px solid #21A5C3;
 
   }
 </style>
