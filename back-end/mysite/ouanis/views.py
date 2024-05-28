@@ -1,21 +1,24 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.authtoken.models import Token
+
 from .models import (
-    Expediteur, DemandeDeCompteVoyageur, Voyageur, 
+    Utilisateur, DemandeDeCompteVoyageur, 
     Annonce, DemandeAnnonce, Tag, AnnonceTag, Palier, AnnoncePalier
 )
 from .serializers import (
-    ExpediteurSerializer, DemandeDeCompteVoyageurSerializer, 
-    VoyageurSerializer, AnnonceSerializer, DemandeAnnonceSerializer, 
+    UserRegistrationSerializer, UtilisateurSerializer, DemandeDeCompteVoyageurSerializer, 
+    AnnonceSerializer, DemandeAnnonceSerializer, 
     TagSerializer, AnnonceTagSerializer, PalierSerializer, AnnoncePalierSerializer
 )
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
+from rest_framework.authtoken.views import ObtainAuthToken
 
-class ExpediteurViewSet(viewsets.ModelViewSet):
-    queryset = Expediteur.objects.all()
-    serializer_class = ExpediteurSerializer
+class UtilisateurViewSet(viewsets.ModelViewSet):
+    queryset = Utilisateur.objects.all()
+    serializer_class = UtilisateurSerializer
     permission_classes = [IsAuthenticated]
 
 class DemandeDeCompteVoyageurViewSet(viewsets.ModelViewSet):
@@ -29,11 +32,6 @@ class DemandeDeCompteVoyageurViewSet(viewsets.ModelViewSet):
         demande.est_approuve = True
         demande.save()
         return Response({'status': 'Demande approuvée'}, status=status.HTTP_200_OK)
-
-class VoyageurViewSet(viewsets.ModelViewSet):
-    queryset = Voyageur.objects.all()
-    serializer_class = VoyageurSerializer
-    permission_classes = [IsAuthenticated]
 
 class AnnonceViewSet(viewsets.ModelViewSet):
     queryset = Annonce.objects.all()
@@ -80,3 +78,23 @@ class AnnoncePalierViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
 # Custom view to handle user registration
+class UserRegistrationView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = UserRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response({"user": serializer.data, "token": Token.objects.get(user=user).key}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# Custom view to handle user login
+class UserLoginView(ObtainAuthToken):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key, 'user_id': user.pk, 'email': user.email})

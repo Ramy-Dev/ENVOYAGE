@@ -1,66 +1,65 @@
 from rest_framework import serializers
 from .models import (
-    Expediteur, DemandeDeCompteVoyageur, Voyageur, 
-    Annonce, DemandeAnnonce, Tag, AnnonceTag, Palier, AnnoncePalier
+    Utilisateur, Annonce, DemandeAnnonce,
+    DemandeDeCompteVoyageur, Tag, AnnonceTag, Palier, AnnoncePalier
 )
+from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
 
-
-class ExpediteurSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Expediteur
-        fields = [
-            'id', 'username', 'first_name', 'last_name', 'email', 'numero_telephone', 
-            'adresse', 'date_de_naissance', 'profile_picture'
-        ]
-
-class DemandeDeCompteVoyageurSerializer(serializers.ModelSerializer):
-    expediteur = ExpediteurSerializer()
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    password2 = serializers.CharField(write_only=True, required=True)
 
     class Meta:
-        model = DemandeDeCompteVoyageur
-        fields = [
-            'expediteur', 'date_de_creation', 'numero_passeport', 
-            'photos_passeport', 'adresse', 'est_approuve'
-        ]
+        model = User
+        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name')
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError({"password": "Password fields didn't match."})
+        return attrs
 
     def create(self, validated_data):
-        expediteur_data = validated_data.pop('expediteur')
-        expediteur = Expediteur.objects.create(**expediteur_data)
-        demande = DemandeDeCompteVoyageur.objects.create(expediteur=expediteur, **validated_data)
-        return demande
+        validated_data.pop('password2')
+        user = User.objects.create_user(**validated_data)
+        Token.objects.create(user=user)  # Create a token for the new user
+        return user
 
-    def update(self, instance, validated_data):
-        expediteur_data = validated_data.pop('expediteur')
-        expediteur = instance.expediteur
+class UserLoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
 
-        instance.numero_passeport = validated_data.get('numero_passeport', instance.numero_passeport)
-        instance.photos_passeport = validated_data.get('photos_passeport', instance.photos_passeport)
-        instance.adresse = validated_data.get('adresse', instance.adresse)
-        instance.est_approuve = validated_data.get('est_approuve', instance.est_approuve)
-        instance.save()
+    def validate(self, attrs):
+        username = attrs.get('username')
+        password = attrs.get('password')
 
-        expediteur.username = expediteur_data.get('username', expediteur.username)
-        expediteur.first_name = expediteur_data.get('first_name', expediteur.first_name)
-        expediteur.last_name = expediteur_data.get('last_name', expediteur.last_name)
-        expediteur.email = expediteur_data.get('email', expediteur.email)
-        expediteur.numero_telephone = expediteur_data.get('numero_telephone', expediteur.numero_telephone)
-        expediteur.adresse = expediteur_data.get('adresse', expediteur.adresse)
-        expediteur.date_de_naissance = expediteur_data.get('date_de_naissance', expediteur.date_de_naissance)
-        expediteur.profile_picture = expediteur_data.get('profile_picture', expediteur.profile_picture)
-        expediteur.save()
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if not user:
+                raise serializers.ValidationError("Invalid credentials.")
+        else:
+            raise serializers.ValidationError("Both username and password are required.")
+        
+        attrs['user'] = user
+        return attrs
 
-        return instance
-
-class VoyageurSerializer(serializers.ModelSerializer):
+class UtilisateurSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Voyageur
+        model = Utilisateur
         fields = [
-            'id', 'username', 'first_name', 'last_name', 'email', 'numero_telephone', 
-            'adresse', 'date_de_naissance', 'profile_picture', 'numero_passeport', 'photos_passeport'
+            'id', 'username', 'password', 'first_name', 'last_name', 'email', 'numero_telephone', 
+            'adresse', 'date_de_naissance', 'profile_picture', 'numero_passeport', 'photos_passeport', 'is_voyageur'
         ]
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = Utilisateur.objects.create_user(**validated_data)
+        return user
 
 class AnnonceSerializer(serializers.ModelSerializer):
-    createur = VoyageurSerializer()
+    createur = UtilisateurSerializer()
 
     class Meta:
         model = Annonce
@@ -71,7 +70,7 @@ class AnnonceSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         createur_data = validated_data.pop('createur')
-        createur = Voyageur.objects.create(**createur_data)
+        createur = Utilisateur.objects.create(**createur_data)
         annonce = Annonce.objects.create(createur=createur, **validated_data)
         return annonce
 
@@ -99,45 +98,45 @@ class AnnonceSerializer(serializers.ModelSerializer):
         return instance
 
 class DemandeAnnonceSerializer(serializers.ModelSerializer):
-    expediteur = ExpediteurSerializer()
+    utilisateur = UtilisateurSerializer()
     annonce = AnnonceSerializer()
 
     class Meta:
         model = DemandeAnnonce
         fields = [
-            'id', 'expediteur', 'annonce', 'statut', 'date_creation', 'poids'
+            'id', 'utilisateur', 'annonce', 'statut', 'date_creation', 'poids'
         ]
 
     def create(self, validated_data):
-        expediteur_data = validated_data.pop('expediteur')
+        utilisateur_data = validated_data.pop('utilisateur')
         annonce_data = validated_data.pop('annonce')
 
-        expediteur = Expediteur.objects.create(**expediteur_data)
+        utilisateur = Utilisateur.objects.create(**utilisateur_data)
         annonce = Annonce.objects.create(**annonce_data)
 
-        demande_annonce = DemandeAnnonce.objects.create(expediteur=expediteur, annonce=annonce, **validated_data)
+        demande_annonce = DemandeAnnonce.objects.create(utilisateur=utilisateur, annonce=annonce, **validated_data)
         return demande_annonce
 
     def update(self, instance, validated_data):
-        expediteur_data = validated_data.pop('expediteur')
+        utilisateur_data = validated_data.pop('utilisateur')
         annonce_data = validated_data.pop('annonce')
 
-        expediteur = instance.expediteur
+        utilisateur = instance.utilisateur
         annonce = instance.annonce
 
         instance.statut = validated_data.get('statut', instance.statut)
         instance.poids = validated_data.get('poids', instance.poids)
         instance.save()
 
-        expediteur.username = expediteur_data.get('username', expediteur.username)
-        expediteur.first_name = expediteur_data.get('first_name', expediteur.first_name)
-        expediteur.last_name = expediteur_data.get('last_name', expediteur.last_name)
-        expediteur.email = expediteur_data.get('email', expediteur.email)
-        expediteur.numero_telephone = expediteur_data.get('numero_telephone', expediteur.numero_telephone)
-        expediteur.adresse = expediteur_data.get('adresse', expediteur.adresse)
-        expediteur.date_de_naissance = expediteur_data.get('date_de_naissance', expediteur.date_de_naissance)
-        expediteur.profile_picture = expediteur_data.get('profile_picture', expediteur.profile_picture)
-        expediteur.save()
+        utilisateur.username = utilisateur_data.get('username', utilisateur.username)
+        utilisateur.first_name = utilisateur_data.get('first_name', utilisateur.first_name)
+        utilisateur.last_name = utilisateur_data.get('last_name', utilisateur.last_name)
+        utilisateur.email = utilisateur_data.get('email', utilisateur.email)
+        utilisateur.numero_telephone = utilisateur_data.get('numero_telephone', utilisateur.numero_telephone)
+        utilisateur.adresse = utilisateur_data.get('adresse', utilisateur.adresse)
+        utilisateur.date_de_naissance = utilisateur_data.get('date_de_naissance', utilisateur.date_de_naissance)
+        utilisateur.profile_picture = utilisateur_data.get('profile_picture', utilisateur.profile_picture)
+        utilisateur.save()
 
         annonce.createur = annonce_data.get('createur', annonce.createur)
         annonce.created_at = annonce_data.get('created_at', annonce.created_at)
@@ -149,6 +148,44 @@ class DemandeAnnonceSerializer(serializers.ModelSerializer):
 
         return instance
 
+class DemandeDeCompteVoyageurSerializer(serializers.ModelSerializer):
+    utilisateur = UtilisateurSerializer()
+
+    class Meta:
+        model = DemandeDeCompteVoyageur
+        fields = [
+            'id', 'utilisateur', 'date_de_creation', 'numero_passeport', 
+            'photos_passeport', 'adresse', 'est_approuve'
+        ]
+
+    def create(self, validated_data):
+        utilisateur_data = validated_data.pop('utilisateur')
+        utilisateur = Utilisateur.objects.create(**utilisateur_data)
+        demande = DemandeDeCompteVoyageur.objects.create(utilisateur=utilisateur, **validated_data)
+        return demande
+
+    def update(self, instance, validated_data):
+        utilisateur_data = validated_data.pop('utilisateur')
+        utilisateur = instance.utilisateur
+
+        instance.numero_passeport = validated_data.get('numero_passeport', instance.numero_passeport)
+        instance.photos_passeport = validated_data.get('photos_passeport', instance.photos_passeport)
+        instance.adresse = validated_data.get('adresse', instance.adresse)
+        instance.est_approuve = validated_data.get('est_approuve', instance.est_approuve)
+        instance.save()
+
+        utilisateur.username = utilisateur_data.get('username', utilisateur.username)
+        utilisateur.first_name = utilisateur_data.get('first_name', utilisateur.first_name)
+        utilisateur.last_name = utilisateur_data.get('last_name', utilisateur.last_name)
+        utilisateur.email = utilisateur_data.get('email', utilisateur.email)
+        utilisateur.numero_telephone = utilisateur_data.get('numero_telephone', utilisateur.numero_telephone)
+        utilisateur.adresse = utilisateur_data.get('adresse', utilisateur.adresse)
+        utilisateur.date_de_naissance = utilisateur_data.get('date_de_naissance', utilisateur.date_de_naissance)
+        utilisateur.profile_picture = utilisateur_data.get('profile_picture', utilisateur.profile_picture)
+        utilisateur.save()
+
+        return instance
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
@@ -156,28 +193,28 @@ class TagSerializer(serializers.ModelSerializer):
 
 class AnnonceTagSerializer(serializers.ModelSerializer):
     annonce = AnnonceSerializer()
-    Tag = TagSerializer()
+    tag = TagSerializer()
 
     class Meta:
         model = AnnonceTag
-        fields = ['id', 'annonce', 'Tag']
+        fields = ['id', 'annonce', 'tag']
 
     def create(self, validated_data):
         annonce_data = validated_data.pop('annonce')
-        Tag_data = validated_data.pop('Tag')
+        tag_data = validated_data.pop('tag')
 
         annonce = Annonce.objects.create(**annonce_data)
-        Tag = Tag.objects.create(**Tag_data)
+        tag = Tag.objects.create(**tag_data)
 
-        annonce_Tag = AnnonceTag.objects.create(annonce=annonce, Tag=Tag, **validated_data)
-        return annonce_Tag
+        annonce_tag = AnnonceTag.objects.create(annonce=annonce, tag=tag, **validated_data)
+        return annonce_tag
 
     def update(self, instance, validated_data):
         annonce_data = validated_data.pop('annonce')
-        Tag_data = validated_data.pop('Tag')
+        tag_data = validated_data.pop('tag')
 
         annonce = instance.annonce
-        Tag = instance.Tag
+        tag = instance.tag
 
         instance.save()
 
@@ -189,8 +226,8 @@ class AnnonceTagSerializer(serializers.ModelSerializer):
         annonce.poids_max = annonce_data.get('poids_max', annonce.poids_max)
         annonce.save()
 
-        Tag.nom = Tag_data.get('nom', Tag.nom)
-        Tag.save()
+        tag.nom = tag_data.get('nom', tag.nom)
+        tag.save()
 
         return instance
 
