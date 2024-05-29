@@ -48,7 +48,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-
+AUTH_USER_MODEL = 'ouanis.Utilisateur'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
