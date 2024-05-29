@@ -2,7 +2,7 @@
 </script>
 
 <main>
-  <nav class="navbar navbar-expand-lg bg-body-tertiary fontPrimary">
+  <nav class="navbar fixed navbar-expand-lg bg-body-tertiary fontPrimary">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">Envoyage</a>
       <button
@@ -63,7 +63,6 @@
 <style>
   nav {
     z-index: 9999;
-    position: fixed;
     width: 100%;
   }
   .SignUp {

@@ -1,17 +1,44 @@
 <script>
-  const toggle = () => {
-    let tr = document.getElementById("tr");
-    let sn = document.getElementById("sn");
+  let message = "";
 
-    tr.classList.toggle("hidden");
-    sn.classList.toggle("hidden");
+  async function handleSubmit(event) {
+    event.preventDefault(); // Prevent the default form submission
 
-    // rah ndir toggle bin class hidden ila kant nhiha il mkantch zidha
-  };
+    // Get form data
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/register/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',        },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        message = "Registration successful!";
+        console.log('Success:', result);
+        // Handle success (e.g., show a success message, clear form, etc.)
+      } else {
+        const error = await response.json();
+        message = "Registration failed!";
+        console.error('Error:', error);
+        // Handle errors (e.g., show error messages)
+      }
+    } catch (error) {
+      message = "An error occurred!";
+      console.error('Error:', error);
+      // Handle errors (e.g., show error messages)
+    }
+  }
+
 </script>
 
 <main>
   <div class="bd">
+    <b>{message}</b>
     <div id="sn" class="singup sn bg-primary m-auto">
       <div class="card-shadow">
         <div class="container">
@@ -20,21 +47,34 @@
               <div class="d-flex flex-row">
                 <button
                   class="sender-btn bg-primary border-0 text-white fs-4 fw-semibold py-3 w-50 m-0 is-selected"
-                  >Sign up as Sender</button
                 >
+                  Sign up as Sender
+                </button>
                 <button
                   type="button"
-                  on:click={toggle}
                   class="travler-btn bg-white border-0 text-primary fs-4 fw-semibold py-3 w-50 m-0"
-                  style="border: 1px solid #fff;">Traveler</button
+                  style="border: 1px solid #fff;"
                 >
+                  Traveler
+                </button>
               </div>
             </div>
           </div>
         </div>
-        <form class="box has-background-primary">
+
+        <form id="registrationForm" class="box has-background-primary" on:submit={handleSubmit}>
           <div class="row">
             <div class="col-md-6">
+              <div class="form-group">
+                <label for="Sender-username">User Name :</label>
+                <input
+                  type="text"
+                  class="snl form-control"
+                  id="Sender-username"
+                  required
+                  name="username"
+                />
+              </div>
               <div class="form-group">
                 <label for="Sender-nom">Nom :</label>
                 <input
@@ -42,6 +82,7 @@
                   class="snl form-control"
                   id="Sender-nom"
                   required
+                  name="last_name"
                 />
               </div>
             </div>
@@ -53,6 +94,7 @@
                   class="snl form-control"
                   id="Sender-prenom"
                   required
+                  name="first_name"
                 />
               </div>
             </div>
@@ -64,6 +106,7 @@
               class="snl form-control"
               id="Sender-email"
               required
+              name="email"
             />
           </div>
           <div class="row">
@@ -75,19 +118,19 @@
                   class="snl form-control"
                   id="Sender-password"
                   required
+                  name="password"
                 />
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <label for="Sender-ConfirmPassword"
-                  >Confirmer le mot de passe :</label
-                >
+                <label for="Sender-ConfirmPassword">Confirmer le mot de passe :</label>
                 <input
                   type="password"
                   class="snl form-control"
                   id="Sender-ConfirmPassword"
                   required
+                  name="password2"
                 />
               </div>
             </div>
@@ -95,100 +138,11 @@
           <div class="d-flex justify-content-center">
             <button
               type="submit"
+              id="submitSignupSender"
               class="submitSignupSender border-0 bg-white text-primary fw-bolder mt-5"
-              >sign up</button
             >
-          </div>
-        </form>
-      </div>
-    </div>
-    <div id="tr" class="singup hidden tr m-auto">
-      <div class="card-shadow">
-        <div class="container">
-          <div class="row">
-            <div class="col p-0">
-              <div class="d-flex flex-row">
-                <button
-                  type="button"
-                  on:click={toggle}
-                  class="sender-btn bg-primary border-0 text-white fs-4 fw-semibold py-3 w-50 m-0 is-selected"
-                  >Sender</button
-                >
-                <button
-                  class="travler-btn bg-white border-0 text-primary fs-4 fw-semibold py-3 w-50 m-0"
-                  style="border: 1px solid #fff;">Sign up as Traveler</button
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-        <form class="box">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="nom">Nom :</label>
-                <input type="text" class="snl form-control" id="nom" required />
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="prenom">Prénom :</label>
-                <input type="text" class="snl form-control" id="prenom" required />
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="adresse">Adresse :</label>
-                <input type="text" class="snl form-control" id="adresse" required />
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="ddn">Date de naissance :</label>
-                <input type="date" class="snl form-control" id="ddn" required />
-              </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="passport">Passport :</label><br />
-            <input type="file" class="snl form-control" id="passport" required />
-          </div>
-          <div class="form-group">
-            <label for="email">Email :</label>
-            <input type="email" class="snl form-control" id="email" required />
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="password">Mot de passe :</label>
-                <input
-                  type="password"
-                  class="snl form-control"
-                  id="password"
-                  required
-                />
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="ConfirmPassword">Confirmer le mot de passe :</label>
-                <input
-                  type="password"
-                  class="snl form-control"
-                  id="ConfirmPassword"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-          <div class="d-flex justify-content-center">
-            <button
-              type="submit"
-              class="submitSignupTravler border-0 bg-primary text-white fw-bolder mt-5"
-              >Sign in</button
-            >
+              Sign up
+            </button>
           </div>
         </form>
       </div>
@@ -212,14 +166,8 @@
   .sn label {
     color: white;
   }
-  .tr label {
-    color: black;
-  }
   .sn input {
     background-color: white;
-  }
-  .tr input {
-    background-color: #f0f0f0;
   }
   .sender-btn {
     border-top-left-radius: 20px;
@@ -228,10 +176,6 @@
     border-top-right-radius: 20px;
   }
   .submitSignupSender {
-    border-radius: 20px;
-    padding: 7px 50px;
-  }
-  .submitSignupTravler {
     border-radius: 20px;
     padding: 7px 50px;
   }
