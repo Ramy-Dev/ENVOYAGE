@@ -62,6 +62,30 @@ function getUser() {
     return JSON.parse(localStorage.getItem("user"));
 }
 
+function logout() {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("user");
+}
+async function fetchUserByUsername(username) {
+   try {
+      const response = await fetch(`http://127.0.0.1:8000/users/?username=${username}`, {
+         headers: {
+            "Authorization": `Token ${getToken()}`
+         }
+      });
+      if (response.ok) {
+         const user = await response.json();
+         return user;
+      } else {
+         console.error("Failed to fetch user by username.");
+         return null;
+      }
+   } catch (error) {
+      console.error("Error fetching user by username:", error);
+      return null;
+   }
+}
+
 </script>
 
 <main>

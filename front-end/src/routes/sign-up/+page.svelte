@@ -19,6 +19,7 @@
       if (response.ok) {
         const result = await response.json();
         message = "Registration successful!";
+        localStorage.setItem("authToken", result.token);
         console.log('Success:', result);
         // Handle success (e.g., show a success message, clear form, etc.)
       } else {

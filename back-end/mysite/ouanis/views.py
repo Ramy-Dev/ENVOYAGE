@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -20,6 +21,12 @@ class UtilisateurViewSet(viewsets.ModelViewSet):
     queryset = Utilisateur.objects.all()
     serializer_class = UtilisateurSerializer
    # permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        username = self.request.query_params.get('username', None)
+        if username is not None:
+            user = get_object_or_404(Utilisateur, username=username)
+            return Utilisateur.objects.filter(username=user.username)
+        return Utilisateur.objects.all()
 
 class DemandeDeCompteVoyageurViewSet(viewsets.ModelViewSet):
     queryset = DemandeDeCompteVoyageur.objects.all()
