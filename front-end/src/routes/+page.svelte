@@ -257,7 +257,10 @@
   </header>
   <section>
     <div class="about">
-      <div class="aboutTitle text-primary fs-1 fw-bold fontSecondary" data-aos="fade-down">
+      <div
+        class="aboutTitle text-primary fs-1 fw-bold fontSecondary"
+        data-aos="fade-down"
+      >
         Envoyage ?
       </div>
       <div class="aboutSectionsContainer">
@@ -766,23 +769,35 @@
             </div>
           </div>
         </div>
-        
       </div>
       <div class="arrow arrowStep3Step4" data-aos="fade-down">
-        <svg 
-        class="arrowSVG"
-        fill="#1C1D20" height="347" viewBox="0 0 198 347" xmlns="http://www.w3.org/2000/svg">
-          <path d="M191.36 137.224L197.302 138.06L191.36 137.224ZM30.402 346.498C27.3654 347.825 23.8283 346.439 22.5017 343.402L0.883889 293.918C-0.44269 290.881 0.943544 287.344 3.98013 286.018C7.01671 284.691 10.5538 286.077 11.8803 289.114L31.0962 333.1L75.082 313.884C78.1186 312.557 81.6556 313.944 82.9822 316.98C84.3088 320.017 82.9226 323.554 79.886 324.88L30.402 346.498ZM54.2748 0.140731C56.056 3.42689 58.2611 6.59445 60.8525 9.6692L51.6767 17.4025C48.6316 13.7894 45.9442 9.95333 43.725 5.85927L54.2748 0.140731ZM78.7967 25.8217C85.2231 30.4903 92.3572 34.9216 99.9037 39.2694L93.9132 49.6671C86.1706 45.2064 78.6406 40.5405 71.7438 35.5304L78.7967 25.8217ZM122.232 51.5547C129.839 55.6513 137.517 59.7965 144.862 64.0812L138.816 74.4466C131.674 70.2806 124.171 66.2285 116.542 62.1201L122.232 51.5547ZM166.921 78.4814C174.47 84.1764 181.242 90.4144 186.514 97.4448L176.914 104.644C172.53 98.7987 166.68 93.3313 159.694 88.0609L166.921 78.4814ZM197.485 123.684C198.049 128.278 198.005 133.066 197.302 138.06L185.419 136.388C185.983 132.383 186.005 128.65 185.575 125.147L197.485 123.684ZM197.302 138.06C196.626 142.863 195.693 147.461 194.524 151.876L182.924 148.803C183.969 144.858 184.808 140.727 185.419 136.388L197.302 138.06ZM183.935 177.922C179.299 186.156 173.757 193.617 167.596 200.559L158.621 192.594C164.319 186.174 169.331 179.401 173.479 172.034L183.935 177.922ZM147.942 219.734C141.234 225.558 134.171 231.182 127.004 236.78L119.618 227.323C126.745 221.756 133.609 216.286 140.074 210.673L147.942 219.734ZM106.025 253.191C99.2238 258.623 92.4752 264.221 85.9115 270.17L77.8534 261.278C84.6674 255.103 91.6246 249.334 98.5369 243.814L106.025 253.191ZM67.4889 288.597C61.8516 294.902 56.5018 301.647 51.5558 308.967L41.6126 302.249C46.8934 294.433 52.5845 287.264 58.5432 280.599L67.4889 288.597ZM38.7419 331.319C36.9191 335.127 35.1968 339.08 33.5863 343.189L22.4137 338.811C24.1311 334.429 25.9698 330.208 27.918 326.138L38.7419 331.319Z"/>
-          </svg>
+        <svg
+          class="arrowSVG"
+          fill="#1C1D20"
+          height="347"
+          viewBox="0 0 198 347"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M191.36 137.224L197.302 138.06L191.36 137.224ZM30.402 346.498C27.3654 347.825 23.8283 346.439 22.5017 343.402L0.883889 293.918C-0.44269 290.881 0.943544 287.344 3.98013 286.018C7.01671 284.691 10.5538 286.077 11.8803 289.114L31.0962 333.1L75.082 313.884C78.1186 312.557 81.6556 313.944 82.9822 316.98C84.3088 320.017 82.9226 323.554 79.886 324.88L30.402 346.498ZM54.2748 0.140731C56.056 3.42689 58.2611 6.59445 60.8525 9.6692L51.6767 17.4025C48.6316 13.7894 45.9442 9.95333 43.725 5.85927L54.2748 0.140731ZM78.7967 25.8217C85.2231 30.4903 92.3572 34.9216 99.9037 39.2694L93.9132 49.6671C86.1706 45.2064 78.6406 40.5405 71.7438 35.5304L78.7967 25.8217ZM122.232 51.5547C129.839 55.6513 137.517 59.7965 144.862 64.0812L138.816 74.4466C131.674 70.2806 124.171 66.2285 116.542 62.1201L122.232 51.5547ZM166.921 78.4814C174.47 84.1764 181.242 90.4144 186.514 97.4448L176.914 104.644C172.53 98.7987 166.68 93.3313 159.694 88.0609L166.921 78.4814ZM197.485 123.684C198.049 128.278 198.005 133.066 197.302 138.06L185.419 136.388C185.983 132.383 186.005 128.65 185.575 125.147L197.485 123.684ZM197.302 138.06C196.626 142.863 195.693 147.461 194.524 151.876L182.924 148.803C183.969 144.858 184.808 140.727 185.419 136.388L197.302 138.06ZM183.935 177.922C179.299 186.156 173.757 193.617 167.596 200.559L158.621 192.594C164.319 186.174 169.331 179.401 173.479 172.034L183.935 177.922ZM147.942 219.734C141.234 225.558 134.171 231.182 127.004 236.78L119.618 227.323C126.745 221.756 133.609 216.286 140.074 210.673L147.942 219.734ZM106.025 253.191C99.2238 258.623 92.4752 264.221 85.9115 270.17L77.8534 261.278C84.6674 255.103 91.6246 249.334 98.5369 243.814L106.025 253.191ZM67.4889 288.597C61.8516 294.902 56.5018 301.647 51.5558 308.967L41.6126 302.249C46.8934 294.433 52.5845 287.264 58.5432 280.599L67.4889 288.597ZM38.7419 331.319C36.9191 335.127 35.1968 339.08 33.5863 343.189L22.4137 338.811C24.1311 334.429 25.9698 330.208 27.918 326.138L38.7419 331.319Z"
+          />
+        </svg>
       </div>
       <div class="steps stepsPart3">
-        <img class="backgroundImageStep03" src="../svg/background3-4.svg" alt="" />
+        <img
+          class="backgroundImageStep03"
+          src="../svg/background3-4.svg"
+          alt=""
+        />
 
-        <div class="headerStep fs-1 text-primary fontSecondary" data-aos="fade-down" data-aos-delay="200">
+        <div
+          class="headerStep fs-1 text-primary fontSecondary"
+          data-aos="fade-down"
+          data-aos-delay="200"
+        >
           Où alors ...
         </div>
         <div class="step04 step">
-         
           <div class="stepTop step04Top">
             <div class="stepContent">
               <div class="stepTitle text-basic fw-bold fs-2 fontSecondary">
@@ -808,8 +823,9 @@
                       expéditeur
                     </p>
                   </div>
-                  <div class="" data-aos="zoom-out-down"
-                  data-aos-delay="1550">!</div>
+                  <div class="" data-aos="zoom-out-down" data-aos-delay="1550">
+                    !
+                  </div>
                 </div>
               </div>
               <div
@@ -823,7 +839,7 @@
                 excepturi laudantium nesciunt.
               </div>
             </div>
-            
+
             <!-- <div
               class="parentHexaSVGBlue"
               data-aos="fade-left"
@@ -849,10 +865,12 @@
       </div>
       <div class="faq bg-basic">
         <div class="faqContent fs-1">
-          <div class="faqText fontSecondary text-white" data-aos="zoom-out-down" data-aos-delay="350">
-            <div class="part1TextFaq text-light">
-              Questions
-            </div>
+          <div
+            class="faqText fontSecondary text-white"
+            data-aos="zoom-out-down"
+            data-aos-delay="350"
+          >
+            <div class="part1TextFaq text-light">Questions</div>
             fréquemment posées
           </div>
         </div>
@@ -860,57 +878,51 @@
           <div class="wrapper faqWrapper" data-aos="fade" data-aos-delay="650">
             <!-- <i id="left" class="fa-solid fa-angle-left text-darkSecondary">&lt</i> -->
             <div class="carousel faqcarousel">
-              <div class="card col ">
+              <div class="card col">
                 <!-- <img src="../svg/effect_faq.svg" alt=""> -->
                 <div class="cardContent">
-                  <div class="cardNumber text-white fontSecondary">
-                    #1
-                  </div>
+                  <div class="cardNumber text-white fontSecondary">#1</div>
                   <div class="cardFaq">
-                  <div class="cardTitle fs-2 text-light fontSecondary">
-                    lorem ipsum dolor sit amet
-                  </div>
-                  <div class="cardText fs-4 text-basic fontSecondary">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Fugit officia, quaerat commodi culpa id fugiat div laudant
+                    <div class="cardTitle fs-2 text-light fontSecondary">
+                      lorem ipsum dolor sit amet
+                    </div>
+                    <div class="cardText fs-4 text-basic fontSecondary">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Fugit officia, quaerat commodi culpa id fugiat div laudant
+                    </div>
                   </div>
                 </div>
-                </div>
-              </div>   
-              <div class="card col ">
+              </div>
+              <div class="card col">
                 <!-- <img src="../svg/effect_faq.svg" alt=""> -->
                 <div class="cardContent">
-                  <div class="cardNumber text-white fontSecondary">
-                    #2
-                  </div>
+                  <div class="cardNumber text-white fontSecondary">#2</div>
                   <div class="cardFaq">
-                  <div class="cardTitle fs-2 text-light fontSecondary">
-                    lorem ipsum dolor sit amet
-                  </div>
-                  <div class="cardText fs-4 text-basic fontSecondary">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Fugit officia, quaerat commodi culpa id fugiat div laudant
+                    <div class="cardTitle fs-2 text-light fontSecondary">
+                      lorem ipsum dolor sit amet
+                    </div>
+                    <div class="cardText fs-4 text-basic fontSecondary">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Fugit officia, quaerat commodi culpa id fugiat div laudant
+                    </div>
                   </div>
                 </div>
-                </div>
-              </div> 
-              <div class="card col ">
+              </div>
+              <div class="card col">
                 <!-- <img src="../svg/effect_faq.svg" alt=""> -->
                 <div class="cardContent">
-                  <div class="cardNumber text-white fontSecondary">
-                    #3
-                  </div>
+                  <div class="cardNumber text-white fontSecondary">#3</div>
                   <div class="cardFaq">
-                  <div class="cardTitle fs-2 text-light fontSecondary">
-                    lorem ipsum dolor sit amet
-                  </div>
-                  <div class="cardText fs-4 text-basic fontSecondary">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Fugit officia, quaerat commodi culpa id fugiat div laudant
+                    <div class="cardTitle fs-2 text-light fontSecondary">
+                      lorem ipsum dolor sit amet
+                    </div>
+                    <div class="cardText fs-4 text-basic fontSecondary">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Fugit officia, quaerat commodi culpa id fugiat div laudant
+                    </div>
                   </div>
                 </div>
-                </div>
-              </div> 
+              </div>
             </div>
             <!-- <i id="right" class="fa-solid fa-angle-right text-darkSecondary">&gt</i> -->
           </div>
@@ -922,7 +934,6 @@
 </main>
 
 <style>
-
   main {
     overflow-x: hidden;
   }
@@ -1107,7 +1118,6 @@
     padding: 150px 0 100px 0;
   }
   .stepsPart1 {
-    
   }
   .step {
     display: flex;
@@ -1335,7 +1345,6 @@
   .backgroundImageStep03 {
     position: absolute;
     z-index: -1;
-
   }
   .parentHexaSVGBlue {
     position: absolute;
@@ -1361,7 +1370,6 @@
     opacity: 30%;
   }
   .step03 .stepContent {
-    
   }
   .step03 .stepText {
     width: 60%;
@@ -1369,24 +1377,24 @@
   .step03 .stepTitle .text .reverseHighlight {
     background-color: #1a849c;
   }
-  
-  /* Step 04 */ 
-   
+
+  /* Step 04 */
+
   .arrowStep3Step4 {
     top: 63%;
     left: 40%;
   }
   .arrowStep3Step4 svg {
-    transform: rotate(-10deg) scale(-1,1);
+    transform: rotate(-10deg) scale(-1, 1);
   }
-  .stepsPart3{
+  .stepsPart3 {
     padding: 200px 0;
   }
   .step04 {
-    padding:  0;
+    padding: 0;
   }
   .step04 .stepText {
-   width: 60%;
+    width: 60%;
   }
   .step04Top {
     display: flex;
@@ -1399,7 +1407,6 @@
   }
 
   /* faq */
-
 
   .faq {
     width: 100%;
@@ -1428,16 +1435,15 @@
     align-items: flex-end;
     gap: 20px;
     margin: 0 auto;
-    width:90%;
+    width: 90%;
     overflow-x: auto;
   }
   .faqWrapper .col {
     padding: 40px 40px 80px 40px;
     background-image: url(../svg/effect_faq.svg);
-    background-color: #3F3F40;
+    background-color: #3f3f40;
     border: 6px solid #4fe1f9;
     width: 110%;
-    ;
   }
   .faqWrapper .cardNumber {
     font-size: 5rem;

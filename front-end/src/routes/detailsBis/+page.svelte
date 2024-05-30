@@ -1,9 +1,8 @@
 <script>
-  import TagRecherche from '../../components/Recherche/TagRecherche.svelte'
-  import { conditions } from '../../lib/tagList.js'
+  import TagRecherche from "../../components/Recherche/TagRecherche.svelte";
+  import { conditions } from "../../lib/tagList.js";
 
   let tags = conditions; // replace this with your actual tags
-
 </script>
 
 <main class="fontSecondary">
@@ -78,29 +77,39 @@
       <!--  Bottom Annonce -->
 
       <div class="bottomAnnonce">
+        <img class="planeImage" src="../svg/plane.svg" alt="plane" />
         <div class="prixFinal">
           <label class="text-basic" for="poids">Prix final :</label>
-            <div class="displayPrix text-white">25€</div>
+          <div class="displayPrix text-light">25€</div>
         </div>
-        <div class="reserveButton"></div>
+        <div class="reserveButton">
+          <button>reserve</button>
+        </div>
       </div>
     </div>
   </div>
 </main>
 
 <style>
-  main {
-    position: relative;
-    height: 200vh;
+main {
+   flex: 1;
+   position: relative;
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between; /* This ensures that the footer image is pushed to the bottom */
+   height: 200vh;
+   width: 100vw;
+  }
+  label {
+    font-size: 1.3rem;
   }
 
   .image_bg_recherche_ads {
-    width: 120%;
-    height: 100%;
+    width: 100%;
+    height: 120%;
     object-fit: cover;
     position: absolute;
     top: -10%;
-    left: -10%;
     z-index: -2;
     transition: transform 0.5s ease;
   }
@@ -176,11 +185,7 @@
     justify-content: space-between;
     align-items: flex-start;
   }
-  .mainAnnonce label {
-    font-size: 1.3rem;
-  }
   /* Left Main */
-
 
   .leftMain {
     display: flex;
@@ -200,6 +205,7 @@
   .inputPoids input {
     flex: 1;
     padding: 0.75rem 1rem;
+    margin-left: 20px;
     width: 300px;
     font-size: 1.1rem;
     border-radius: 16px;
@@ -229,6 +235,7 @@
   }
   .displayTarif {
     padding: 1.75rem 1rem;
+    margin-left: 20px;
     width: 300px;
     font-size: 1.5rem;
     border-radius: 16px;
@@ -256,7 +263,6 @@
     justify-content: flex-start;
     align-items: flex-start;
     gap: 25px;
-  
   }
   .displayConditions {
     display: flex;
@@ -270,7 +276,46 @@
     border-radius: 20px;
   }
 
+  .bottomAnnonce {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: end;
+  }
+  .prixFinal {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 25px;
+  }
+  .displayPrix {
+    font-size: 2.5rem;
+    padding: 0.75rem 3rem;
+    margin-left: 20px;
+    border: 4px dashed #4fe1f9;
+    border-radius: 20px;
+  }
+  button {
+    flex: 1;
 
-
-  
+    padding: 0.75rem 3rem;
+    font-size: 1.3rem;
+    border-radius: 16px;
+    text-align: center; /* Centrer le contenu */
+    border: 3px solid #4fe1f9;
+    background-color: #4fe1f9;
+    color: white;
+  }
+  button:hover {
+    background-color: #55e3f8;
+    border: 3px solid #55e3f8;
+  }
+  .planeImage {
+    width: 12%;
+    position: absolute;
+    top: -70%;
+    left: 30%;
+  }
 </style>

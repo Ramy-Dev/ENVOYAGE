@@ -1,4 +1,4 @@
-<footer id="contact" class="footer pt-6 bg-primary fontPrimary">
+<footer id="contact" class="footer pt-6 bg-primary fontPrimary sticky-footer">
   <div class="row">
     <div class="md-6">
       <ul class="menu">
@@ -42,12 +42,18 @@
   </div>
 </footer>
 
-<style>
-  .col {
-    text-align: center;
-  }
-  .link-mention {
-    color: #4FE1F9;
-    text-decoration: none;
-  }
+<style> 
+ .col {
+  text-align: center;
+}
+.link-mention {
+  color: #4FE1F9;
+  text-decoration: none;
+}
+.sticky-footer {
+  position: relative;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}
 </style>
