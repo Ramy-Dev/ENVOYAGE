@@ -31,13 +31,6 @@
       </div>
     </div>
       <div class="containerInputs">
-        <p class="textPreInput">Quantité</p>
-      <div class="inputGroup">
-        <input bind:value={quantite} placeholder="nombre" type="number" />
-        <button on:click={() => handleAdd('quantite')}>add</button>
-      </div>
-    </div>
-      <div class="containerInputs">
         <p class="textPreInput">Volume</p>
       <div class="inputGroup">
         <input bind:value={volume} placeholder="volume m³" type="number" />
@@ -57,7 +50,7 @@
     top: 100%; /* Position below the input */
     left: 0;
     width: 450px; /* Full width of the parent tarifContainer */
-    height: 500px;
+    height: 400px;
     background: white;
     box-shadow: 0 4px 30px 0 rgba(0, 0, 0, 0.29);
     z-index: 1000;
