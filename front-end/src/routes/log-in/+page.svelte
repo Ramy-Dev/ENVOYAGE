@@ -1,4 +1,6 @@
 <script>
+   import { redirect } from "@sveltejs/kit";
+
 // In the login script
 let message = "";
 
@@ -24,7 +26,9 @@ async function handleSubmit(event) {
             console.log("Success:", result);
             // Fetch and store user info
             fetchUserInfo(result.token);
-        } else {
+            // Redirect to the home page  
+            window.location.href = '/'
+            } else {
             const error = await response.json();
             message = "Login failed!";
             console.error("Error:", error);

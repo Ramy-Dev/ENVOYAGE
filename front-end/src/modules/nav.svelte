@@ -1,6 +1,20 @@
 <script>
+  import { onMount } from 'svelte';
+
+  let user = "";
+  let username = "";
+  onMount(() => {
+    user = JSON.parse(localStorage.getItem('user'));
+  });
+  
+  $: username = user && user[0] && user[0].username ? user[0].username : "";
+
+  // Add your code here
+
 </script>
 
+<!-- Rest of the code -->
+<!-- svelte-ignore non-top-level-reactive-declaration -->
 <main>
   <nav class="navbar fixed navbar-expand-lg bg-body-tertiary fontPrimary">
     <div class="container-fluid">
@@ -40,6 +54,9 @@
               </li> -->
         </ul>
         <ul class="SignUp-LogIn d-flex m-0 p-0">
+          <li class="text-primary mt-2 fw-bold nav-link" >
+           {username}
+          </li>
           <li>
             <a class="LogIn fw-semibold nav-link bg-primary" href="/creation">Créer une annonce +</a>
           </li>

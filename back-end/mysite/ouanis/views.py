@@ -17,22 +17,32 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework.authtoken.views import ObtainAuthToken
 
+
+
 class UtilisateurViewSet(viewsets.ModelViewSet):
     queryset = Utilisateur.objects.all()
     serializer_class = UtilisateurSerializer
-   # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     def get_queryset(self):
         username = self.request.query_params.get('username', None)
         if username is not None:
             user = get_object_or_404(Utilisateur, username=username)
             return Utilisateur.objects.filter(username=user.username)
         return Utilisateur.objects.all()
+    def get_queryset(self):
+        return Utilisateur.objects.filter(id=self.request.user.id)
+
+
+
+
 
 class DemandeDeCompteVoyageurViewSet(viewsets.ModelViewSet):
     queryset = DemandeDeCompteVoyageur.objects.all()
     serializer_class = DemandeDeCompteVoyageurSerializer
-    #permission_classes = [IsAuthenticated]
-
+    permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        return DemandeDeCompteVoyageur.objects.filter(user=self.request.user)
+    
     @action(detail=True, methods=['post'])
     def approve(self, request, pk=None):
         demande = self.get_object()
@@ -40,15 +50,19 @@ class DemandeDeCompteVoyageurViewSet(viewsets.ModelViewSet):
         demande.save()
         return Response({'status': 'Demande approuvée'}, status=status.HTTP_200_OK)
 
+
+
 class AnnonceViewSet(viewsets.ModelViewSet):
     queryset = Annonce.objects.all()
     serializer_class = AnnonceSerializer
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+
+
 
 class DemandeAnnonceViewSet(viewsets.ModelViewSet):
     queryset = DemandeAnnonce.objects.all()
     serializer_class = DemandeAnnonceSerializer
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     @action(detail=True, methods=['post'])
     def accept(self, request, pk=None):
@@ -67,22 +81,22 @@ class DemandeAnnonceViewSet(viewsets.ModelViewSet):
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 class AnnonceTagViewSet(viewsets.ModelViewSet):
     queryset = AnnonceTag.objects.all()
     serializer_class = AnnonceTagSerializer
-   # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 class PalierViewSet(viewsets.ModelViewSet):
     queryset = Palier.objects.all()
     serializer_class = PalierSerializer
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 class AnnoncePalierViewSet(viewsets.ModelViewSet):
     queryset = AnnoncePalier.objects.all()
     serializer_class = AnnoncePalierSerializer
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 # Custom view to handle user registration
 class UserRegistrationView(APIView):
