@@ -34,11 +34,10 @@
   }
 </script>
 
-
 <main>
   <div class="ad-card fontSecondary" on:mouseover={changeColorOnHover} on:mouseleave={resetColor}>
     <div class="col">
-      <div href="" class="card h-100 redirection-div card-shadow-gray">
+      <a href={`/detailsBis`} class="card h-100 redirection-div card-shadow-gray">
         <div class="card-body">
           <div class="colorTopAnnonce mb-3" style="background-color: {randomColor};"></div>
           <div class="topCard">
@@ -83,14 +82,13 @@
             last updated {ad.updated}
           </div>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 </main>
 
-
 <style>
-  .col {
+   .col {
     background-color: transparent;
   }
   .card {
@@ -183,5 +181,9 @@
     appearance: none;
     border: none;
     text-align: start;
+  }
+  .redirection-div {
+    text-decoration: none;
+    color: inherit;
   }
 </style>

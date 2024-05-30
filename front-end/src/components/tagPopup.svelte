@@ -86,7 +86,13 @@ let popupRef;
     <div class="popup" bind:this={popupRef} tabindex="-1" on:keydown={handleEscapeKey}>
       <div class="popup-header">
         <h2 class="fw-bold fs">{title}</h2>
-        <button on:click={onClose} class="exitTagBtn btn border-0 text-primary fw-bolder fs-5">X</button>
+        <button on:click={onClose} class="exitTagBtn btn border-0 text-primary fw-bolder fs-5"> <lord-icon
+          class="animated-cross"
+          src="https://cdn.lordicon.com/zxvuvcnc.json"
+          colors="primary:#4FE1F9"
+          style="background-color: none;"
+          trigger="hover">
+      </lord-icon></button>
       </div>
       <div class="popup-content">
         <div class="tagSearch">
@@ -234,5 +240,9 @@ let popupRef;
     border-radius: 5px;
     padding: 5px 10px;
     cursor: pointer;
+  }
+  .animated-cross {
+width: 40px;
+height: 40px;
   }
 </style>

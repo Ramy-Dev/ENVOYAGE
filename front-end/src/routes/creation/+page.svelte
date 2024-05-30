@@ -312,7 +312,14 @@
                   >
                     <p class="m-0">{tag}</p>
                     <button class="removeTagBtn" on:click={() => removeTag(tag)}
-                      >.x.</button
+                      >  <lord-icon
+                      class="animated-cross"
+                      src="https://cdn.lordicon.com/zxvuvcnc.json"
+                      colors="primary:#4FE1F9"
+                      style="background-color: none;"
+                      trigger="hover">
+                  </lord-icon>
+</button
                     >
                   </div>
                 {/each}
@@ -634,4 +641,8 @@
   .inactive {
     display: none;
   }
+  .animated-cross {
+          width: 28px;
+          height: 28px;
+            }
 </style>
