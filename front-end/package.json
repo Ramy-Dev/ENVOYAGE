@@ -42,6 +42,7 @@
 	"type": "module",
 	"dependencies": {
 		"aos": "^2.3.4",
+		"axios": "^1.7.2",
 		"bootstrap": "^5.3.3",
 		"dragscroll": "^0.0.8",
 		"svelte-routing": "^2.12.0"

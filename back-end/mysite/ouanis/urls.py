@@ -6,7 +6,8 @@ from rest_framework.authtoken.views import obtain_auth_token
 from .views import (
     UtilisateurViewSet, DemandeDeCompteVoyageurViewSet, 
     AnnonceViewSet, DemandeAnnonceViewSet, TagViewSet,  UserRegistrationView, UserLoginView,
-    AnnonceTagViewSet, PalierViewSet, AnnoncePalierViewSet
+    AnnonceTagViewSet, PalierViewSet, AnnoncePalierViewSet, PasswordResetRequestView, PasswordResetConfirmView
+
 )
 
 router = DefaultRouter()
@@ -20,6 +21,8 @@ router.register(r'paliers', PalierViewSet)
 router.register(r'annonce_paliers', AnnoncePalierViewSet)
 
 urlpatterns = [
+    path('reset_password/', PasswordResetRequestView.as_view(), name='reset_password'),
+    path('reset_password_confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='reset_password_confirm'),
     path('register/', UserRegistrationView.as_view(), name='register'),
     path('login/', UserLoginView.as_view(), name='login'),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),

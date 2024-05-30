@@ -39,11 +39,17 @@ async function handleSubmit(event) {
     }
 }
 
+
+
+
+
+
+
 async function fetchUserInfo(token) {
     try {
         const response = await fetch("http://127.0.0.1:8000/utilisateurs/", {
             headers: {
-                "Authorization": `Token ${token}`
+                "Authorization": `Token ${token}` 
             }
         });
 

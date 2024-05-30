@@ -4,7 +4,7 @@
     console.log(`Fetching ad details for ID: ${id}`); // Log the ID being fetched
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/recherche/${id}`);
+      const response = await fetch(`http://127.0.0.1:8000/annonces/${id}`);
 
       if (!response.ok) {
         console.error(`Failed to fetch ad details: ${response.statusText}`);

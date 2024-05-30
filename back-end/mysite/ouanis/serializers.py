@@ -275,5 +275,16 @@ class AnnoncePalierSerializer(serializers.ModelSerializer):
         palier.to_poids = palier_data.get('to_poids', palier.to_poids)
         palier.prix = palier_data.get('prix', palier.prix)
         palier.save()
-
         return instance
+    
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    new_password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        if attrs['new_password'] != attrs['confirm_password']:
+            raise serializers.ValidationError("Passwords do not match.")
+        return attrs
