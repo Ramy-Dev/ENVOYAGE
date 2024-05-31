@@ -54,24 +54,27 @@
     });
 
     const dragStart = (e) => {
-      isDragging = true;
-      carousel.classList.add("dragging");
-      // Records the initial cursor and scroll position of the carousel
-      startX = e.pageX;
-      startScrollLeft = carousel.scrollLeft;
-    };
+  isDragging = true;
+  carousel.classList.add("dragging");
+  // Records the initial cursor and scroll position of the carousel
+  startX = e.pageX || e.touches[0].pageX;
+  startScrollLeft = carousel.scrollLeft;
+  e.preventDefault(); // Prevent default behavior
+};
 
-    const dragging = (e) => {
-      if (!isDragging) return; // if isDragging is false return from here
-      // Updates the scroll position of the carousel based on the cursor movement
-      carousel.scrollLeft = startScrollLeft - (e.pageX - startX);
-    };
+const dragging = (e) => {
+  if (!isDragging) return; // if isDragging is false return from here
+  // Updates the scroll position of the carousel based on the cursor movement
+  const x = e.pageX || e.touches[0].pageX;
+  carousel.scrollLeft = startScrollLeft - (x - startX);
+  e.preventDefault(); // Prevent default behavior
+};
 
-    const dragStop = () => {
-      isDragging = false;
-      carousel.classList.remove("dragging");
-    };
-
+const dragStop = (e) => {
+  isDragging = false;
+  carousel.classList.remove("dragging");
+  e.preventDefault(); // Prevent default behavior
+};
     const infiniteScroll = () => {
       // If the carousel is at the beginning, scroll to the end
       if (carousel.scrollLeft === 0) {
@@ -858,61 +861,56 @@
         </div>
         <div class="faqScroller">
           <div class="wrapper faqWrapper" data-aos="fade" data-aos-delay="650">
-            <!-- <i id="left" class="fa-solid fa-angle-left text-darkSecondary">&lt</i> -->
-            <div class="carousel faqcarousel">
-              <div class="card col ">
-                <!-- <img src="../svg/effect_faq.svg" alt=""> -->
+            <div class="carousel faqCarousel">
+              <div class="card col">
                 <div class="cardContent">
                   <div class="cardNumber text-white fontSecondary">
                     #1
                   </div>
                   <div class="cardFaq">
-                  <div class="cardTitle fs-2 text-light fontSecondary">
-                    lorem ipsum dolor sit amet
-                  </div>
-                  <div class="cardText fs-4 text-basic fontSecondary">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Fugit officia, quaerat commodi culpa id fugiat div laudant
+                    <div class="cardTitle fs-2 text-light fontSecondary">
+                      lorem ipsum dolor sit amet
+                    </div>
+                    <div class="cardText fs-4 text-basic fontSecondary">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Fugit officia, quaerat commodi culpa id fugiat div laudant
+                    </div>
                   </div>
                 </div>
-                </div>
-              </div>   
-              <div class="card col ">
-                <!-- <img src="../svg/effect_faq.svg" alt=""> -->
+              </div>
+              <div class="card col">
                 <div class="cardContent">
                   <div class="cardNumber text-white fontSecondary">
                     #2
                   </div>
                   <div class="cardFaq">
-                  <div class="cardTitle fs-2 text-light fontSecondary">
-                    lorem ipsum dolor sit amet
-                  </div>
-                  <div class="cardText fs-4 text-basic fontSecondary">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Fugit officia, quaerat commodi culpa id fugiat div laudant
+                    <div class="cardTitle fs-2 text-light fontSecondary">
+                      lorem ipsum dolor sit amet
+                    </div>
+                    <div class="cardText fs-4 text-basic fontSecondary">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Fugit officia, quaerat commodi culpa id fugiat div laudant
+                    </div>
                   </div>
                 </div>
-                </div>
-              </div> 
-              <div class="card col ">
-                <!-- <img src="../svg/effect_faq.svg" alt=""> -->
+              </div>
+              <div class="card col">
                 <div class="cardContent">
                   <div class="cardNumber text-white fontSecondary">
                     #3
                   </div>
                   <div class="cardFaq">
-                  <div class="cardTitle fs-2 text-light fontSecondary">
-                    lorem ipsum dolor sit amet
-                  </div>
-                  <div class="cardText fs-4 text-basic fontSecondary">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Fugit officia, quaerat commodi culpa id fugiat div laudant
+                    <div class="cardTitle fs-2 text-light fontSecondary">
+                      lorem ipsum dolor sit amet
+                    </div>
+                    <div class="cardText fs-4 text-basic fontSecondary">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Fugit officia, quaerat commodi culpa id fugiat div laudant
+                    </div>
                   </div>
                 </div>
-                </div>
-              </div> 
+              </div>
             </div>
-            <!-- <i id="right" class="fa-solid fa-angle-right text-darkSecondary">&gt</i> -->
           </div>
         </div>
       </div>
@@ -1431,6 +1429,12 @@
     width:90%;
     overflow-x: auto;
   }
+  .faqWrapper * {
+  user-select: none; /* Disable text selection */
+  -webkit-user-select: none; /* Disable text selection for Safari */
+  -moz-user-select: none; /* Disable text selection for Firefox */
+  -ms-user-select: none; /* Disable text selection for Internet Explorer/Edge */
+}
   .faqWrapper .col {
     padding: 40px 40px 80px 40px;
     background-image: url(../svg/effect_faq.svg);
@@ -1469,4 +1473,13 @@
     width: 100%;
     background-color: #4fe1f9;
   }
+  .colorTopAnnonce {
+    border-radius: 40px;
+    height: 40px;
+    width: 100%;
+    margin: 0 auto;
+    border-radius: 30px;
+    background-color: #4fe1f9;
+  }
+
 </style>
