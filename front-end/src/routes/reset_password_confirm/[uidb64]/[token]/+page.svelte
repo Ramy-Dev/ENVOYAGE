@@ -38,7 +38,7 @@ console.log('token:', token);
   </script>
   
   <main>
-    <img class="image_bg_recherche_ads" src="../../svg/bg-recherche-ads.svg" />
+    <img class="image_bg_recherche_ads" src="../../svg/bg-recherche-ads.svg" alt="" />
     <div class="password-reset fontSecondary ">
     <h1 class="mb-4">Set
        <span class="new-span">New</span>

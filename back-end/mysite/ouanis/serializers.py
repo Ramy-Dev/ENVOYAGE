@@ -1,3 +1,6 @@
+from datetime import date
+import stat
+from fastapi import Response
 from rest_framework import serializers
 from .models import (
     Utilisateur, Annonce, DemandeAnnonce,
@@ -58,44 +61,95 @@ class UtilisateurSerializer(serializers.ModelSerializer):
         user = Utilisateur.objects.create_user(**validated_data)
         return user
 
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = '__all__'
+
+class PalierSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Palier
+        fields = ['id', 'from_poids', 'to_poids', 'prix']
+
+
+class AnnonceTagSerializer(serializers.ModelSerializer):
+    tag = TagSerializer()
+
+    class Meta:
+        model = AnnonceTag
+        fields = ['id', 'tag']
+
+class AnnoncePalierSerializer(serializers.ModelSerializer):
+    palier = PalierSerializer()
+
+    class Meta:
+        model = AnnoncePalier
+        fields = ['id', 'palier']
+
 class AnnonceSerializer(serializers.ModelSerializer):
-    createur = UtilisateurSerializer()
+    createur = serializers.PrimaryKeyRelatedField(queryset=Utilisateur.objects.all())
+    tags = serializers.PrimaryKeyRelatedField(many=True, queryset=Tag.objects.all(), write_only=True)
+    paliers = AnnoncePalierSerializer(many=True, write_only=True)
 
     class Meta:
         model = Annonce
         fields = [
             'id', 'createur', 'created_at', 'updated_at', 'lieu_depart', 
-            'destination', 'poids_max'
+            'destination', 'poids_max', 'volume_max', 'date_heure_depart', 'date_heure_arrivee', 'tags', 'paliers'
         ]
 
     def create(self, validated_data):
-        createur_data = validated_data.pop('createur')
-        createur = Utilisateur.objects.create(**createur_data)
-        annonce = Annonce.objects.create(createur=createur, **validated_data)
+        tags_data = validated_data.pop('tags')
+        paliers_data = validated_data.pop('paliers')
+        annonce = Annonce.objects.create(**validated_data)
+
+        for tag in tags_data:
+            AnnonceTag.objects.create(annonce=annonce, tag=tag)
+
+        for palier_data in paliers_data:
+            palier = Palier.objects.create(**palier_data['palier'])
+            AnnoncePalier.objects.create(annonce=annonce, palier=palier)
+
         return annonce
-
     def update(self, instance, validated_data):
-        createur_data = validated_data.pop('createur')
-        createur = instance.createur
+        utilisateur_data = validated_data.pop('utilisateur')
+        annonce_data = validated_data.pop('annonce')
 
-        instance.lieu_depart = validated_data.get('lieu_depart', instance.lieu_depart)
-        instance.destination = validated_data.get('destination', instance.destination)
-        instance.poids_max = validated_data.get('poids_max', instance.poids_max)
+        utilisateur = instance.utilisateur
+        annonce = instance.annonce
+
+        instance.statut = validated_data.get('statut', instance.statut)
+        instance.poids = validated_data.get('poids', instance.poids)
         instance.save()
 
-        createur.username = createur_data.get('username', createur.username)
-        createur.first_name = createur_data.get('first_name', createur.first_name)
-        createur.last_name = createur_data.get('last_name', createur.last_name)
-        createur.email = createur_data.get('email', createur.email)
-        createur.numero_telephone = createur_data.get('numero_telephone', createur.numero_telephone)
-        createur.adresse = createur_data.get('adresse', createur.adresse)
-        createur.date_de_naissance = createur_data.get('date_de_naissance', createur.date_de_naissance)
-        createur.profile_picture = createur_data.get('profile_picture', createur.profile_picture)
-        createur.numero_passeport = createur_data.get('numero_passeport', createur.numero_passeport)
-        createur.photos_passeport = createur_data.get('photos_passeport', createur.photos_passeport)
-        createur.save()
+        utilisateur.username = utilisateur_data.get('username', utilisateur.username)
+        utilisateur.first_name = utilisateur_data.get('first_name', utilisateur.first_name)
+        utilisateur.last_name = utilisateur_data.get('last_name', utilisateur.last_name)
+        utilisateur.email = utilisateur_data.get('email', utilisateur.email)
+        utilisateur.numero_telephone = utilisateur_data.get('numero_telephone', utilisateur.numero_telephone)
+        utilisateur.adresse = utilisateur_data.get('adresse', utilisateur.adresse)
+        utilisateur.date_de_naissance = utilisateur_data.get('date_de_naissance', utilisateur.date_de_naissance)
+        utilisateur.profile_picture = utilisateur_data.get('profile_picture', utilisateur.profile_picture)
+        utilisateur.save()
+
+        annonce.createur = annonce_data.get('createur', annonce.createur)
+        annonce.created_at = annonce_data.get('created_at', annonce.created_at)
+        annonce.updated_at = annonce_data.get('updated_at', annonce.updated_at)
+        annonce.lieu_depart = annonce_data.get('lieu_depart', annonce.lieu_depart)
+        annonce.destination = annonce_data.get('destination', annonce.destination)
+        annonce.poids_max = annonce_data.get('poids_max', annonce.poids_max)
+        annonce.save()
 
         return instance
+    
+    def delete(self, request, pk):
+        try:
+            annonce = Annonce.objects.get(pk=pk)
+            annonce.delete()
+            return Response(status=stat.HTTP_204_NO_CONTENT)
+        except Annonce.DoesNotExist:
+            return Response(status=stat.HTTP_404_NOT_FOUND)
+
 
 class DemandeAnnonceSerializer(serializers.ModelSerializer):
     utilisateur = UtilisateurSerializer()

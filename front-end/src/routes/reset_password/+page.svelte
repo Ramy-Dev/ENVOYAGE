@@ -14,7 +14,8 @@
     </script>
     
     <main>
-        <img class="image_bg_recherche_ads" src="../svg/bg-recherche-ads.svg" />
+       
+        <img class="image_bg_recherche_ads" src="../svg/bg-recherche-ads.svg" alt="" />
         <div class="password-reset fontSecondary">
         <h1 class="mb-4">Reset Password</h1>
         <input class="mb-4" type="email" bind:value={email} placeholder="Enter your email" />

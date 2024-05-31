@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
 class Utilisateur(AbstractUser):
     numero_telephone = models.CharField(max_length=200, blank=True, null=True)
     adresse = models.CharField(max_length=200, blank=True, null=True)
@@ -28,15 +29,19 @@ class Utilisateur(AbstractUser):
     
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+3.5
+from django.utils import timezone
 
 class Annonce(models.Model):
-    createur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name='annonces')
+    createur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    lieu_depart = models.CharField(max_length=200, blank=True, null=True)
-    destination = models.CharField(max_length=200)
-    poids_max = models.IntegerField(blank=True, null=True)
-    volume_max = models.IntegerField(blank=True, null=True)
+    lieu_depart = models.CharField(max_length=255)
+    destination = models.CharField(max_length=255)
+    poids_max = models.FloatField()
+    volume_max = models.IntegerField()
+    date_heure_depart = models.DateTimeField(default=timezone.now)
+    date_heure_arrivee = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return f"Annonce de {self.createur.first_name} {self.createur.last_name} vers {self.destination}"
 
@@ -85,7 +90,7 @@ class Palier(models.Model):
     prix = models.FloatField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.nom} {self.prix}"
+        return f"{self.id} {self.prix}"
 
 class AnnoncePalier(models.Model):
     annonce = models.ForeignKey(Annonce, on_delete=models.CASCADE)
