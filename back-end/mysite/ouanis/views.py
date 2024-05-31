@@ -1,10 +1,10 @@
+import http
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
-from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
@@ -35,11 +35,12 @@ class PasswordResetRequestView(APIView):
             if user:
                 token = default_token_generator.make_token(user)
                 uid = urlsafe_base64_encode(force_bytes(user.pk))
-                reset_link = f"{request.scheme}://{request.get_host()}/reset_password_confirm/{uid}/{token}/"
+                # reset_link = f"{request.scheme}://{request.get_host()}/reset_password_confirm/{uid}/{token}/"
+                reset_link = f"{request.scheme}://http://localhost:5173/reset_password_confirm/{uid}/{token}/"
                 send_mail(
                     'Password Reset Request',
                     f'Click the link to reset your password: {reset_link}',
-                    'from@example.com',
+                    'imansoura.ramy@outlook.com',  # Change to your authenticated email address
                     [user.email],
                     fail_silently=False,
                 )
@@ -79,10 +80,6 @@ class UtilisateurViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Utilisateur.objects.filter(id=self.request.user.id)
 
-
-
-
-
 class DemandeDeCompteVoyageurViewSet(viewsets.ModelViewSet):
     queryset = DemandeDeCompteVoyageur.objects.all()
     serializer_class = DemandeDeCompteVoyageurSerializer
@@ -97,14 +94,10 @@ class DemandeDeCompteVoyageurViewSet(viewsets.ModelViewSet):
         demande.save()
         return Response({'status': 'Demande approuvée'}, status=status.HTTP_200_OK)
 
-
-
 class AnnonceViewSet(viewsets.ModelViewSet):
     queryset = Annonce.objects.all()
     serializer_class = AnnonceSerializer
     permission_classes = [IsAuthenticated]
-
-
 
 class DemandeAnnonceViewSet(viewsets.ModelViewSet):
     queryset = DemandeAnnonce.objects.all()
