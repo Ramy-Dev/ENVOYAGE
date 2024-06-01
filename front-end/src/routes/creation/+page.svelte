@@ -2,7 +2,6 @@
   import { onMount } from "svelte";
   import TagPopup from "../../components/TagPopup.svelte";
   import PricingByWeight from "../../components/Pricings/PricingByWeight.svelte";
-  import PricingByNumber from "../../components/Pricings/PricingByNumber.svelte";
   import PricingByVolume from "../../components/Pricings/PricingByVolume.svelte";
   import { conditions } from "../../lib/tagList.js";
   import { alreadySelectedConditions } from "../../stores/alreadySelectedConditions.js";
@@ -25,9 +24,69 @@
   let isAirportActive = true;
   let isPortActive = false;
   let poidsMax = 0;
+  let volumeMax = 0;
   let poidsPaliers = [];
   let prixPaliers = [];
+  let message = "";
 
+  async function handleSubmit(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    // Collect form data
+    const departureLocation = document.getElementById('departure-location').value;
+    const departureDate = document.getElementById('departure-date').value;
+    const departureTime = document.getElementById('departure-time').value;
+    const arrivalLocation = document.getElementById('arrival-location').value;
+    const arrivalDate = document.getElementById('arrival-date').value;
+    const arrivalTime = document.getElementById('arrival-time').value;
+
+    // Combine date and time into a single datetime string
+    const departureDateTime = `${departureDate}T${departureTime}`;
+    const arrivalDateTime = `${arrivalDate}T${arrivalTime}`;
+
+    // Prepare data object
+    const data = {
+      lieu_depart: departureLocation,
+      destination: arrivalLocation,
+      poids_max: parseFloat(poidsMax),
+      volume_max: parseInt(volumeMax, 10),
+      date_heure_depart: departureDateTime,
+      date_heure_arrivee: arrivalDateTime,
+      tags: tags
+    };
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/annonces/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${localStorage.getItem('authToken')}` // Assuming the token is stored in localStorage
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        message = "Ad posted successfully!";
+        console.log('Success:', result);
+        // Handle success (e.g., show a success message, clear form, etc.)
+      } else {
+        const error = await response.json();
+        message = "Failed to post ad!";
+        console.error('Error:', error);
+        // Handle errors (e.g., show error messages)
+      }
+    } catch (error) {
+      message = "An error occurred!";
+      console.error('Error:', error);
+      // Handle errors (e.g., show error messages)
+    }
+  }
+
+
+  function getToken() {
+    return localStorage.getItem("authToken");
+}
   const poidsPaliersUnsubscribe = poidsPaliersStore.subscribe((value) => {
     poidsPaliers = value;
   });
@@ -50,13 +109,6 @@
     isNumberActive = false;
     isVolumeActive = false;
     console.log("Poids");
-  }
-
-  function toggleNumber() {
-    isKgActive = false;
-    isNumberActive = true;
-    isVolumeActive = false;
-    console.log("Number");
   }
 
   function toggleVolume() {
@@ -190,7 +242,9 @@
                     </div>
                     <div class="airportDepartureCreationInput">
                       <div class="input-box-creation">
+                        <!-- Departure Inputs -->
                         <input
+                        id="departure-location"
                           class=" fw-normal text-primary fontSecondary"
                           type="text"
                           placeholder={`choose an ${isAirportActive ? "airport" : "port"}`}
@@ -208,6 +262,7 @@
                     <div class="DateDepartureCreationInput">
                       <div class="input-box-date-creation">
                         <input
+                        id="departure-date"
                           class="DateInput fw-normal text-primary fontSecondary"
                           type="date"
                           required
@@ -217,6 +272,7 @@
                     <div class="hoursMinutesDateDepartureCreationInput">
                       <div class="input-box-date-creation">
                         <input
+                        id="departure-time"
                           class="DateInput fw-normal text-primary fontSecondary"
                           type="time"
                           required
@@ -245,7 +301,9 @@
                     </div>
                     <div class="airportDepartureCreationInput">
                       <div class="input-box-creation">
+                        <!-- Arrival Inputs -->
                         <input
+                        id="arrival-location"
                           class=" fw-normal text-primary fontSecondary"
                           type="text"
                           placeholder={`choose an ${isAirportActive ? "airport" : "port"}`}
@@ -263,6 +321,7 @@
                     <div class="DateDepartureCreationInput">
                       <div class="input-box-date-creation">
                         <input
+                        id="arrival-date"
                           class="DateInput fw-normal text-primary fontSecondary"
                           type="date"
                           required
@@ -272,6 +331,7 @@
                     <div class="hoursMinutesDateDepartureCreationInput">
                       <div class="input-box-date-creation">
                         <input
+                        id="arrival-time"
                           class="DateInput fw-normal text-primary fontSecondary"
                           type="time"
                           required
@@ -365,18 +425,6 @@
                     Weight
                   </div>
                 </button>
-
-                <button class="border-0" type="button" on:click={toggleNumber}>
-                  <div
-                    class="{isNumberActive
-                      ? 'colorProfileOriginalSwitch'
-                      : 'colorProfileSecondarySwitch'} choiceProfileBtn fw-bold fs-5 fontSecondary"
-                    id="c2"
-                  >
-                    Unité
-                  </div>
-                </button>
-
                 <button class="border-0" type="button" on:click={toggleVolume}>
                   <div
                     class="{isVolumeActive
@@ -389,21 +437,18 @@
                 </button>
               </div>
               <div class={isKgActive ? "active" : "inactive"}>
-                <PricingByWeight />
-              </div>
-              <div class={isNumberActive ? "active" : "inactive"}>
-                <PricingByNumber />
+                <PricingByWeight valueMax={poidsMax}/>
               </div>
               <div class={isVolumeActive ? "active" : "inactive"}>
                 
-                <PricingByVolume />
+                <PricingByVolume valueMax={volumeMax}/>
               </div>
             </div>
           </div>
           <div class="postCreation">
             <button
-              class="PostBtn ButtonEdit btn border-0 text-primary fw-bold fs-3 fontSecondary"
-            >
+              class="PostBtn ButtonEdit btn border-0 text-white fw-bold fs-3 fontSecondary"
+              on:click={handleSubmit} >
               Post
             </button>
           </div>
@@ -632,7 +677,11 @@
   .PostBtn {
     border-radius: 40px;
     padding: 1rem 4rem;
-    background-color: #ffe767;
+    background-color: #21A5C3;
+    transition: background-color 0.2s ease-in-out;
+  }
+  .PostBtn:hover {
+    background-color: #4FE1F9;
   }
   .active {
     display: block;

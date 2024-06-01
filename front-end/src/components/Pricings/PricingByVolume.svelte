@@ -6,7 +6,7 @@
   import { pricingDataStore } from "../../stores/pricingDataStore.js";
   import { writable } from "svelte/store";
 
-  let valueMax = 0;
+  export let valueMax = 0;
   let valueInterm = 0;
   let volumeMaxEntered = false;
   let volumePaliers = [];

@@ -7,8 +7,8 @@
   import { pricingDataStore } from "../../stores/pricingDataStore.js";
   import { writable } from "svelte/store";
   // Utilisation des stores locaux pour les poidsPaliers et les prix
+  export let valueMax = 0;
 
-  let valueMax = 0;
   let valueInterm = 0;
   let poidsMaxEntered = false;
   let poidsPaliers = [];
