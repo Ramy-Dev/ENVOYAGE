@@ -12,11 +12,8 @@
     prixPaliersStore,
   } from "../../stores/pricingStore.js";
   
-  let availableCondition;
-  onMount(() => {
-   availableConditions = fetchTagInfo(getToken()); 
-  });
-  
+  let availableCondition =true;
+
   let isEditing = false;
   let newFieldValue = "";
   let title = "";
@@ -458,7 +455,7 @@
                   <TagPopup
                     isOpen={isEditing}
                     onClose={() => (isEditing = false)}
-                    {availableConditions}
+                    {availableCondition}
                     on:selectedConditionsAdded={handleSelectedConditionsAdded}
                     {title}
                     on:addClick={saveChanges}

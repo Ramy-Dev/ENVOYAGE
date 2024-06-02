@@ -7,9 +7,6 @@
 const { uidb64, token } = $page.params;
 
 // Display the query parameters
-console.log('uidb64:', uidb64);
-console.log('token:', token);
-  
     let new_password = '';
     let confirm_password = '';
     let message = '';
@@ -31,10 +28,7 @@ console.log('token:', token);
       }
     };
   
-    onMount(() => {
-      console.log('UIDB64:', uidb64);
-      console.log('Token:', token);
-    });
+
   </script>
   
   <main>
