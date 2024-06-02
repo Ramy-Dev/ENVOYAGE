@@ -1,7 +1,7 @@
 <script>
     import { createEventDispatcher } from "svelte";
     import { onMount } from "svelte";
-  import { conditions } from "../lib/tagList.js"
+  // import { conditions } from "../lib/tagList.js"
   import Tag from '../components/Tag.svelte';
     import { alreadySelectedConditions } from '../stores/alreadySelectedConditions.js'; // Import du store
 
@@ -10,13 +10,37 @@
   export let isOpen = false;
   export let onClose = () => {};
   export let selectedCondition = ""; // La condition sélectionnée
-  export let availableConditions = conditions; // Liste des conditions disponibles
+  export let availableConditions; // Liste des conditions disponibles
+
   export let filteredConditions = [...availableConditions]; // Initialisation des conditions filtrées avec toutes les conditions disponibles
   export let title = ""; // Titre du popup
 
-  
   let selectedConditions = [];
 
+  
+  onMount(() => {
+    availableConditions = fetchTagInfo(localStorage.getItem("authToken"));
+  });
+
+async function fetchTagInfo(token) {
+    try {
+        const response = await fetch("http://127.0.0.1:8000/tags/", {
+            headers: {
+                "Authorization": `Token ${token}` 
+            }
+        });
+
+        if (response.ok) {
+            const tag = await response.json();
+            console.log(tag);
+            return tag;
+        } else {
+            console.error("Failed to fetch user info.");
+        }
+    } catch (error) {
+        console.error("Error fetching user info:", error);
+    }
+}
 
   function handleOverlayClick(event) {
     if (event.target.classList.contains("overlay")) {
@@ -82,7 +106,7 @@ let popupRef;
 
 <main>
   {#if isOpen}
-  <div class="overlay" on:click={handleOverlayClick}>
+  <div class="overlay fontSecondary" on:click={handleOverlayClick}>
     <div class="popup" bind:this={popupRef} tabindex="-1" on:keydown={handleEscapeKey}>
       <div class="popup-header">
         <h2 class="fw-bold fs">{title}</h2>
@@ -97,7 +121,7 @@ let popupRef;
       <div class="popup-content">
         <div class="tagSearch">
           <div class="inputTagSearch">
-            <input on:input={handleSearch} class="fs-5 fw-normal text-primary fs-5 fw-bold fontSecondary" type="text" placeholder="Type in your search" required />
+            <input on:input={handleSearch} class="fs-5 fw-normal text-primary fs-5 fw-bold fontSecondary" type="text" placeholder="Type in your search"/>
           </div>
           <button class="btnTagSearch bg-primary text-white search-button border-0 fs-5 fontSecondary" on:click={saveChanges}>Add</button>
         </div>
@@ -173,7 +197,7 @@ let popupRef;
     width: 100%;
     padding: 1rem 1.5rem;
     border-radius: 20px;
-    border: 3px solid #5a02d4;
+    border: 3px solid #21A5C3;
     box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.25);
     text-align: center; /* Centrer le contenu */
   }

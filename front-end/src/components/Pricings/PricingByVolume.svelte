@@ -4,9 +4,17 @@
   import PopupCalculVolume from "../PopupCalculVolume.svelte";
   import { volumePaliersStore } from "../../stores/paliersStore.js";
   import { pricingDataStore } from "../../stores/pricingDataStore.js";
+  import { createEventDispatcher } from "svelte";
   import { writable } from "svelte/store";
 
   export let valueMax = 0;
+const dispatch = createEventDispatcher();
+
+function getVolumeMax(newVolumeMax) {
+  valueMax = newVolumeMax;
+  updateVolumeMax(newVolumeMax); // Appeler la fonction updatePoidsMax
+  dispatch('valueMaxChange', valueMax); // Émettre l'événement avec la nouvelle valeur
+}
   let valueInterm = 0;
   let volumeMaxEntered = false;
   let volumePaliers = [];
@@ -206,7 +214,7 @@ function openCalculVolumePopup() {
             class="inputPrix fw-normal text-primary fontSecondary"
             placeholder="Volume maximum"
             bind:value={valueMax}
-            on:change={updateVolumeMax(valueMax)}
+            on:change={getVolumeMax(valueMax)}
             required
           />
         </div>
@@ -323,7 +331,6 @@ function openCalculVolumePopup() {
     border-radius: 40px;
     display: flex;
     flex-direction: column;
-    gap: 50px;
   }
 
   .informationsPricing {
@@ -370,7 +377,7 @@ function openCalculVolumePopup() {
   }
   .inputPalier input:focus {
     border: 2px solid transparent;
-    outline: 3px solid #5a02d4;
+    outline: 3px solid #4FE1F9;
   }
   .inputPalier p {
     margin: 0;
@@ -404,5 +411,8 @@ function openCalculVolumePopup() {
     border-radius: 20px;
     padding: 0.5rem 0.7rem;
     cursor: pointer;
+  }
+  .colorTopAnnonce {
+    height: 0;
   }
 </style>

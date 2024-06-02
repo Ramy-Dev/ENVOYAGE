@@ -3,15 +3,20 @@
   import TagPopup from "../../components/TagPopup.svelte";
   import PricingByWeight from "../../components/Pricings/PricingByWeight.svelte";
   import PricingByVolume from "../../components/Pricings/PricingByVolume.svelte";
-  import { conditions } from "../../lib/tagList.js";
+  import Dropdown from "../../components/Dropdown.svelte";
+  // import { conditions } from "../../lib/tagList.js";
   import { alreadySelectedConditions } from "../../stores/alreadySelectedConditions.js";
   import { calculatePricing } from "../../lib/calculatePricing.js";
   import {
     poidsPaliersStore,
     prixPaliersStore,
   } from "../../stores/pricingStore.js";
-
-  let availableConditions = conditions;
+  
+  let availableCondition;
+  onMount(() => {
+   availableConditions = fetchTagInfo(getToken()); 
+  });
+  
   let isEditing = false;
   let newFieldValue = "";
   let title = "";
@@ -28,65 +33,137 @@
   let poidsPaliers = [];
   let prixPaliers = [];
   let message = "";
+  let formErrors = {};
+
+  let arrivalLocationOptions = [];
+
+  let departurePlace = "";
+  let arrivalPlace = "";
+  let departureDate = "";
+  let departureTime = "";
+  let arrivalDate = "";
+  let arrivalTime = "";
+
+ onMount(() => {
+    const unsubscribe = alreadySelectedConditions.subscribe((value) => {
+      tags = value;
+    });
+    return unsubscribe;
+  });
+
+  async function fetchTagInfo(token) {
+    try {
+        const response = await fetch("http://127.0.0.1:8000/tags/", {
+            headers: {
+                "Authorization": `Token ${token}` 
+            }
+        });
+
+        if (response.ok) {
+            const tag = await response.json();
+            console.log(tag);
+            return tag;
+        } else {
+            console.error("Failed to fetch user info.");
+        }
+    } catch (error) {
+        console.error("Error fetching user info:", error);
+    }
+}
 
   async function handleSubmit(event) {
     event.preventDefault(); // Prevent the default form submission
-
-    // Collect form data
-    const departureLocation = document.getElementById('departure-location').value;
-    const departureDate = document.getElementById('departure-date').value;
-    const departureTime = document.getElementById('departure-time').value;
-    const arrivalLocation = document.getElementById('arrival-location').value;
-    const arrivalDate = document.getElementById('arrival-date').value;
-    const arrivalTime = document.getElementById('arrival-time').value;
 
     // Combine date and time into a single datetime string
     const departureDateTime = `${departureDate}T${departureTime}`;
     const arrivalDateTime = `${arrivalDate}T${arrivalTime}`;
 
+    console.log(poidsMax, volumeMax);
     // Prepare data object
     const data = {
-      lieu_depart: departureLocation,
-      destination: arrivalLocation,
+      lieu_depart: departurePlace,
+      destination: arrivalPlace,
       poids_max: parseFloat(poidsMax),
       volume_max: parseInt(volumeMax, 10),
       date_heure_depart: departureDateTime,
       date_heure_arrivee: arrivalDateTime,
-      tags: tags
+      tags: tags,
     };
+    console.log(data);
+    // Validation
+    formErrors = {};
+    if (!data.lieu_depart) {
+      formErrors.departureLocation = "Departure location is required.";
+      console.log(formErrors.departureLocation);
+    }
+    if (!departureDate || !departureTime) {
+      formErrors.departureDateTime = "Departure date and time are required.";
+      console.log(formErrors.departureDateTime);
+    }
+    if (!data.destination) {
+      formErrors.arrivalLocation = "Arrival location is required.";
+      console.log(formErrors.arrivalLocation);
+    }
+    if (!arrivalDate || !arrivalTime) {
+      formErrors.arrivalDateTime = "Arrival date and time are required.";
+      console.log(formErrors.arrivalDateTime);
+    }
+    if (data.poids_max <= 0) {
+      formErrors.poidsMax = "Max weight should be greater than 0.";
+      console.log(formErrors.poidsMax);
+    }
+    if (data.volume_max <= 0) {
+      formErrors.volumeMax = "Max volume should be greater than 0.";
+      console.log(formErrors.volumeMax);
+    }
 
+    if (Object.keys(formErrors).length > 0) {
+      message = "Please fix the errors in the form.";
+      console.log(message);
+      return;
+    }
     try {
-      const response = await fetch('http://127.0.0.1:8000/annonces/', {
-        method: 'POST',
+      const response = await fetch("http://127.0.0.1:8000/annonces/", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${localStorage.getItem('authToken')}` // Assuming the token is stored in localStorage
+          "Content-Type": "application/json",
+          Authorization: `Token ${getToken()}`, // Use the getToken function
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
 
       if (response.ok) {
         const result = await response.json();
         message = "Ad posted successfully!";
-        console.log('Success:', result);
+        console.log("Success:", result);
         // Handle success (e.g., show a success message, clear form, etc.)
       } else {
         const error = await response.json();
         message = "Failed to post ad!";
-        console.error('Error:', error);
+        console.error("Error:", error);
         // Handle errors (e.g., show error messages)
       }
     } catch (error) {
       message = "An error occurred!";
-      console.error('Error:', error);
+      console.error("Error:", error);
       // Handle errors (e.g., show error messages)
     }
   }
 
-
   function getToken() {
     return localStorage.getItem("authToken");
-}
+  }
+
+  function handlePoidsMaxChange(event) {
+    poidsMax = event.detail; // Mettre à jour poidsMax avec la nouvelle valeur
+    console.log("Nouvelle valeur de poidsMax:", poidsMax);
+  }
+
+  function handleVolumeMaxChange(event) {
+    volumeMax = event.detail; // Mettre à jour poidsMax avec la nouvelle valeur
+    console.log("Nouvelle valeur de volumeMax:", volumeMax);
+  }
+
   const poidsPaliersUnsubscribe = poidsPaliersStore.subscribe((value) => {
     poidsPaliers = value;
   });
@@ -98,12 +175,19 @@
   function toggleAirport() {
     isAirportActive = true;
     isPortActive = false;
+    departurePlace = "";
+    arrivalPlace = "";
+    arrivalLocationOptions = [];
   }
+
   function togglePort() {
     isAirportActive = false;
     isPortActive = true;
+    departurePlace = "";
+    arrivalPlace = "";
+    arrivalLocationOptions = [];
   }
-  // Fonction pour basculer sur le profil Kg
+
   function toggleKg() {
     isKgActive = true;
     isNumberActive = false;
@@ -117,12 +201,23 @@
     isVolumeActive = true;
     console.log("Volume");
   }
+
+  // function updateArrivalOptions() {
+  //   if (isAirportActive) {
+  //     arrivalLocationOptions =
+  //       dataTransport.routes.Algeria[departurePlace] || [];
+  //   } else {
+  //     // Add logic for ports if necessary
+  //   }
+  // }
+
   function updatePricing() {
     // Appelez la fonction pour recalculer les paliers de poids et les prix associés
     console.log("Updating pricing...");
     let { poidsPaliers, prixPaliers } = calculatePricing("weight", poidsMax);
     console.log(poidsMax, poidsPaliers, prixPaliers);
   }
+
   function handleTagInput(event) {
     if (event.key === "Enter" && newTag.trim() !== "") {
       if (!tags.includes(newTag.trim())) {
@@ -163,17 +258,12 @@
     }
     isEditing = false; // Fermer le popup après avoir ajouté les conditions
   }
+
   function handleSelectedConditionsAdded(event) {
     // Stocker temporairement les éléments sélectionnés
     Addedconditions = event.detail.conditions;
   }
 
-  onMount(() => {
-    const unsubscribe = alreadySelectedConditions.subscribe((value) => {
-      tags = value;
-    });
-    return unsubscribe;
-  });
 </script>
 
 <main>
@@ -193,265 +283,288 @@
               General informations
             </p>
           </div>
-          <div class="placeCreationTransport">
-            <div class="choiceTranspor">
-              <p class="fs-3 fw-bold text-primary fontPrimary my-4">
-                Transport :
-              </p>
-              <div class="choiceTransportToggle">
-                <button class="border-0" type="button" on:click={toggleAirport}>
-                  <div
-                    class="{isAirportActive
-                      ? 'colorTransportOriginalSwitch'
-                      : 'colorTransportSecondarySwitch'} choiceTransportBtn fw-bold fs-3 fontSecondary"
-                    id="c1"
-                  >
-                    Airport
-                  </div>
-                </button>
 
-                <button class="border-0" type="button" on:click={togglePort}>
-                  <div
-                    class="{isPortActive
-                      ? 'colorTransportOriginalSwitch'
-                      : 'colorTransportSecondarySwitch'} choiceTransportBtn fw-bold fs-3 fontSecondary"
-                    id="c2"
-                  >
-                    Port
-                  </div>
-                </button>
-              </div>
-            </div>
-            <div class="placeCreation">
-              <div class="departureCreation cardCreation">
+          <form on:submit={handleSubmit}>
+            <div class="placeCreationTransport">
+              <div class="choiceTranspor">
                 <p class="fs-3 fw-bold text-primary fontPrimary my-4">
-                  Departure :
+                  Transport :
                 </p>
-                <div class="placeCreationContainer">
-                  <div class="parentGridCreation">
-                    <div class="airportDepartureCreation">
-                      <div class="airportDepartureCreation">
-                        <p class="fs-5 fw-bold text-darkPrimary fontPrimary">
-                          {#if isAirportActive}
-                            Airport :
-                          {:else}
-                            Port :
-                          {/if}
-                        </p>
-                      </div>
-                    </div>
-                    <div class="airportDepartureCreationInput">
-                      <div class="input-box-creation">
-                        <!-- Departure Inputs -->
-                        <input
-                        id="departure-location"
-                          class=" fw-normal text-primary fontSecondary"
-                          type="text"
-                          placeholder={`choose an ${isAirportActive ? "airport" : "port"}`}
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div class="dateDepartureCreation">
-                      <div class="dateDepartureCreation">
-                        <p class="fs-5 fw-bold text-darkPrimary fontPrimary">
-                          Date :
-                        </p>
-                      </div>
-                    </div>
-                    <div class="DateDepartureCreationInput">
-                      <div class="input-box-date-creation">
-                        <input
-                        id="departure-date"
-                          class="DateInput fw-normal text-primary fontSecondary"
-                          type="date"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div class="hoursMinutesDateDepartureCreationInput">
-                      <div class="input-box-date-creation">
-                        <input
-                        id="departure-time"
-                          class="DateInput fw-normal text-primary fontSecondary"
-                          type="time"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="arrivalCreation cardCreation">
-                <p class="fs-3 fw-bold text-primary fontPrimary my-4">
-                  Arrival :
-                </p>
-                <div class="placeCreationContainer">
-                  <div class="parentGridCreation">
-                    <div class="airportDepartureCreation">
-                      <div class="airportDepartureCreation">
-                        <p class="fs-5 fw-bold text-darkPrimary fontPrimary">
-                          {#if isAirportActive}
-                            Airport :
-                          {:else}
-                            Port :
-                          {/if}
-                        </p>
-                      </div>
-                    </div>
-                    <div class="airportDepartureCreationInput">
-                      <div class="input-box-creation">
-                        <!-- Arrival Inputs -->
-                        <input
-                        id="arrival-location"
-                          class=" fw-normal text-primary fontSecondary"
-                          type="text"
-                          placeholder={`choose an ${isAirportActive ? "airport" : "port"}`}
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div class="dateDepartureCreation">
-                      <div class="dateDepartureCreation">
-                        <p class="fs-5 fw-bold text-darkPrimary fontPrimary">
-                          Date :
-                        </p>
-                      </div>
-                    </div>
-                    <div class="DateDepartureCreationInput">
-                      <div class="input-box-date-creation">
-                        <input
-                        id="arrival-date"
-                          class="DateInput fw-normal text-primary fontSecondary"
-                          type="date"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div class="hoursMinutesDateDepartureCreationInput">
-                      <div class="input-box-date-creation">
-                        <input
-                        id="arrival-time"
-                          class="DateInput fw-normal text-primary fontSecondary"
-                          type="time"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="conditionCreation">
-            <p class="fs-3 fw-bold text-primary fontPrimary my-4">
-              Conditions :
-            </p>
-            <div class="ProfileContainerDisplay">
-              <!-- Bouton pour ouvrir le tagPopup -->
-
-              <!-- TagPopup -->
-              {#if isEditing}
-                <div class="overlay"></div>
-                <TagPopup
-                  isOpen={isEditing}
-                  onClose={() => (isEditing = false)}
-                  {availableConditions}
-                  on:selectedConditionsAdded={handleSelectedConditionsAdded}
-                  {title}
-                  on:addClick={saveChanges}
-                />
-              {/if}
-
-              <!-- Affichage des tags sélectionnés -->
-              <div class="tagContainer">
-                {#each tags as tag}
-                  <div
-                    class="tagItem bg-primary text-white fs-5 fontSecondary"
-                    key={tag}
-                  >
-                    <p class="m-0">{tag}</p>
-                    <button class="removeTagBtn" on:click={() => removeTag(tag)}
-                      >  <lord-icon
-                      class="animated-cross"
-                      src="https://cdn.lordicon.com/zxvuvcnc.json"
-                      colors="primary:#4FE1F9"
-                      style="background-color: none;"
-                      trigger="hover">
-                  </lord-icon>
-</button
-                    >
-                  </div>
-                {/each}
-              </div>
-              <div class="buttonsCreationConditions">
-                <div class="buttonAddTag">
+                <div class="choiceTransportToggle">
                   <button
-                    class="ButtonEdit btn border-0 bg-primary text-white fs-5 fontSecondary"
-                    on:click={openTagPopup}
+                    class="border-0"
+                    type="button"
+                    on:click={toggleAirport}
                   >
-                    Ajouter une condition +
+                    <div
+                      class="{isAirportActive
+                        ? 'colorTransportOriginalSwitch'
+                        : 'colorTransportSecondarySwitch'} choiceTransportBtn fw-bold fs-3 fontSecondary"
+                      id="c1"
+                    >
+                      Airport
+                    </div>
+                  </button>
+
+                  <button class="border-0" type="button" on:click={togglePort}>
+                    <div
+                      class="{isPortActive
+                        ? 'colorTransportOriginalSwitch'
+                        : 'colorTransportSecondarySwitch'} choiceTransportBtn fw-bold fs-3 fontSecondary"
+                      id="c2"
+                    >
+                      Port
+                    </div>
                   </button>
                 </div>
-                {#if tags.length >= 2}
+              </div>
+              <div class="placeCreation">
+                <div class="departureCreation cardCreation">
+                  <p class="fs-3 fw-bold text-primary fontPrimary my-4">
+                    Departure :
+                  </p>
+                  <div class="placeCreationContainer">
+                    <div class="parentGridCreation">
+                      <div class="airportDepartureCreation">
+                        <div class="airportDepartureCreation">
+                          <p class="fs-5 fw-bold text-darkPrimary fontPrimary">
+                            {#if isAirportActive}
+                              Airport :
+                            {:else}
+                              Port :
+                            {/if}
+                          </p>
+                        </div>
+                      </div>
+                      <div class="airportDepartureCreationInput">
+                        <div class="input-box-creation">
+                          <!-- Departure Inputs -->
+                          <input
+                            id="departure-location"
+                            class="fw-normal text-primary fontSecondary"
+                            type="text"
+                            placeholder={`choose an ${isAirportActive ? "airport" : "port"}`}
+                            bind:value={departurePlace}
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div class="dateDepartureCreation">
+                        <div class="dateDepartureCreation">
+                          <p class="fs-5 fw-bold text-darkPrimary fontPrimary">
+                            Date :
+                          </p>
+                        </div>
+                      </div>
+                      <div class="DateDepartureCreationInput">
+                        <div class="input-box-date-creation">
+                          <input
+                            id="departure-date"
+                            class="DateInput fw-normal text-primary fontSecondary"
+                            bind:value={departureDate}
+                            type="date"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div class="hoursMinutesDateDepartureCreationInput">
+                        <div class="input-box-date-creation">
+                          <input
+                            id="departure-time"
+                            class="DateInput fw-normal text-primary fontSecondary"
+                            bind:value={departureTime}
+                            type="time"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="arrivalCreation cardCreation">
+                  <p class="fs-3 fw-bold text-primary fontPrimary my-4">
+                    Arrival :
+                  </p>
+                  <div class="placeCreationContainer">
+                    <div class="parentGridCreation">
+                      <div class="airportDepartureCreation">
+                        <div class="airportDepartureCreation">
+                          <p class="fs-5 fw-bold text-darkPrimary fontPrimary">
+                            {#if isAirportActive}
+                              Airport :
+                            {:else}
+                              Port :
+                            {/if}
+                          </p>
+                        </div>
+                      </div>
+                      <div class="airportDepartureCreationInput">
+                        <div class="input-box-creation">
+                          <!-- Arrival Inputs -->
+                          <input
+                            id="arrival-location"
+                            class="fw-normal text-primary fontSecondary"
+                            type="text"
+                            placeholder={`choose an ${isAirportActive ? "airport" : "port"}`}
+                            bind:value={arrivalPlace}
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div class="dateDepartureCreation">
+                        <div class="dateDepartureCreation">
+                          <p class="fs-5 fw-bold text-darkPrimary fontPrimary">
+                            Date :
+                          </p>
+                        </div>
+                      </div>
+                      <div class="DateDepartureCreationInput">
+                        <div class="input-box-date-creation">
+                          <input
+                            id="arrival-date"
+                            class="DateInput fw-normal text-primary fontSecondary"
+                            bind:value={arrivalDate}
+                            type="date"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div class="hoursMinutesDateDepartureCreationInput">
+                        <div class="input-box-date-creation">
+                          <input
+                            id="arrival-time"
+                            class="DateInput fw-normal text-primary fontSecondary"
+                            bind:value={arrivalTime}
+                            type="time"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="conditionCreation">
+              <p class="fs-3 fw-bold text-primary fontPrimary my-4">
+                Conditions :
+              </p>
+              <div class="ProfileContainerDisplay">
+                <!-- Bouton pour ouvrir le tagPopup -->
+
+                <!-- TagPopup -->
+                {#if isEditing}
+                  <div class="overlay"></div>
+                  <TagPopup
+                    isOpen={isEditing}
+                    onClose={() => (isEditing = false)}
+                    {availableConditions}
+                    on:selectedConditionsAdded={handleSelectedConditionsAdded}
+                    {title}
+                    on:addClick={saveChanges}
+                  />
+                {/if}
+
+                <!-- Affichage des tags sélectionnés -->
+                <div class="tagContainer">
+                  {#each tags as tag}
+                    <div
+                      class="tagItem bg-primary text-white fs-5 fontSecondary"
+                      key={tag}
+                    >
+                      <p class="m-0">{tag}</p>
+                      <button
+                        class="removeTagBtn"
+                        on:click={() => removeTag(tag)}
+                      >
+                        <lord-icon
+                          class="animated-cross"
+                          src="https://cdn.lordicon.com/zxvuvcnc.json"
+                          colors="primary:#4FE1F9"
+                          style="background-color: none;"
+                          trigger="hover"
+                        >
+                        </lord-icon>
+                      </button>
+                    </div>
+                  {/each}
+                </div>
+                <div class="buttonsCreationConditions">
                   <div class="buttonAddTag">
                     <button
                       class="ButtonEdit btn border-0 bg-primary text-white fs-5 fontSecondary"
-                      on:click={removeAllConditions}
+                      on:click={openTagPopup}
                     >
-                      Tout retirer
+                      Ajouter une condition +
                     </button>
                   </div>
-                {/if}
+                  {#if tags.length >= 2}
+                    <div class="buttonAddTag">
+                      <button
+                        class="ButtonEdit btn border-0 bg-primary text-white fs-5 fontSecondary"
+                        on:click={removeAllConditions}
+                      >
+                        Tout retirer
+                      </button>
+                    </div>
+                  {/if}
+                </div>
               </div>
             </div>
-          </div>
-          <div class="pt-5 ProfileDisplayTopCard">
-            <p class="fs-1 fw-bold text-darkPrimary fontPrimary">
-              Pricing informations
-            </p>
-          </div>
-          <div class="pricingCreation">
-            <p class="fs-3 fw-bold text-primary fontPrimary my-4">Pricing :</p>
-            <div class="pricingCreationDisplay">
-              <div class="choicePricing" id="tarifs">
-                <button class="border-0" type="button" on:click={toggleKg}>
-                  <div
-                    class="{isKgActive
-                      ? 'colorProfileOriginalSwitch'
-                      : 'colorProfileSecondarySwitch'} choiceProfileBtn fw-bold fs-5 fontSecondary"
-                    id="c1"
+            <div class="pt-5 ProfileDisplayTopCard">
+              <p class="fs-1 fw-bold text-darkPrimary fontPrimary">
+                Pricing informations
+              </p>
+            </div>
+            <div class="pricingCreation">
+              <p class="fs-3 fw-bold text-primary fontPrimary my-4">
+                Pricing :
+              </p>
+              <div class="pricingCreationDisplay">
+                <div class="choicePricing" id="tarifs">
+                  <button class="border-0" type="button" on:click={toggleKg}>
+                    <div
+                      class="{isKgActive
+                        ? 'colorProfileOriginalSwitch'
+                        : 'colorProfileSecondarySwitch'} choiceProfileBtn fw-bold fs-5 fontSecondary"
+                      id="c1"
+                    >
+                      Poids
+                    </div>
+                  </button>
+                  <button
+                    class="border-0"
+                    type="button"
+                    on:click={toggleVolume}
                   >
-                    Weight
-                  </div>
-                </button>
-                <button class="border-0" type="button" on:click={toggleVolume}>
-                  <div
-                    class="{isVolumeActive
-                      ? 'colorProfileOriginalSwitch'
-                      : 'colorProfileSecondarySwitch'} choiceProfileBtn fw-bold fs-5 fontSecondary"
-                    id="c3"
-                  >
-                    Volume
-                  </div>
-                </button>
-              </div>
-              <div class={isKgActive ? "active" : "inactive"}>
-                <PricingByWeight valueMax={poidsMax}/>
-              </div>
-              <div class={isVolumeActive ? "active" : "inactive"}>
-                
-                <PricingByVolume valueMax={volumeMax}/>
+                    <div
+                      class="{isVolumeActive
+                        ? 'colorProfileOriginalSwitch'
+                        : 'colorProfileSecondarySwitch'} choiceProfileBtn fw-bold fs-5 fontSecondary"
+                      id="c3"
+                    >
+                      Volume
+                    </div>
+                  </button>
+                </div>
+                <div class={isKgActive ? "active" : "inactive"}>
+                  <PricingByWeight on:valueMaxChange={handlePoidsMaxChange} />
+                </div>
+                <div class={isVolumeActive ? "active" : "inactive"}>
+                  <PricingByVolume on:valueMaxChange={handleVolumeMaxChange} />
+                </div>
               </div>
             </div>
-          </div>
-          <div class="postCreation">
-            <button
-              class="PostBtn ButtonEdit btn border-0 text-white fw-bold fs-3 fontSecondary"
-              on:click={handleSubmit} >
-              Post
-            </button>
-          </div>
+            <div class="postCreation">
+              <button
+                class="PostBtn ButtonEdit btn border-0 text-white fw-bold fs-3 fontSecondary"
+                type="submit"
+                on:click={handleSubmit}
+              >
+                Post
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -510,7 +623,7 @@
   }
   .pricingCreationDisplay {
     padding: 40px 160px;
-    background-color: #5a02d4;
+    background-color: #21a5c3;
     border-radius: 40px;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
     display: flex;
@@ -558,7 +671,7 @@
   }
   .input-box-creation input:focus {
     border: 2px solid transparent;
-    outline: 3px solid #5a02d4;
+    outline: 3px solid #21a5c3;
   }
 
   .input-box-date-creation {
@@ -578,7 +691,7 @@
   }
   .input-box-date-creation input:focus {
     border: 2px solid transparent;
-    outline: 3px solid #5a02d4;
+    outline: 3px solid #21a5c3;
   }
   .airportDepartureCreation {
     display: flex;
@@ -664,9 +777,9 @@
   }
   .choicePricing {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     grid-template-rows: 1fr;
-    grid-column-gap: 100px;
+    grid-column-gap: 150px;
     grid-row-gap: 0px;
   }
   .postCreation {
@@ -677,11 +790,11 @@
   .PostBtn {
     border-radius: 40px;
     padding: 1rem 4rem;
-    background-color: #21A5C3;
+    background-color: #21a5c3;
     transition: background-color 0.2s ease-in-out;
   }
   .PostBtn:hover {
-    background-color: #4FE1F9;
+    background-color: #4fe1f9;
   }
   .active {
     display: block;
@@ -691,7 +804,7 @@
     display: none;
   }
   .animated-cross {
-          width: 28px;
-          height: 28px;
-            }
+    width: 28px;
+    height: 28px;
+  }
 </style>

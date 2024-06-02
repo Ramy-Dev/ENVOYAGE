@@ -5,10 +5,17 @@
   // import { calculatePricing } from "../../lib/calculatePricing.js";
   import { poidsPaliersStore } from "../../stores/paliersStore.js";
   import { pricingDataStore } from "../../stores/pricingDataStore.js";
+  import { createEventDispatcher } from "svelte";
   import { writable } from "svelte/store";
   // Utilisation des stores locaux pour les poidsPaliers et les prix
   export let valueMax = 0;
+const dispatch = createEventDispatcher();
 
+function getPoidsMax(newPoidsMax) {
+  valueMax = newPoidsMax;
+  updatePoidsMax(newPoidsMax); // Appeler la fonction updatePoidsMax
+  dispatch('valueMaxChange', valueMax); // Émettre l'événement avec la nouvelle valeur
+}
   let valueInterm = 0;
   let poidsMaxEntered = false;
   let poidsPaliers = [];
@@ -180,6 +187,7 @@ poidsPaliersStore.subscribe(value => {
   console.log("Le data center a été appelé.");
 }
   $: poidsPaliers = $poidsPaliersStore;
+
 </script>
 
 <main>
@@ -197,7 +205,7 @@ poidsPaliersStore.subscribe(value => {
             class="inputPrix fw-normal text-primary fontSecondary"
             placeholder="Poids maximum"
             bind:value={valueMax}
-            on:change={updatePoidsMax(valueMax)}
+            on:change={getPoidsMax(valueMax)}
             required
           />
         </div>
@@ -314,7 +322,6 @@ poidsPaliersStore.subscribe(value => {
     border-radius: 40px;
     display: flex;
     flex-direction: column;
-    gap: 50px;
   }
 
   .informationsPricing {
@@ -351,7 +358,7 @@ poidsPaliersStore.subscribe(value => {
   }
   .inputPalier input:focus {
     border: 2px solid transparent;
-    outline: 3px solid #5a02d4;
+    outline: 3px solid #4FE1F9;
   }
   .inputPalier p {
     margin: 0;
@@ -380,5 +387,8 @@ poidsPaliersStore.subscribe(value => {
     border-radius: 20px;
     padding: 0.5rem 0.7rem;
     cursor: pointer;
+  }
+  .colorTopAnnonce {
+    height: 0;
   }
 </style>

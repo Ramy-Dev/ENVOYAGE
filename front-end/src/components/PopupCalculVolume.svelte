@@ -35,7 +35,13 @@
           <h2 class="fw-bold fs">{title}</h2>
           <button
             class="border-0 text-primary fs-2 fw-bold fontSecondary"
-            on:click={onClose}>x</button
+            on:click={onClose}> <lord-icon
+            class="animated-cross"
+            src="https://cdn.lordicon.com/zxvuvcnc.json"
+            colors="primary:#4FE1F9"
+            style="background-color: none;"
+            trigger="hover">
+        </lord-icon></button
           >
         </div>
         <div class="popup-content fs-4 fontSecondary">
@@ -78,7 +84,7 @@
 
             <div class="ajoutBtn">
               <button
-                class="notextPricing bg-primary text-white fs-5 fontSecondary"
+                class="notextPricing bg-light text-white fs-5 fontSecondary"
                 on:click={addVolumeMax}
               >
                 Add
@@ -133,15 +139,18 @@
     width: 70%;
     appearance: none;
     border-radius: 10px;
-    border: 3px solid #5a02d4;
-    color: #5a02d4;
+    border: 3px solid #4FE1F9;
+    color: #21A5C3;
+  }
+  input:focus {
+    outline: none;
   }
   button {
     /* Styles pour le bouton */
     padding: 5px;
     border-radius: 10px;
     margin-left: 30px;
-    border: 3px solid #5a02d4;
+    border: 3px solid #4FE1F9;
   }
   .notextPricing {
     padding: 1rem 1rem;
@@ -155,12 +164,16 @@
     width: 300px;
     appearance: none;
     border-radius: 10px;
-    border: 3px solid #5a02d4;
-    color: #5a02d4;
+    border: 3px solid #4FE1F9;
+    color: #21A5C3;
   }
   .bottomPopup {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+  }
+  .animated-cross {
+width: 40px;
+height: 40px;
   }
 </style>

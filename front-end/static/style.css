@@ -438,15 +438,22 @@ header {
   padding: 10px 20px;
   appearance: none;
   border-radius: 20px;
+
 }
+
 .colorProfileOriginalSwitch {
-  color: #5A02D4;
-  background-color: white;
+  color: white;
+  background-color: var(--couleur-secondaire);
+
 }
 
 .colorProfileSecondarySwitch {
-  color: white;
-  background-color: var(--couleur-secondaire);
+  color: var(--couleur-principale);
+  background-color: white;
+  transition: color 0.2s ease;
+}
+.colorProfileSecondarySwitch:hover {
+  color: var(--couleur-light);
 }
 
 /* ----------------------------------------------------------- */
