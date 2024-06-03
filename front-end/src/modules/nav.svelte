@@ -18,7 +18,9 @@
 <main>
   <nav class="navbar fixed navbar-expand-lg bg-body-tertiary fontPrimary">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">Envoyage</a>
+      <a class="navbar-brand" href="/">
+      <img class="image_nav" src="../svg/logo-navbar.svg" alt="">
+    </a>
       <button
         class="navbar-toggler"
         type="button"
@@ -33,10 +35,7 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/recherche">Recherche</a>
+            <a class="nav-link text-darkPrimary" href="/recherche">Recherche</a>
           </li>
           <!-- <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="/" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -54,15 +53,20 @@
               </li> -->
         </ul>
         <ul class="SignUp-LogIn d-flex m-0 p-0">
-          <li class="text-primary mt-2 fw-bold nav-link" >
+          <li class="text-primary fw-bold nav-link" >
            {username}
           </li>
           <li>
             <a class="LogIn fw-semibold nav-link bg-primary" href="/creation">Créer une annonce +</a>
           </li>
           <li>
-            <a class="LogIn fw-semibold nav-link" href="/profil">
-              <img class="Profil-img-top-nav-bar" src="../svg/utilisateur.png" alt="profil-icon">
+            <a class="fw-semibold d-flex nav-link" href="/profil">
+              <lord-icon
+                src="https://cdn.lordicon.com/hrjifpbq.json"
+                trigger="hover"
+                colors="primary:#0D434F"
+                style="width:40px;height:40px">
+              </lord-icon>
             </a>
           </li>
           <li>
@@ -79,11 +83,16 @@
 
 <style>
   nav {
+    padding: 10px 10px;
     z-index: 9999;
     width: 100%;
   }
+  .image_nav {
+    width: 200px;
+  }
   .SignUp {
     background-color: #ffe767;
+    align-items: center;
     border-radius: 5px;
     padding: 10px;
   }
@@ -97,5 +106,6 @@
   }
   li {
     list-style: none;
+    align-self: center;
   }
 </style>
