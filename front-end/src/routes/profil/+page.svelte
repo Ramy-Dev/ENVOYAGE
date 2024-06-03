@@ -1,29 +1,54 @@
 <script>
   import Popup from "../../components/Popup.svelte";
+  import { onMount } from "svelte";
+  import { tick } from "svelte";
 
-  let userData = {
-    name: "Ramy",
-    email: "ramy@envoyage.com",
-    phone: "+213 123 45 67 89",
-    dateOfBirth: "24 / 06 / 2005 - 18 yo",
-    address: "11 rue Bainem, El Hammamet",
-    password: "**********",
-    passport: "***********************",
-  };
-
+  let userData = [];
   let isEditing = false;
   let newFieldValue = "";
   let fieldName = "";
   let title = "";
   let isProfileActive = true;
 
+  
+  onMount(async () => {
+    const token = localStorage.getItem("authToken");
+    userData = await fetchUserData(token);
+    // Now userData should be populated
+    console.log("User data loaded:", userData);
+});
+
+async function fetchUserData(token) {
+    try {
+        const response = await fetch("http://127.0.0.1:8000/utilisateurs/", {
+            headers: {
+                "Authorization": `Token ${token}`
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Fetched user data:", data);
+            return data; // Ensure to return the fetched data
+        } else {
+            console.error("Failed to fetch user info.");
+            return {}; // Return an empty object or handle the error as needed
+        }
+    } catch (error) {
+        console.error("Error fetching user info:", error);
+        return {}; // Return an empty object or handle the error as needed
+    }
+}
+
   function toggleProfile() {
     isProfileActive = true;
+    console.log(userData, userData[0].username);
   }
 
   function toggleHistory() {
     isProfileActive = false;
   }
+
   function toggleProfileAndToggle() {
     toggleProfile();
     toggle();
@@ -33,6 +58,7 @@
     toggleHistory();
     toggle();
   }
+
   const toggle = (event) => {
     const clickedButton = event.target.closest("button");
     const clickedTarif = clickedButton.querySelector(".choiceProfileBtn");
@@ -43,7 +69,6 @@
 
     if (clickedTarif.classList.contains("colorProfileOriginalSwitch")) return;
 
-    // Désactiver toutes les classes colorOriginalSwitch
     document
       .querySelectorAll(".choiceProfileBtn.colorProfileOriginalSwitch")
       .forEach((tarif) => {
@@ -51,13 +76,12 @@
         tarif.classList.add("colorProfileSecondarySwitch");
       });
 
-    // Activer la classe colorOriginalSwitch pour le bouton cliqué
     clickedTarif.classList.add("colorProfileOriginalSwitch");
     clickedTarif.classList.remove("colorProfileSecondarySwitch");
 
-    // Activer le bouton cliqué
     clickedButton.disabled = false;
   };
+
   function openPopup(field) {
     isEditing = true;
     fieldName = field;
@@ -65,31 +89,31 @@
     switch (field) {
       case "name":
         title = "Edit your Name";
-        newFieldValue = userData.name;
+        newFieldValue = userData[0].first_name;
         break;
       case "email":
         title = "Edit your Email";
-        newFieldValue = userData.email;
+        newFieldValue = userData[0].email;
         break;
       case "phone":
         title = "Edit your Phone Number";
-        newFieldValue = userData.phone;
+        newFieldValue = userData[0].numero_telephone;
         break;
       case "dateOfBirth":
         title = "Edit your Date of Birth / Age";
-        newFieldValue = userData.dateOfBirth;
+        newFieldValue = userData[0].date_de_naissance;
         break;
       case "address":
         title = "Edit your Address";
-        newFieldValue = userData.address;
+        newFieldValue = userData[0].adresse;
         break;
       case "password":
         title = "Change your Password";
-        newFieldValue = userData.password;
+        newFieldValue = userData[0].password; // Placeholder, you might not want to display password
         break;
       case "passport":
         title = "Edit your Passport Number";
-        newFieldValue = userData.passport;
+        newFieldValue = userData[0].numero_passeport;
         break;
     }
   }
@@ -97,28 +121,32 @@
   function saveChanges() {
     switch (fieldName) {
       case "name":
-        userData.name = newFieldValue;
+        userData[0].first_name = newFieldValue;
         break;
       case "email":
-        userData.email = newFieldValue;
+        userData[0].email = newFieldValue;
         break;
       case "phone":
-        userData.phone = newFieldValue;
+        userData[0].numero_telephone = newFieldValue;
         break;
       case "dateOfBirth":
-        userData.dateOfBirth = newFieldValue;
+        userData[0].date_de_naissance = newFieldValue;
         break;
       case "address":
-        userData.address = newFieldValue;
+        userData[0].adresse = newFieldValue;
         break;
       case "password":
-        userData.password = newFieldValue;
+        userData[0].password = newFieldValue;
         break;
       case "passport":
-        userData.passport = newFieldValue;
+        userData[0].numero_passeport = newFieldValue;
         break;
     }
     isEditing = false;
+
+    tick().then(() => {
+    // Optionally, you can perform additional operations here if needed
+  });
   }
 
   function handleChangesSaved(event) {
@@ -160,9 +188,9 @@
       <div class="ProfileTopCard">
         <p class="text-white fw-semibold fs-2 fontPrimary">
           {#if isProfileActive}
-            {userData.name}'s profile
+            {userData[0]?.username || 'N/A'}'s profile
           {:else}
-            {userData.name}'s history
+            {userData[0]?.username}'s history
           {/if}
         </p>
         <img src="../svg/VerifStar.svg" alt="Verif Star" />
@@ -208,11 +236,11 @@
             >
           </div>
           <div class="ProfileContainerDisplay fontSecondary">
-            <p class="fs-2 mb-5">Importants informations</p>
+            <p class="fs-2 mb-5">Important information</p>
             <div class="ProfileInfo fs-5">
               <p class="text-secondary">Your Name</p>
               <div class="ProfileEditInfo">
-                <span id="info-name">{userData.name}</span>
+                <span id="info-name">{userData[0]?.first_name}</span>
                 <button
                   id="edit-name"
                   class="ButtonEdit btn border-0 bg-primary text-white"
@@ -223,7 +251,7 @@
             <div class="ProfileInfo fs-5">
               <p class="text-secondary">Email</p>
               <div class="ProfileEditInfo">
-                <span class="fw-bold">{userData.email}</span>
+                <span class="fw-bold">{userData[0]?.email}</span>
                 <button
                   class="ButtonEdit btn border-0 bg-primary text-white"
                   on:click={() => openPopup("email")}>edit</button
@@ -233,7 +261,7 @@
             <div class="ProfileInfo fs-5">
               <p class="text-secondary">Phone Number</p>
               <div class="ProfileEditInfo">
-                <span class="fw-bold">{userData.phone}</span>
+                <span class="fw-bold">{userData[0]?.numero_telephone}</span>
                 <button
                   class="ButtonEdit btn border-0 bg-primary text-white"
                   on:click={() => openPopup("phone")}>edit</button
@@ -243,13 +271,13 @@
           </div>
           <div class="ProfileContainerDisplay fontSecondary">
             <p class="fs-3 mb-5">
-              About <span class="text-primary">{userData.name}</span>
-              <span class="text-muted">(facultatif)</span>
+              About <span class="text-primary">{userData[0]?.first_name}</span>
+              <span class="text-muted">(optional)</span>
             </p>
             <div class="ProfileInfo fs-5">
               <p class="text-secondary">Date of birth / Age</p>
               <div class="ProfileEditInfo">
-                <span class="fw-bold">{userData.dateOfBirth}</span>
+                <span class="fw-bold">{userData[0]?.date_de_naissance}</span>
                 <button
                   class="ButtonEdit btn border-0 bg-primary text-white"
                   on:click={() => openPopup("dateOfBirth")}>edit</button
@@ -257,42 +285,41 @@
               </div>
             </div>
             <div class="ProfileInfo fs-5">
-              <p class="text-secondary">Adresse</p>
+              <p class="text-secondary">Address</p>
               <div class="ProfileEditInfo">
-                <span class="fw-bold">{userData.address}</span>
+                <span class="fw-bold">{userData[0]?.adresse}</span>
                 <button
                   class="ButtonEdit btn border-0 bg-primary text-white"
                   on:click={() => openPopup("address")}>edit</button
                 >
               </div>
             </div>
-          </div>
-          <div class="ProfileContainerDisplay fontSecondary">
-            <p class="fs-3 mb-5">Security</p>
             <div class="ProfileInfo fs-5">
               <p class="text-secondary">Password</p>
               <div class="ProfileEditInfo">
-                <span class="fw-bold">{userData.password}</span>
+                <span class="fw-bold">********</span>
                 <button
                   class="ButtonEdit btn border-0 bg-primary text-white"
                   on:click={() => openPopup("password")}>edit</button
                 >
               </div>
             </div>
-            <div class="ProfileInfo fs-5">
-              <p class="text-secondary">Passport Number</p>
-              <div class="ProfileEditInfo">
-                <p class="fw-bold">
-                  <span class="fw-bold">{userData.passport}</span>
-                </p>
-                <button
-                  class="ButtonEdit btn border-0 bg-primary text-white"
-                  on:click={() => openPopup("passport")}>edit</button
-                >
+
+            {#if userData[0]?.is_voyageur}
+              <div class="ProfileInfo fs-5">
+                <p class="text-secondary">Passport Number</p>
+                <div class="ProfileEditInfo">
+                  <span class="fw-bold">{userData[0]?.numero_passeport}</span>
+                  <button
+                    class="ButtonEdit btn border-0 bg-primary text-white"
+                    on:click={() => openPopup("passport")}>edit</button
+                  >
+                </div>
               </div>
-            </div>
+            {/if}
           </div>
         </div>
+
       {:else}
         <!-- Afficher le contenu de le partie history -->
 
