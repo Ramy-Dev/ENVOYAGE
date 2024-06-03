@@ -1,9 +1,15 @@
 <script>
    import { redirect } from "@sveltejs/kit";
+   import { onMount } from "svelte";
 
-// In the login script
-let message = "";
+   let message = "";
 
+   onMount(() => {
+      if (getToken()) {
+         window.location.href = '/'
+      }
+      
+   });
 async function handleSubmit(event) {
     event.preventDefault();
 
