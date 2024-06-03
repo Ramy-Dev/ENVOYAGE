@@ -91,10 +91,11 @@
     width: 200px;
   }
   .SignUp {
-    background-color: #ffe767;
+    background-color: transparent;
+    border: 3px dashed #21A5C3;
     align-items: center;
     border-radius: 5px;
-    padding: 10px;
+    padding: 7px 10px;
   }
   .LogIn {
     color: white;
