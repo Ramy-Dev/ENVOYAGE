@@ -1,4 +1,3 @@
-import http
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
@@ -20,9 +19,7 @@ from .serializers import (
     TagSerializer, AnnonceTagSerializer, PalierSerializer, AnnoncePalierSerializer
 )
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.views import APIView
 from rest_framework.authtoken.views import ObtainAuthToken
-
 
 class PasswordResetRequestView(APIView):
     permission_classes = [AllowAny]
@@ -35,8 +32,7 @@ class PasswordResetRequestView(APIView):
             if user:
                 token = default_token_generator.make_token(user)
                 uid = urlsafe_base64_encode(force_bytes(user.pk))
-                # reset_link = f"{request.scheme}://{request.get_host()}/reset_password_confirm/{uid}/{token}/"
-                reset_link = f"{request.scheme}://http://localhost:5173/reset_password_confirm/{uid}/{token}/"
+                reset_link = f"{request.scheme}://localhost:5173/reset_password_confirm/{uid}/{token}/"
                 send_mail(
                     'Password Reset Request',
                     f'Click the link to reset your password: {reset_link}',
@@ -71,21 +67,23 @@ class UtilisateurViewSet(viewsets.ModelViewSet):
     queryset = Utilisateur.objects.all()
     serializer_class = UtilisateurSerializer
     permission_classes = [IsAuthenticated]
+
     def get_queryset(self):
         username = self.request.query_params.get('username', None)
-        if username is not None:
-            user = get_object_or_404(Utilisateur, username=username)
-            return Utilisateur.objects.filter(username=user.username)
+        if username:
+            return Utilisateur.objects.filter(username=username)
         return Utilisateur.objects.all()
-    def get_queryset(self):
-        return Utilisateur.objects.filter(id=self.request.user.id)
+
+    def get_object(self):
+        return get_object_or_404(Utilisateur, pk=self.request.user.pk)
 
 class DemandeDeCompteVoyageurViewSet(viewsets.ModelViewSet):
     queryset = DemandeDeCompteVoyageur.objects.all()
     serializer_class = DemandeDeCompteVoyageurSerializer
     permission_classes = [IsAuthenticated]
+
     def get_queryset(self):
-        return DemandeDeCompteVoyageur.objects.filter(user=self.request.user)
+        return DemandeDeCompteVoyageur.objects.filter(utilisateur=self.request.user)
     
     @action(detail=True, methods=['post'])
     def approve(self, request, pk=None):
@@ -138,7 +136,6 @@ class AnnoncePalierViewSet(viewsets.ModelViewSet):
     serializer_class = AnnoncePalierSerializer
     permission_classes = [IsAuthenticated]
 
-# Custom view to handle user registration
 class UserRegistrationView(APIView):
     permission_classes = [AllowAny]
 
@@ -146,10 +143,10 @@ class UserRegistrationView(APIView):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            return Response({"user": serializer.data, "token": Token.objects.get(user=user).key}, status=status.HTTP_201_CREATED)
+            token = Token.objects.create(user=user)
+            return Response({"user": serializer.data, "token": token.key}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# Custom view to handle user login
 class UserLoginView(ObtainAuthToken):
     permission_classes = [AllowAny]
 

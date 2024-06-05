@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -27,8 +26,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# settings.py
-
+# Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.office365.com'
 EMAIL_PORT = 587
@@ -36,11 +34,13 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'imansoura.ramy@outlook.com'
 EMAIL_HOST_PASSWORD = 'azerty_2024'
 
-
-# Application definition
-
 INSTALLED_APPS = [
-    'ouanis.apps.OuanisConfig',
+    'jazzmin',
+    'admin_interface',
+    'colorfield',
+    'flat_responsive',
+    'flat',
+    'ouanis',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,6 +51,40 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
 ]
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+SILENCED_SYSTEM_CHECKS = ['security.W019']
+
+# Customization for django-admin-interface
+ADMIN_INTERFACE_THEME = {
+    'css': {
+        'header': 'bg-lightblue-500',
+        'title': 'font-bold text-white',
+        'user_info': 'text-gray-200',
+        'sidebar': 'bg-gray-900 text-white',
+        'sidebar_active': 'bg-lightblue-500 text-white',
+        'footer': 'text-gray-200',
+    }
+}
+
+# Jazzmin settings
+JAZZMIN_SETTINGS = {
+    "site_title": "My Admin",
+    "site_header": "My Admin",
+    "site_brand": "My Admin",
+    "site_logo": "logo.png",
+    "login_logo": "logo.png",
+    "login_logo_dark": "logo-dark.png",
+    "site_icon": "icon.png",
+    "welcome_sign": "Welcome to My Admin",
+    "copyright": "My Company",
+    "user_avatar": "profile_picture",
+    "custom_css": None,
+    "custom_js": None,
+    "show_ui_builder": True,
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
+}
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -69,6 +103,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 ]
+
 CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'mysite.urls'
@@ -91,7 +126,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -101,7 +135,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -121,7 +154,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -133,11 +165,10 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

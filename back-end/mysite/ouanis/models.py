@@ -1,36 +1,20 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
+from django.utils import timezone
 
 class Utilisateur(AbstractUser):
     numero_telephone = models.CharField(max_length=200, blank=True, null=True)
     adresse = models.CharField(max_length=200, blank=True, null=True)
     date_de_naissance = models.DateField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
     numero_passeport = models.CharField(max_length=200, blank=True, null=True)
     photos_passeport = models.FileField(upload_to='documents/', blank=True, null=True)
     is_voyageur = models.BooleanField(default=False)
 
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='utilisateur_set',
-        blank=True,
-        help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
-        related_query_name='utilisateur',
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='utilisateur_set',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        related_query_name='utilisateur',
-    )
-    
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
-3.5
-from django.utils import timezone
 
 class Annonce(models.Model):
     createur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
@@ -42,21 +26,24 @@ class Annonce(models.Model):
     volume_max = models.IntegerField()
     date_heure_depart = models.DateTimeField(default=timezone.now)
     date_heure_arrivee = models.DateTimeField(default=timezone.now)
+
     def __str__(self):
         return f"Annonce de {self.createur.first_name} {self.createur.last_name} vers {self.destination}"
 
 class DemandeAnnonce(models.Model):
-    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
-    annonce = models.ForeignKey(Annonce, on_delete=models.CASCADE, related_name='demandes')
     STATUT_CHOICES = [
         ('en_attente', 'En Attente'),
         ('accepte', 'Accepté'),
         ('rejete', 'Rejeté')
     ]
+
+    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+    annonce = models.ForeignKey(Annonce, on_delete=models.CASCADE, related_name='demandes')
     statut = models.CharField(max_length=20, choices=STATUT_CHOICES, default='en_attente')
     date_creation = models.DateTimeField(auto_now_add=True)
     poids = models.FloatField(blank=True, null=True)
     volume = models.FloatField(blank=True, null=True)
+
     def __str__(self):
         return f"Demande de {self.utilisateur.first_name} {self.utilisateur.last_name} pour {self.annonce}"
 
@@ -75,7 +62,7 @@ class Tag(models.Model):
     nom = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.nom}"
+        return self.nom
 
 class AnnonceTag(models.Model):
     annonce = models.ForeignKey(Annonce, on_delete=models.CASCADE)

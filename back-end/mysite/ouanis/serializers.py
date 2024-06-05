@@ -1,13 +1,8 @@
-from datetime import date
-import stat
-from fastapi import Response
 from rest_framework import serializers
 from .models import (
     Utilisateur, Annonce, DemandeAnnonce,
     DemandeDeCompteVoyageur, Tag, AnnonceTag, Palier, AnnoncePalier
 )
-from django.contrib.auth.models import User
-from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 
@@ -27,7 +22,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('password2')
         user = Utilisateur.objects.create_user(**validated_data)
-        Token.objects.create(user=user)  # Create a token for the new user
+        Token.objects.create(user=user)
         return user
 
 class UserLoginSerializer(serializers.Serializer):
@@ -71,7 +66,6 @@ class PalierSerializer(serializers.ModelSerializer):
         model = Palier
         fields = ['id', 'from_poids', 'to_poids', 'prix']
 
-
 class AnnonceTagSerializer(serializers.ModelSerializer):
     tag = TagSerializer()
 
@@ -107,100 +101,42 @@ class AnnonceSerializer(serializers.ModelSerializer):
             AnnonceTag.objects.create(annonce=annonce, tag=tag)
 
         for palier_data in paliers_data:
-            palier = Palier.objects.create(**palier_data['palier'])
+            palier = Palier.objects.create(**palier_data)
             AnnoncePalier.objects.create(annonce=annonce, palier=palier)
 
         return annonce
-    def update(self, instance, validated_data):
-        utilisateur_data = validated_data.pop('utilisateur')
-        annonce_data = validated_data.pop('annonce')
-
-        utilisateur = instance.utilisateur
-        annonce = instance.annonce
-
-        instance.statut = validated_data.get('statut', instance.statut)
-        instance.poids = validated_data.get('poids', instance.poids)
-        instance.save()
-
-        utilisateur.username = utilisateur_data.get('username', utilisateur.username)
-        utilisateur.first_name = utilisateur_data.get('first_name', utilisateur.first_name)
-        utilisateur.last_name = utilisateur_data.get('last_name', utilisateur.last_name)
-        utilisateur.email = utilisateur_data.get('email', utilisateur.email)
-        utilisateur.numero_telephone = utilisateur_data.get('numero_telephone', utilisateur.numero_telephone)
-        utilisateur.adresse = utilisateur_data.get('adresse', utilisateur.adresse)
-        utilisateur.date_de_naissance = utilisateur_data.get('date_de_naissance', utilisateur.date_de_naissance)
-        utilisateur.profile_picture = utilisateur_data.get('profile_picture', utilisateur.profile_picture)
-        utilisateur.save()
-
-        annonce.createur = annonce_data.get('createur', annonce.createur)
-        annonce.created_at = annonce_data.get('created_at', annonce.created_at)
-        annonce.updated_at = annonce_data.get('updated_at', annonce.updated_at)
-        annonce.lieu_depart = annonce_data.get('lieu_depart', annonce.lieu_depart)
-        annonce.destination = annonce_data.get('destination', annonce.destination)
-        annonce.poids_max = annonce_data.get('poids_max', annonce.poids_max)
-        annonce.save()
-
-        return instance
     
-    def delete(self, request, pk):
-        try:
-            annonce = Annonce.objects.get(pk=pk)
-            annonce.delete()
-            return Response(status=stat.HTTP_204_NO_CONTENT)
-        except Annonce.DoesNotExist:
-            return Response(status=stat.HTTP_404_NOT_FOUND)
+    def update(self, instance, validated_data):
+        tags_data = validated_data.pop('tags', None)
+        paliers_data = validated_data.pop('paliers', None)
 
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        
+        if tags_data:
+            instance.tags.clear()
+            for tag in tags_data:
+                AnnonceTag.objects.create(annonce=instance, tag=tag)
+
+        if paliers_data:
+            instance.paliers.clear()
+            for palier_data in paliers_data:
+                palier = Palier.objects.create(**palier_data)
+                AnnoncePalier.objects.create(annonce=instance, palier=palier)
+
+        instance.save()
+        return instance
 
 class DemandeAnnonceSerializer(serializers.ModelSerializer):
-    utilisateur = UtilisateurSerializer()
-    annonce = AnnonceSerializer()
+    utilisateur = serializers.PrimaryKeyRelatedField(queryset=Utilisateur.objects.all())
+    annonce = serializers.PrimaryKeyRelatedField(queryset=Annonce.objects.all())
 
     class Meta:
         model = DemandeAnnonce
-        fields = [
-            'id', 'utilisateur', 'annonce', 'statut', 'date_creation', 'poids'
-        ]
+        fields = ['id', 'utilisateur', 'annonce', 'statut', 'date_creation', 'poids', 'volume']
 
     def create(self, validated_data):
-        utilisateur_data = validated_data.pop('utilisateur')
-        annonce_data = validated_data.pop('annonce')
-
-        utilisateur = Utilisateur.objects.create(**utilisateur_data)
-        annonce = Annonce.objects.create(**annonce_data)
-
-        demande_annonce = DemandeAnnonce.objects.create(utilisateur=utilisateur, annonce=annonce, **validated_data)
-        return demande_annonce
-
-    def update(self, instance, validated_data):
-        utilisateur_data = validated_data.pop('utilisateur')
-        annonce_data = validated_data.pop('annonce')
-
-        utilisateur = instance.utilisateur
-        annonce = instance.annonce
-
-        instance.statut = validated_data.get('statut', instance.statut)
-        instance.poids = validated_data.get('poids', instance.poids)
-        instance.save()
-
-        utilisateur.username = utilisateur_data.get('username', utilisateur.username)
-        utilisateur.first_name = utilisateur_data.get('first_name', utilisateur.first_name)
-        utilisateur.last_name = utilisateur_data.get('last_name', utilisateur.last_name)
-        utilisateur.email = utilisateur_data.get('email', utilisateur.email)
-        utilisateur.numero_telephone = utilisateur_data.get('numero_telephone', utilisateur.numero_telephone)
-        utilisateur.adresse = utilisateur_data.get('adresse', utilisateur.adresse)
-        utilisateur.date_de_naissance = utilisateur_data.get('date_de_naissance', utilisateur.date_de_naissance)
-        utilisateur.profile_picture = utilisateur_data.get('profile_picture', utilisateur.profile_picture)
-        utilisateur.save()
-
-        annonce.createur = annonce_data.get('createur', annonce.createur)
-        annonce.created_at = annonce_data.get('created_at', annonce.created_at)
-        annonce.updated_at = annonce_data.get('updated_at', annonce.updated_at)
-        annonce.lieu_depart = annonce_data.get('lieu_depart', annonce.lieu_depart)
-        annonce.destination = annonce_data.get('destination', annonce.destination)
-        annonce.poids_max = annonce_data.get('poids_max', annonce.poids_max)
-        annonce.save()
-
-        return instance
+        return DemandeAnnonce.objects.create(**validated_data)
 
 class DemandeDeCompteVoyageurSerializer(serializers.ModelSerializer):
     utilisateur = UtilisateurSerializer()
@@ -219,118 +155,16 @@ class DemandeDeCompteVoyageurSerializer(serializers.ModelSerializer):
         return demande
 
     def update(self, instance, validated_data):
-        utilisateur_data = validated_data.pop('utilisateur')
-        utilisateur = instance.utilisateur
-
-        instance.numero_passeport = validated_data.get('numero_passeport', instance.numero_passeport)
-        instance.photos_passeport = validated_data.get('photos_passeport', instance.photos_passeport)
-        instance.adresse = validated_data.get('adresse', instance.adresse)
-        instance.est_approuve = validated_data.get('est_approuve', instance.est_approuve)
+        utilisateur_data = validated_data.pop('utilisateur', None)
+        if utilisateur_data:
+            UtilisateurSerializer().update(instance.utilisateur, utilisateur_data)
+        
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        
         instance.save()
-
-        utilisateur.username = utilisateur_data.get('username', utilisateur.username)
-        utilisateur.first_name = utilisateur_data.get('first_name', utilisateur.first_name)
-        utilisateur.last_name = utilisateur_data.get('last_name', utilisateur.last_name)
-        utilisateur.email = utilisateur_data.get('email', utilisateur.email)
-        utilisateur.numero_telephone = utilisateur_data.get('numero_telephone', utilisateur.numero_telephone)
-        utilisateur.adresse = utilisateur_data.get('adresse', utilisateur.adresse)
-        utilisateur.date_de_naissance = utilisateur_data.get('date_de_naissance', utilisateur.date_de_naissance)
-        utilisateur.profile_picture = utilisateur_data.get('profile_picture', utilisateur.profile_picture)
-        utilisateur.save()
-
         return instance
 
-class TagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = ['id', 'nom']
-
-class AnnonceTagSerializer(serializers.ModelSerializer):
-    annonce = AnnonceSerializer()
-    tag = TagSerializer()
-
-    class Meta:
-        model = AnnonceTag
-        fields = ['id', 'annonce', 'tag']
-
-    def create(self, validated_data):
-        annonce_data = validated_data.pop('annonce')
-        tag_data = validated_data.pop('tag')
-
-        annonce = Annonce.objects.create(**annonce_data)
-        tag = Tag.objects.create(**tag_data)
-
-        annonce_tag = AnnonceTag.objects.create(annonce=annonce, tag=tag, **validated_data)
-        return annonce_tag
-
-    def update(self, instance, validated_data):
-        annonce_data = validated_data.pop('annonce')
-        tag_data = validated_data.pop('tag')
-
-        annonce = instance.annonce
-        tag = instance.tag
-
-        instance.save()
-
-        annonce.createur = annonce_data.get('createur', annonce.createur)
-        annonce.created_at = annonce_data.get('created_at', annonce.created_at)
-        annonce.updated_at = annonce_data.get('updated_at', annonce.updated_at)
-        annonce.lieu_depart = annonce_data.get('lieu_depart', annonce.lieu_depart)
-        annonce.destination = annonce_data.get('destination', annonce.destination)
-        annonce.poids_max = annonce_data.get('poids_max', annonce.poids_max)
-        annonce.save()
-
-        tag.nom = tag_data.get('nom', tag.nom)
-        tag.save()
-
-        return instance
-
-class PalierSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Palier
-        fields = ['id', 'from_poids', 'to_poids', 'prix']
-
-class AnnoncePalierSerializer(serializers.ModelSerializer):
-    annonce = AnnonceSerializer()
-    palier = PalierSerializer()
-
-    class Meta:
-        model = AnnoncePalier
-        fields = ['id', 'annonce', 'palier']
-
-    def create(self, validated_data):
-        annonce_data = validated_data.pop('annonce')
-        palier_data = validated_data.pop('palier')
-
-        annonce = Annonce.objects.create(**annonce_data)
-        palier = Palier.objects.create(**palier_data)
-
-        annonce_palier = AnnoncePalier.objects.create(annonce=annonce, palier=palier, **validated_data)
-        return annonce_palier
-
-    def update(self, instance, validated_data):
-        annonce_data = validated_data.pop('annonce')
-        palier_data = validated_data.pop('palier')
-
-        annonce = instance.annonce
-        palier = instance.palier
-
-        instance.save()
-
-        annonce.createur = annonce_data.get('createur', annonce.createur)
-        annonce.created_at = annonce_data.get('created_at', annonce.created_at)
-        annonce.updated_at = annonce_data.get('updated_at', annonce.updated_at)
-        annonce.lieu_depart = annonce_data.get('lieu_depart', annonce.lieu_depart)
-        annonce.destination = annonce_data.get('destination', annonce.destination)
-        annonce.poids_max = annonce_data.get('poids_max', annonce.poids_max)
-        annonce.save()
-
-        palier.from_poids = palier_data.get('from_poids', palier.from_poids)
-        palier.to_poids = palier_data.get('to_poids', palier.to_poids)
-        palier.prix = palier_data.get('prix', palier.prix)
-        palier.save()
-        return instance
-    
 class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField()
 

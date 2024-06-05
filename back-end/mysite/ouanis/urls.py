@@ -2,12 +2,10 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from django.contrib import admin
 from rest_framework.authtoken.views import obtain_auth_token
-
 from .views import (
     UtilisateurViewSet, DemandeDeCompteVoyageurViewSet, 
-    AnnonceViewSet, DemandeAnnonceViewSet, TagViewSet,  UserRegistrationView, UserLoginView,
+    AnnonceViewSet, DemandeAnnonceViewSet, TagViewSet, UserRegistrationView, UserLoginView,
     AnnonceTagViewSet, PalierViewSet, AnnoncePalierViewSet, PasswordResetRequestView, PasswordResetConfirmView
-
 )
 
 router = DefaultRouter()
@@ -21,6 +19,7 @@ router.register(r'paliers', PalierViewSet)
 router.register(r'annonce_paliers', AnnoncePalierViewSet)
 
 urlpatterns = [
+    path('admin/', admin.site.urls),  # Ensure admin path is included
     path('reset_password/', PasswordResetRequestView.as_view(), name='reset_password'),
     path('reset_password_confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='reset_password_confirm'),
     path('register/', UserRegistrationView.as_view(), name='register'),
