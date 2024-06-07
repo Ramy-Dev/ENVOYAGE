@@ -19,7 +19,7 @@ router.register(r'paliers', PalierViewSet)
 router.register(r'annonce_paliers', AnnoncePalierViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),  # Ensure admin path is included
+    # In your urls.py (add this view to the admin urls)
     path('reset_password/', PasswordResetRequestView.as_view(), name='reset_password'),
     path('reset_password_confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='reset_password_confirm'),
     path('register/', UserRegistrationView.as_view(), name='register'),

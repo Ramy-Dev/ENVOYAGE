@@ -67,24 +67,78 @@ ADMIN_INTERFACE_THEME = {
     }
 }
 
-# Jazzmin settings
 JAZZMIN_SETTINGS = {
-    "site_title": "My Admin",
-    "site_header": "My Admin",
-    "site_brand": "My Admin",
-    "site_logo": "logo.png",
-    "login_logo": "logo.png",
-    "login_logo_dark": "logo-dark.png",
-    "site_icon": "icon.png",
+    "site_title": "En voyage",
+    "site_header": "En voyage",
+    "site_brand": "Admin En voyage",
     "welcome_sign": "Welcome to My Admin",
-    "copyright": "My Company",
+    "copyright": "EN voyage RAMY / AMINE",
     "user_avatar": "profile_picture",
-    "custom_css": None,
-    "custom_js": None,
-    "show_ui_builder": True,
     "changeform_format": "horizontal_tabs",
     "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "ouanis.utilisateur": "fas fa-user-circle",
+        "ouanis.annonce": "fas fa-bullhorn",
+        "ouanis.demandeannonce": "fas fa-hand-paper",
+        "ouanis.demandedecomptevoyageur": "fas fa-passport",
+        "ouanis.tag": "fas fa-tag",
+        "ouanis.annoncetag": "fas fa-tags",
+        "ouanis.palier": "fas fa-weight",
+        "ouanis.annoncepalier": "fas fa-balance-scale",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    "topmenu_links": [
+        {"name": "AR Panel", "url": "", "permissions": ["auth.view_user"]},
+        {"app": "auth"},
+    ],
+    "usermenu_links": [
+        {"name": "Support", "url": "Mail:imansoura.ramy@gmail.com", "new_window": True},
+    ],
+    "show_sidebar": True,
+    "order_with_respect_to": ["auth", "ouanis", "settings"],
+    "custom_links": {
+        "ouanis": [
+            {"name": "Dashboard", "url": "admin:dashboard", "icon": "fas fa-tachometer-alt", "permissions": ["ouanis.view_utilisateur"]},
+           # {"name": "User Reports", "url": "/admin/reports/users/", "icon": "fas fa-chart-line", "permissions": ["ouanis.view_utilisateur"]},
+        ]
+    },
+    "related_modal_active": True,  # Utiliser des modals pour les champs liés
+    "theme": {
+        "navbar": {
+            "background_color": "#2c3e50",
+            "text_color": "white",
+            "hover_background_color": "#1abc9c",
+            "hover_text_color": "lightgrey",
+        },
+        "sidebar": {
+            "background_color": "#34495e",
+            "text_color": "white",
+            "hover_background_color": "#1abc9c",
+            "hover_text_color": "lightgrey",
+        },
+        "footer": {
+            "background_color": "#2c3e50",
+            "text_color": "white",
+        },
+        "buttons": {
+            "default": "btn-primary",
+            "primary": "btn-primary",
+            "success": "btn-success",
+            "info": "btn-info",
+            "warning": "btn-warning",
+            "danger": "btn-danger",
+        },
+
+    },
+        "custom_css": "css/custom_admin.css",  # Add this line
+
 }
+
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -111,7 +165,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # Ensure this points to the correct path
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -123,6 +177,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
@@ -164,13 +219,16 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+import os
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]

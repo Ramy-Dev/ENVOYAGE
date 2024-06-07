@@ -2,13 +2,16 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
 
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+
 class Utilisateur(AbstractUser):
     numero_telephone = models.CharField(max_length=200, blank=True, null=True)
     adresse = models.CharField(max_length=200, blank=True, null=True)
     date_de_naissance = models.DateField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     numero_passeport = models.CharField(max_length=200, blank=True, null=True)
-    photos_passeport = models.FileField(upload_to='documents/', blank=True, null=True)
+    photos_passeport = models.ImageField(upload_to='passport_images/', blank=True, null=True)  # Ensure this is an ImageField
     is_voyageur = models.BooleanField(default=False)
 
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
@@ -23,6 +26,7 @@ class Annonce(models.Model):
     lieu_depart = models.CharField(max_length=255)
     destination = models.CharField(max_length=255)
     poids_max = models.FloatField()
+    is_completed = models.BooleanField(default=False)
     volume_max = models.IntegerField()
     date_heure_depart = models.DateTimeField(default=timezone.now)
     date_heure_arrivee = models.DateTimeField(default=timezone.now)
