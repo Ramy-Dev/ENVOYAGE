@@ -1,6 +1,5 @@
 Certainly! Here's a detailed README file for your Django project:
 
-```markdown
 # En Voyage Admin Panel
 
 Welcome to the En Voyage Admin Panel project. This project is a Django-based application designed to manage various aspects of the En Voyage platform, including user management, announcement handling, and more.
