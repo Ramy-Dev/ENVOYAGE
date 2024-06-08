@@ -1,3 +1,4 @@
+from datetime import timezone
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
@@ -8,7 +9,7 @@ from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
-
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import (
     Utilisateur, DemandeDeCompteVoyageur,
     Annonce, DemandeAnnonce, Tag, AnnonceTag, Palier, AnnoncePalier
@@ -16,10 +17,13 @@ from .models import (
 from .serializers import (
     UserRegistrationSerializer, UtilisateurSerializer, DemandeDeCompteVoyageurSerializer, 
     AnnonceSerializer, DemandeAnnonceSerializer,  PasswordResetRequestSerializer, PasswordResetConfirmSerializer,
-    TagSerializer, AnnonceTagSerializer, PalierSerializer, AnnoncePalierSerializer
+    TagSerializer, AnnonceTagSerializer, PalierSerializer, AnnoncePalierSerializer, UserLoginSerializer
 )
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.authtoken.views import ObtainAuthToken
+
+# Password reset request view
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.conf import settings
 
 class PasswordResetRequestView(APIView):
     permission_classes = [AllowAny]
@@ -32,17 +36,28 @@ class PasswordResetRequestView(APIView):
             if user:
                 token = default_token_generator.make_token(user)
                 uid = urlsafe_base64_encode(force_bytes(user.pk))
-                reset_link = f"{request.scheme}://localhost:5173/reset_password_confirm/{uid}/{token}/"
+                reset_link = f"{request.scheme}://{request.get_host()}/reset_password_confirm/{uid}/{token}/"
+
+                # Render the HTML email template
+                html_message = render_to_string('emails/password_reset_email.html', {
+                    'user': user,
+                    'reset_link': reset_link,
+                    'year': timezone.now().year,
+                })
+                plain_message = strip_tags(html_message)
+
                 send_mail(
                     'Password Reset Request',
-                    f'Click the link to reset your password: {reset_link}',
-                    'imansoura.ramy@outlook.com',  # Change to your authenticated email address
+                    plain_message,
+                    settings.DEFAULT_FROM_EMAIL,  # Ensure this is set in your settings.py
                     [user.email],
+                    html_message=html_message,
                     fail_silently=False,
                 )
             return Response({"message": "Password reset link has been sent to your email."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# Password reset confirm view
 class PasswordResetConfirmView(APIView):
     permission_classes = [AllowAny]
 
@@ -63,79 +78,7 @@ class PasswordResetConfirmView(APIView):
                 return Response({"message": "Invalid token or user ID."}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class UtilisateurViewSet(viewsets.ModelViewSet):
-    queryset = Utilisateur.objects.all()
-    serializer_class = UtilisateurSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        username = self.request.query_params.get('username', None)
-        if username:
-            return Utilisateur.objects.filter(username=username)
-        return Utilisateur.objects.all()
-
-    def get_object(self):
-        return get_object_or_404(Utilisateur, pk=self.request.user.pk)
-
-class DemandeDeCompteVoyageurViewSet(viewsets.ModelViewSet):
-    queryset = DemandeDeCompteVoyageur.objects.all()
-    serializer_class = DemandeDeCompteVoyageurSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return DemandeDeCompteVoyageur.objects.filter(utilisateur=self.request.user)
-    
-    @action(detail=True, methods=['post'])
-    def approve(self, request, pk=None):
-        demande = self.get_object()
-        demande.est_approuve = True
-        demande.save()
-        return Response({'status': 'Demande approuvée'}, status=status.HTTP_200_OK)
-
-class AnnonceViewSet(viewsets.ModelViewSet):
-    queryset = Annonce.objects.all()
-    serializer_class = AnnonceSerializer
-    permission_classes = [IsAuthenticated]
-
-class DemandeAnnonceViewSet(viewsets.ModelViewSet):
-    queryset = DemandeAnnonce.objects.all()
-    serializer_class = DemandeAnnonceSerializer
-    permission_classes = [IsAuthenticated]
-
-    @action(detail=True, methods=['post'])
-    def accept(self, request, pk=None):
-        demande = self.get_object()
-        demande.statut = 'accepte'
-        demande.save()
-        return Response({'status': 'Demande acceptée'}, status=status.HTTP_200_OK)
-
-    @action(detail=True, methods=['post'])
-    def reject(self, request, pk=None):
-        demande = self.get_object()
-        demande.statut = 'rejete'
-        demande.save()
-        return Response({'status': 'Demande rejetée'}, status=status.HTTP_200_OK)
-
-class TagViewSet(viewsets.ModelViewSet):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
-    permission_classes = [IsAuthenticated]
-
-class AnnonceTagViewSet(viewsets.ModelViewSet):
-    queryset = AnnonceTag.objects.all()
-    serializer_class = AnnonceTagSerializer
-    permission_classes = [IsAuthenticated]
-
-class PalierViewSet(viewsets.ModelViewSet):
-    queryset = Palier.objects.all()
-    serializer_class = PalierSerializer
-    permission_classes = [IsAuthenticated]
-
-class AnnoncePalierViewSet(viewsets.ModelViewSet):
-    queryset = AnnoncePalier.objects.all()
-    serializer_class = AnnoncePalierSerializer
-    permission_classes = [IsAuthenticated]
-
+# User registration view
 class UserRegistrationView(APIView):
     permission_classes = [AllowAny]
 
@@ -147,12 +90,115 @@ class UserRegistrationView(APIView):
             return Response({"user": serializer.data, "token": token.key}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class UserLoginView(ObtainAuthToken):
+# User login view
+class UserLoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer = UserLoginSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
         return Response({'token': token.key, 'user_id': user.pk, 'email': user.email})
+
+# ViewSet for managing users
+class UtilisateurViewSet(viewsets.ModelViewSet):
+    queryset = Utilisateur.objects.all()
+    serializer_class = UtilisateurSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Optionally restricts the returned users by filtering against a `username` query parameter in the URL."""
+        username = self.request.query_params.get('username', None)
+        if username:
+            return Utilisateur.objects.filter(username=username)
+        return Utilisateur.objects.all()
+
+    def get_object(self):
+        """Retrieve and return the authenticated user."""
+        return get_object_or_404(Utilisateur, pk=self.request.user.pk)
+
+# ViewSet for managing travel account requests
+class DemandeDeCompteVoyageurViewSet(viewsets.ModelViewSet):
+    queryset = DemandeDeCompteVoyageur.objects.all()
+    serializer_class = DemandeDeCompteVoyageurSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Filter requests by the authenticated user."""
+        return DemandeDeCompteVoyageur.objects.filter(utilisateur=self.request.user)
+    
+    @action(detail=True, methods=['post'])
+    def approve(self, request, pk=None):
+        """Approve a travel account request."""
+        demande = self.get_object()
+        demande.est_approuve = True
+        demande.save()
+        return Response({'status': 'Demande approuvée'}, status=status.HTTP_200_OK)
+
+# ViewSet for managing announcements
+class AnnonceViewSet(viewsets.ModelViewSet):
+    queryset = Annonce.objects.all()
+    serializer_class = AnnonceSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Optionally filter announcements by the creator."""
+        creator_id = self.request.query_params.get('createur', None)
+        if creator_id:
+            return Annonce.objects.filter(createur_id=creator_id)
+        return Annonce.objects.all()
+
+    def perform_create(self, serializer):
+        """Set the creator to the logged-in user."""
+        serializer.save(createur=self.request.user)
+
+# ViewSet for managing announcement requests
+class DemandeAnnonceViewSet(viewsets.ModelViewSet):
+    queryset = DemandeAnnonce.objects.all()
+    serializer_class = DemandeAnnonceSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Filter requests by the authenticated user."""
+        return DemandeAnnonce.objects.filter(utilisateur=self.request.user)
+
+    @action(detail=True, methods=['post'])
+    def accept(self, request, pk=None):
+        """Accept an announcement request."""
+        demande = self.get_object()
+        demande.statut = 'accepte'
+        demande.save()
+        return Response({'status': 'Demande acceptée'}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'])
+    def reject(self, request, pk=None):
+        """Reject an announcement request."""
+        demande = self.get_object()
+        demande.statut = 'rejete'
+        demande.save()
+        return Response({'status': 'Demande rejetée'}, status=status.HTTP_200_OK)
+
+# ViewSet for managing tags
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = [IsAuthenticated]
+
+# ViewSet for managing announcement tags
+class AnnonceTagViewSet(viewsets.ModelViewSet):
+    queryset = AnnonceTag.objects.all()
+    serializer_class = AnnonceTagSerializer
+    permission_classes = [IsAuthenticated]
+
+# ViewSet for managing tiers
+class PalierViewSet(viewsets.ModelViewSet):
+    queryset = Palier.objects.all()
+    serializer_class = PalierSerializer
+    permission_classes = [IsAuthenticated]
+
+# ViewSet for managing announcement tiers
+class AnnoncePalierViewSet(viewsets.ModelViewSet):
+    queryset = AnnoncePalier.objects.all()
+    serializer_class = AnnoncePalierSerializer
+    permission_classes = [IsAuthenticated]
