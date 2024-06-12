@@ -3,10 +3,7 @@ from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from .models import (
-    Utilisateur, Annonce, DemandeAnnonce,
-    DemandeDeCompteVoyageur, Tag, AnnonceTag, Palier, AnnoncePalier
-)
+from .models import Utilisateur, Annonce, DemandeAnnonce, DemandeDeCompteVoyageur, Tag, AnnonceTag, Palier, AnnoncePalier
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, min_length=8)
@@ -17,19 +14,16 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name')
 
     def validate_email(self, value):
-        """Check that the email is unique."""
         if Utilisateur.objects.filter(email=value).exists():
             raise serializers.ValidationError("Email is already in use.")
         return value
 
     def validate_username(self, value):
-        """Check that the username is unique."""
         if Utilisateur.objects.filter(username=value).exists():
             raise serializers.ValidationError("Username is already in use.")
         return value
 
     def validate(self, attrs):
-        """Ensure passwords match and meet complexity requirements."""
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password": "Password fields didn't match."})
         if not any(char.isdigit() for char in attrs['password']):
@@ -72,19 +66,16 @@ class UtilisateurSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate_email(self, value):
-        """Check that the email is unique for update operations."""
         if self.instance and self.instance.email != value and Utilisateur.objects.filter(email=value).exists():
             raise serializers.ValidationError("Email is already in use.")
         return value
 
     def validate_username(self, value):
-        """Check that the username is unique for update operations."""
         if self.instance and self.instance.username != value and Utilisateur.objects.filter(username=value).exists():
             raise serializers.ValidationError("Username is already in use.")
         return value
 
     def validate_numero_telephone(self, value):
-        """Ensure phone number is valid."""
         if not value.isdigit():
             raise serializers.ValidationError("Phone number must contain only digits.")
         if not (9 <= len(value) <= 15):
@@ -96,7 +87,6 @@ class UtilisateurSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance, validated_data):
-        # Remove password from validated_data if it's not being updated
         password = validated_data.pop('password', None)
         if password:
             instance.set_password(password)
@@ -108,7 +98,6 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_nom(self, value):
-        """Ensure tag name is not empty."""
         if not value:
             raise serializers.ValidationError("Tag name cannot be empty.")
         return value
@@ -119,7 +108,6 @@ class PalierSerializer(serializers.ModelSerializer):
         fields = ['id', 'from_poids', 'to_poids', 'prix']
 
     def validate(self, data):
-        """Ensure from_poids is less than to_poids."""
         if data['from_poids'] >= data['to_poids']:
             raise serializers.ValidationError("from_poids must be less than to_poids.")
         return data
@@ -151,13 +139,11 @@ class AnnonceSerializer(serializers.ModelSerializer):
         ]
 
     def validate_date_heure_depart(self, value):
-        """Ensure departure date and time is in the future."""
         if value < timezone.now():
             raise serializers.ValidationError("Departure date and time must be in the future.")
         return value
 
     def validate(self, data):
-        """Ensure departure is before arrival."""
         if data['date_heure_depart'] >= data['date_heure_arrivee']:
             raise serializers.ValidationError("Departure date and time must be before arrival date and time.")
         return data
@@ -206,13 +192,11 @@ class DemandeAnnonceSerializer(serializers.ModelSerializer):
         fields = ['id', 'utilisateur', 'annonce', 'statut', 'date_creation', 'poids', 'volume']
 
     def validate_poids(self, value):
-        """Ensure weight is positive."""
         if value and value <= 0:
             raise serializers.ValidationError("Weight must be a positive number.")
         return value
 
     def validate_volume(self, value):
-        """Ensure volume is positive."""
         if value and value <= 0:
             raise serializers.ValidationError("Volume must be a positive number.")
         return value
@@ -231,7 +215,6 @@ class DemandeDeCompteVoyageurSerializer(serializers.ModelSerializer):
         ]
 
     def validate_numero_passeport(self, value):
-        """Ensure passport number is valid."""
         if not value.isalnum():
             raise serializers.ValidationError("Passport number must contain only alphanumeric characters.")
         return value
@@ -257,7 +240,6 @@ class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
     def validate_email(self, value):
-        """Ensure the email exists in the database."""
         if not Utilisateur.objects.filter(email=value).exists():
             raise serializers.ValidationError("Email address not found.")
         return value
@@ -267,7 +249,6 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
     confirm_password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
-        """Ensure passwords match and meet complexity requirements."""
         if attrs['new_password'] != attrs['confirm_password']:
             raise serializers.ValidationError("Passwords do not match.")
         if not any(char.isdigit() for char in attrs['new_password']):
@@ -275,3 +256,16 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         if not any(char.isalpha() for char in attrs['new_password']):
             raise serializers.ValidationError({"new_password": "Password must contain at least one letter."})
         return attrs
+
+from rest_framework import serializers
+from .models import Payment
+
+class PaymentIntentSerializer(serializers.Serializer):
+    annonce_id = serializers.IntegerField()
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+    currency = serializers.CharField(max_length=10, default='usd')
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = '__all__'
