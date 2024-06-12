@@ -1,15 +1,19 @@
 <script>
    import { redirect } from "@sveltejs/kit";
    import { onMount } from "svelte";
+   import { writable } from 'svelte/store';
 
    let message = "";
+   let passwordType = writable("password");
+  let confirmPasswordType = writable("password");
 
-   onMount(() => {
-      if (getToken()) {
-         window.location.href = '/'
-      }
+
+  //  onMount(() => {
+  //     if (getToken()) {
+  //        window.location.href = '/'
+  //     }
       
-   });
+  //  });
 async function handleSubmit(event) {
     event.preventDefault();
 
@@ -101,75 +105,266 @@ async function fetchUserByUsername(username) {
       return null;
    }
 }
-
+function togglePassword(type) {
+    if (type === 'password') {
+      passwordType.update(value => value === "password" ? "text" : "password");
+    } else if (type === 'confirmPassword') {
+      confirmPasswordType.update(value => value === "password" ? "text" : "password");
+    }
+  }
 </script>
 
 <main>
-  <b>{message}</b>
-  <div class="container bd fontPrimary">
-     <div class="login card-shadow mx-auto">
-        <div class="box p-0">
-           <button
-              id=""
-              class="login-btn sender btn-block bg-primary text-white fw-bolder fs-5 border-0 w-100 py-3 mb-0"
-              >Log in</button
-           >
+  <div class="bd">
+    <b>{message}</b>
+    <div class="bgImage">
+      <img class="image_hexa" src="../svg/hexaMotif.svg" alt="bgImage" />
+    </div>
+    <section>
+      <header class="fontSecondary">
+        <div class="right-side-sign-up">
+          <p class="phrase-accroche text-light">Embarquez vos colis !</p>
+          <img class="illustration-plane" src="../svg/plane-login.svg" alt="Illustration of a plane">
         </div>
-        <div class="container container-form">
-           <form class="box" on:submit={handleSubmit}>
-              <div class="form-group">
-                 <label for="username">User name :</label>
-                 <input
-                    type="text"
-                    class="snl form-control"
-                    name="username"
-                    id="username"
-                    required
-                 />
+        <div class="sign_up_user">
+          <div class="top-form">
+            <p class="titre-form fw-bold">Bienvenue à <span class="text-primary">bord</span></p>
+            <p class="soustitre-form">Votre colis est prêt à décoller ? Connectez-vous et trouvez le vol 
+              <span class="text-primary">parfait</span> pour son voyage.</p>
+          </div>
+          <form class="form-user" on:submit={handleSubmit}>
+            <div class="input-unit username-user">
+              <label class="text-basic" for="mail-user">Adresse E-mail</label>
+              <input type="email" id="mail-user" name="email" required>
+            </div>
+            <div class="input-unit username-user">
+              <label class="text-basic" for="password-user">Mot de passe</label>
+              <div class="password-container">
+                <input type={$passwordType} id="password-user" name="password"  required>
+                <span class="toggle-password" on:click={() => togglePassword('password')}>
+                  {#if $passwordType === 'password'}
+                  <img src="../svg/eye-off.svg" alt="Hide" class="icon">
+                  {:else}
+                  <img src="../svg/eye.svg" alt="Show" class="icon">
+                  {/if}
+                </span>
               </div>
-              <div class="form-group">
-                 <label for="password">Mot de passe :</label>
-                 <input
-                    type="password"
-                    class="snl form-control"
-                    name="password"
-                    id="password"
-                    required
-                 />
-              </div>
-              <div class="text-center mt-4">
-                 <button
-                    type="submit"
-                    class="submitLogin border-0 bg-primary text-white fw-bolder mt-3"
-                    >Log in</button>
-              </div>
-           </form>
+            </div>
+            <div class="bottom-form">
+               <div class="links-container">
+               <a href="/reset_password" class="login-redirect text-light">
+                  Mot de passe oublié ?
+                </a>
+              <a href="/sign-up" class="login-redirect text-light">
+                Pas encore de compte ?
+              </a>
+            </div>
+              <button type="submit" class="text-white">
+                log-in
+              </button>
+            </div>
+          </form>
         </div>
-     </div>
+      </header>
+    </section>
   </div>
 </main>
 
 <style>
-  .login {
-     background-color: #fff;
+  @import "./responsive.css";
+  .bd {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+    z-index: 1;
   }
-  .login label {
-     color: black;
-     font-weight: 650;
-     margin-top: 20px;
+
+  header {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding-top: 30px;
+    gap: 300px;
   }
-  .snl {
-     background-color: #f0f0f0;
+
+  .right-side-sign-up {
+    align-self: flex-start;
+    user-select: none; /* Prevents selection of the image */
+    pointer-events: none; /* Disables all mouse events, including dragging */
   }
-  .container-form {
-     padding: 25px;
+
+  .phrase-accroche {
+    font-size: 2.5rem;
+    text-shadow: 1px 2px 0 #21A5C3;
   }
-  .login-btn {
-     border-top-left-radius: 20px;
-     border-top-right-radius: 20px;
+
+  .illustration-plane {
+    position: absolute;
+    width: 70%;
+    top: 50%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
   }
-  .submitLogin {
-     border-radius: 20px;
-     padding: 7px 50px;
+
+  .sign_up_user {
+    background: white;
+    padding: 20px 30px;
+    border-radius: 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .titre-form {
+    font-size: 1.7rem;
+    margin-bottom: 5px !important;
+  }
+
+  .soustitre-form {
+    font-size: 0.9rem;
+    margin-bottom: 5px !important;
+  }
+
+  .form-user {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .form-user input {
+    appearance: none;
+    padding: 10px 15px !important;
+    border: 3px solid #21A5C3;
+    border-radius: 15px;
+    transition: all 0.1s ease-in-out;
+  }
+
+  .form-user input:hover {
+    border: 3px solid #4FE1F9;
+  }
+
+  .form-user input:focus {
+    outline: 0px solid #21a5c3;
+    border: 3px solid #4FE1F9;
+  }
+
+  .input-unit {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .input-double {
+    display: flex;
+    gap: 30px;
+  }
+
+  .input-double input {
+    width: 100%;
+  }
+
+  .bottom-form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .bottom-form button {
+    padding: 10px 25px;
+    background-color: #4FE1F9;
+    border: 3px solid #4FE1F9;
+    border-radius: 15px;
+    font-size: 1.2rem;
+    transition: all 0.1s ease-in-out;
+  }
+
+  .bottom-form button:hover {
+    background-color: #24e2ff;
+  }
+
+  .login-redirect {
+    padding: 5px 0;
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  .links-container {
+   display: flex;
+   flex-direction: column;
+   text-align: left;
+}
+  .bgImage {
+    position: absolute;
+    top: -5%;
+    width: 100%;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+    user-select: none; /* Prevents selection of the image */
+    pointer-events: none; /* Disables all mouse events, including dragging */
+  }
+
+  .bgImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.1;
+  }
+
+  .bgImage::after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 1) 5%,
+      rgba(255, 255, 255, 0) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    pointer-events: none;
+  }
+  .password-container {
+    position: relative;
+    border: 3px solid #21A5C3;
+    border-radius: 15px;
+    transition: all 0.1s ease-in-out;
+  }
+  .password-container input:hover {
+    border: 0px solid #4FE1F9;
+  }
+
+  .password-container input:focus {
+    outline: 0px solid #21a5c3;
+    border: 0px solid #4FE1F9;
+  }
+
+  .password-container input {
+    border: 0 ;
+  }
+
+  .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+
+  .icon {
+    width: 25px;
+    height: 25px;
+    user-select: none; /* Prevents selection of the image */
+    pointer-events: none; /* Disables all mouse events, including dragging */
   }
 </style>

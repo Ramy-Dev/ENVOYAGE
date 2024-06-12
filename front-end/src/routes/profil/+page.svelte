@@ -9,7 +9,7 @@
   let fieldName = "";
   let title = "";
   let isProfileActive = true;
-
+let is_voyageur = true;
   
   onMount(async () => {
     const token = localStorage.getItem("authToken");
@@ -183,14 +183,14 @@ async function fetchUserData(token) {
     </Popup>
   {/if}
 
-  <div class="Profile fp">
+  <div class="Profile fontSecondary">
     <div class="Profile-background bg-primary">
       <div class="ProfileTopCard">
         <p class="text-white fw-semibold fs-2 fontPrimary">
           {#if isProfileActive}
             {userData[0]?.username || 'N/A'}'s profile
           {:else}
-            {userData[0]?.username}'s history
+            {userData[0]?.username || 'N/A'}'s history
           {/if}
         </p>
         <img src="../svg/VerifStar.svg" alt="Verif Star" />
@@ -231,19 +231,40 @@ async function fetchUserData(token) {
         <div class="ProfileDisplay card-shadow-gray">
           <div class="ProfileDisplayTopCard">
             <img src="../svg/image_profil.svg" alt="Photo de profile" />
-            <button class="ImageEdit btn text-primary fontSecondary"
+            <button class="ImageEdit btn text-light fontSecondary"
               >upload image</button
             >
           </div>
+          {#if is_voyageur}
+          <div class="demande_compte_voyageur fontSecondary">
+            <div class="ProfileContainerDisplay ProfileContainerDisplayVoyageur">
+              
+            <p class="text-basic fs-2 mb-5">Demande de compte <span class="text-primary">voyageur</span></p>
+            <div class="container_infos">
+            <p class="text-secondary fs-5 mb-4">
+              Vous n'êtes pas encore un voyageur, pour devenir un voyageur veuillez remplir le formulaire suivant
+            </p>
+         
+            <button
+              id="edit-name"
+              class="ButtonEdit btn border-0 text-white">
+              <a href="/demande-voyageur" class="fw-semibold">
+              Remplir le formulaire
+            </a>
+            </button>
+          </div>
+            </div>
+          </div>
+          {/if}
           <div class="ProfileContainerDisplay fontSecondary">
-            <p class="fs-2 mb-5">Important information</p>
+            <p class="text-basic fs-2 mb-5">Important information</p>
             <div class="ProfileInfo fs-5">
               <p class="text-secondary">Your Name</p>
               <div class="ProfileEditInfo">
                 <span id="info-name">{userData[0]?.first_name}</span>
                 <button
                   id="edit-name"
-                  class="ButtonEdit btn border-0 bg-primary text-white"
+                  class="ButtonEdit btn border-0 bg-light text-white"
                   on:click={() => openPopup("name")}>edit</button
                 >
               </div>
@@ -253,7 +274,7 @@ async function fetchUserData(token) {
               <div class="ProfileEditInfo">
                 <span class="fw-bold">{userData[0]?.email}</span>
                 <button
-                  class="ButtonEdit btn border-0 bg-primary text-white"
+                  class="ButtonEdit btn border-0 bg-light text-white"
                   on:click={() => openPopup("email")}>edit</button
                 >
               </div>
@@ -263,7 +284,7 @@ async function fetchUserData(token) {
               <div class="ProfileEditInfo">
                 <span class="fw-bold">{userData[0]?.numero_telephone}</span>
                 <button
-                  class="ButtonEdit btn border-0 bg-primary text-white"
+                  class="ButtonEdit btn border-0 bg-light text-white"
                   on:click={() => openPopup("phone")}>edit</button
                 >
               </div>
@@ -279,7 +300,7 @@ async function fetchUserData(token) {
               <div class="ProfileEditInfo">
                 <span class="fw-bold">{userData[0]?.date_de_naissance}</span>
                 <button
-                  class="ButtonEdit btn border-0 bg-primary text-white"
+                  class="ButtonEdit btn border-0 bg-light text-white"
                   on:click={() => openPopup("dateOfBirth")}>edit</button
                 >
               </div>
@@ -289,7 +310,7 @@ async function fetchUserData(token) {
               <div class="ProfileEditInfo">
                 <span class="fw-bold">{userData[0]?.adresse}</span>
                 <button
-                  class="ButtonEdit btn border-0 bg-primary text-white"
+                  class="ButtonEdit btn border-0 bg-light text-white"
                   on:click={() => openPopup("address")}>edit</button
                 >
               </div>
@@ -299,7 +320,7 @@ async function fetchUserData(token) {
               <div class="ProfileEditInfo">
                 <span class="fw-bold">********</span>
                 <button
-                  class="ButtonEdit btn border-0 bg-primary text-white"
+                  class="ButtonEdit btn border-0 bg-light text-white"
                   on:click={() => openPopup("password")}>edit</button
                 >
               </div>
@@ -323,7 +344,7 @@ async function fetchUserData(token) {
       {:else}
         <!-- Afficher le contenu de le partie history -->
 
-        <div class="ProfileDisplay card-shadow-gray">
+        <div class="ProfileDisplay card-shadow-gray fontSecondary">
           <p class="profileTitle text-primary fs-2 fw-bold mb-2">My Ads</p>
           <div class="album py-5">
             <div class="container containerAnnonces">
@@ -331,102 +352,7 @@ async function fetchUserData(token) {
                   class="row row-cols-1 row-cols-md-2 g-5 px-5"
                   id="cardsContainer"
                >
-          <div class="col">
-            <a href="" class="card cardAnnonce h-100 redirection-div">
-              <div class="card-body">
-                <div class="colorTopAnnonce mb-3"></div>
-                <div class="topCard">
-                  <img src="../svg/photoProfile.svg" class="card-img-top" alt="..." />
-                  <div class="nomDateTopCard">
-                    <h5 class="card-title fw-bold">
-                      Amine Izem
-                    </h5>
-                    <h5 class="card-title DateTopCard fw-semibold">
-                        24/06/2005
-                    </h5>
-                  </div>
-                </div>
-                <div class="destinationTopCard fw-semibold fs-5">
-                  <div class="departureTopCard">Alger</div>
-                  <svg class="svgArrow mt-2 mx-3" viewBox="246.554 219.198 189.9 12" width="189.9" height="12" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
-                    <!-- svelte-ignore illegal-attribute-character -->
-                    <path d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z" style="fill-rule: nonzero;" transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)" bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb" />
-                  </svg>
-                  <div class="arrivalTopCard">Paris</div>
-                </div>
-                <div class="dateCard pt-4 pb-2 fw-semibold">
-                  Date : 30/03/2024
-                </div>
-              </div>
-              <div class="card-footer">
-                <small class="text-body-secondary">Last updated mins ago</small>
-              </div>
-            </a>
-          </div>
-          <div class="col">
-            <a href="" class="card cardAnnonce h-100 redirection-div">
-              <div class="card-body">
-                <div class="colorTopAnnonce mb-3"></div>
-                <div class="topCard">
-                  <img src="../svg/photoProfile.svg" class="card-img-top" alt="..." />
-                  <div class="nomDateTopCard">
-                    <h5 class="card-title fw-bold">
-                      Amine Izem
-                    </h5>
-                    <h5 class="card-title DateTopCard fw-semibold">
-                        24/06/2005
-                    </h5>
-                  </div>
-                </div>
-                <div class="destinationTopCard fw-semibold fs-5">
-                  <div class="departureTopCard">Alger</div>
-                  <svg class="svgArrow mt-2 mx-3" viewBox="246.554 219.198 189.9 12" width="189.9" height="12" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
-                    <!-- svelte-ignore illegal-attribute-character -->
-                    <path d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z" style="fill-rule: nonzero;" transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)" bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb" />
-                  </svg>
-                  <div class="arrivalTopCard">Paris</div>
-                </div>
-                <div class="dateCard pt-4 pb-2 fw-semibold">
-                  Date : 30/03/2024
-                </div>
-              </div>
-              <div class="card-footer">
-                <small class="text-body-secondary">Last updated mins ago</small>
-              </div>
-            </a>
-          </div>
-          <div class="col">
-            <a href="" class="card cardAnnonce h-100 redirection-div">
-              <div class="card-body">
-                <div class="colorTopAnnonce mb-3"></div>
-                <div class="topCard">
-                  <img src="../svg/photoProfile.svg" class="card-img-top" alt="..." />
-                  <div class="nomDateTopCard">
-                    <h5 class="card-title fw-bold">
-                      Amine Izem
-                    </h5>
-                    <h5 class="card-title DateTopCard fw-semibold">
-                        24/06/2005
-                    </h5>
-                  </div>
-                </div>
-                <div class="destinationTopCard fw-semibold fs-5">
-                  <div class="departureTopCard">Alger</div>
-                  <svg class="svgArrow mt-2 mx-3" viewBox="246.554 219.198 189.9 12" width="189.9" height="12" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
-                    <!-- svelte-ignore illegal-attribute-character -->
-                    <path d="M 246.554 223.198 H 425.454 L 425.454 219.198 L 436.454 225.198 L 425.454 231.198 L 425.454 227.198 H 246.554 V 223.198 Z" style="fill-rule: nonzero;" transform="matrix(1.0000000000000002, 0, 0, 1.0000000000000002, 0, 0)" bx:shape="arrow 246.554 219.198 189.9 12 4 11 0 1@4082cbfb" />
-                  </svg>
-                  <div class="arrivalTopCard">Paris</div>
-                </div>
-                <div class="dateCard pt-4 pb-2 fw-semibold">
-                  Date : 30/03/2024
-                </div>
-              </div>
-              <div class="card-footer">
-                <small class="text-body-secondary">Last updated mins ago</small>
-              </div>
-            </a>
-          </div>
+         
         </div>
       </div>
     </div>
@@ -473,7 +399,7 @@ async function fetchUserData(token) {
     font-size: 1.25rem;
   }
   .ImageEdit {
-    border: 2px dashed #5A02D4;
+    border: 2px dashed #4FE1F9;
     padding: 0.5rem 2.5rem;
     border-radius: 20px;
     font-size: 1.25rem;
@@ -488,7 +414,16 @@ async function fetchUserData(token) {
   .ProfileInfo {
     margin: 0 30px 20px 30px;
   }
-
+  .container_infos {
+  margin: 0 30px 20px 30px;
+  }
+  .container_infos button{
+  align-items: center;
+  }
+  .container_infos a{
+  text-decoration: none;
+  color: #ffffff;
+  }
   .ProfileEditInfo {
     display: flex;
     flex-direction: row;
@@ -517,5 +452,10 @@ async function fetchUserData(token) {
       align-items: center;
       justify-content: space-between;
    }
-
+   .demande_compte_voyageur button{
+      background-color: #4FE1F9;
+   }
+   .demande_compte_voyageur button:hover{
+      background-color: #24e2ff;
+   }
 </style>

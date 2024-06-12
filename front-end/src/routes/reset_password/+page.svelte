@@ -17,9 +17,10 @@
        
         <img class="image_bg_recherche_ads" src="../svg/bg-recherche-ads.svg" alt="" />
         <div class="password-reset fontSecondary">
-        <h1 class="mb-4">Reset Password</h1>
-        <input class="mb-4" type="email" bind:value={email} placeholder="Enter your email" />
-        <button on:click={resetPassword}>Send Reset Link</button>
+        <h1 class="mb-4">Réinitialisation du mot de passe</h1>
+        <input class="mb-4" type="email" bind:value={email} placeholder="Entrer votre E-mail" />
+        <button on:click={resetPassword}>Envoyer un lien de réinitialisation</button>
+        <button class="mt-2"><a class="text-white" href="/">Accueil</a></button>
         <p class="">{message}</p>
     </div>
     </main>
@@ -57,9 +58,14 @@ main {
         margin-bottom: 1rem;
         padding: 0.75rem;
         width: 100%;
-        max-width: 300px;
+        max-width: 350px;
         border: 3px solid #21A5C3;
         border-radius: 12px;
+        transition: all 0.2s ease;
+    }
+    input:hover {
+      outline: none;
+    border: 3px solid #4fe1f9;
     }
     input:focus {
       outline: none;
@@ -86,5 +92,8 @@ main {
 
     p:hover {
       color: #4fe1f9;
+    }
+    a{
+        text-decoration: none;
     }
 </style>

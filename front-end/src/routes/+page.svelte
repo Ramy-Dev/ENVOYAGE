@@ -1,6 +1,7 @@
 <script>
   import { onMount } from "svelte";
 
+
   let isDragging = false,
     isAutoPlay = false,
     startX,
@@ -234,9 +235,81 @@ const dragStop = (e) => {
       observer.observe(document.querySelector(".containerSectionTop"));
     });
   });
+
+  
+  onMount(() => {
+    // Open the first accordion item by default
+    const firstAccordionHeader = document.querySelector('.accordion-header');
+    const firstAccordionContent = firstAccordionHeader.nextElementSibling;
+    firstAccordionHeader.classList.add('active');
+    firstAccordionHeader.style.color = '#21A5C3'; // Change font color for the first active header
+    firstAccordionContent.style.maxHeight = firstAccordionContent.scrollHeight + 'px';
+    firstAccordionContent.style.opacity = '1';
+    firstAccordionContent.classList.add('active');
+
+    const firstIcon = firstAccordionHeader.querySelector('lord-icon');
+    firstIcon.src = "https://cdn.lordicon.com/ternnbni.json";
+    firstIcon.setAttribute('trigger', 'hover');
+    firstIcon.setAttribute('colors', 'primary:#4FE1F9'); // Active color
+    firstIcon.setAttribute('style', 'width:50px;height:50px');
+
+    document.querySelectorAll('.accordion-header').forEach((item) => {
+      item.addEventListener('click', () => {
+        const content = item.nextElementSibling;
+
+        if (content.classList.contains('active')) {
+          content.style.maxHeight = '0';
+          content.style.opacity = '0';
+          content.classList.remove('active');
+          item.classList.remove('active');
+          item.style.color = ''; // Reset font color
+          const icon = item.querySelector('lord-icon');
+          icon.src = "https://cdn.lordicon.com/xcrjfuzb.json";
+          icon.setAttribute('trigger', 'hover');
+          icon.setAttribute('colors', 'primary:#767676');
+          icon.setAttribute('style', 'width:50px;height:50px');
+        } else {
+          document.querySelectorAll('.accordion-content').forEach(content => {
+            content.style.maxHeight = '0';
+            content.style.opacity = '0';
+            content.classList.remove('active');
+          });
+
+          document.querySelectorAll('.accordion-header').forEach(header => {
+            header.classList.remove('active');
+            header.style.color = ''; // Reset font color
+            const headerIcon = header.querySelector('lord-icon');
+            headerIcon.src = "https://cdn.lordicon.com/xcrjfuzb.json";
+            headerIcon.setAttribute('trigger', 'hover');
+            headerIcon.setAttribute('colors', 'primary:#767676');
+            headerIcon.setAttribute('style', 'width:50px;height:50px');
+            headerIcon.style.display = ''; // Reset display
+          });
+
+          content.style.maxHeight = content.scrollHeight + 'px';
+          content.style.opacity = '1';
+          content.classList.remove('active');
+          content.classList.add('active');
+          item.classList.add('active');
+          item.style.color = '#21A5C3'; // Change font color for active header
+          const icon = item.querySelector('lord-icon');
+          icon.src = "https://cdn.lordicon.com/ternnbni.json";
+          icon.setAttribute('trigger', 'hover');
+          icon.setAttribute('colors', 'primary:#4FE1F9'); // Active color
+          icon.setAttribute('style', 'width:50px;height:50px;'); // Active size
+          icon.style.display = 'block'; // Ensure display is block for the active one
+        }
+      });
+    });
+  });
+
+
 </script>
 
 <main>
+  <div class="gridBrandImage">
+    <img class="brandImage" src="../svg/plane_sky.svg" alt="photo_brand" />
+  </div>
   <header class="landingPage">
     <div class="headerContent">
       <div class="bgImage">
@@ -247,15 +320,17 @@ const dragStop = (e) => {
         <div class="brandSlogan text-darkPrimary fs-2 fontSecondary">
           gagnez de l’argent tout en voyageant
         </div>
-        <div class="headerButtons"></div>
+        <div class="headerButtons">
+          <button class=""> 
+            <a href="/sign-up" class="">Transportez & Gagnez</a>
+          </button>
+         
+        </div>
       </div>
       <div class="logo">
-        <img src="../svg/logo_envoyage.svg" alt="logo" />
+        <img class="logo_envoyage" src="../svg/logo_envoyage.svg" alt="logo" />
       </div>
       <div class="w-50"></div>
-      <div class="gridBrandImage">
-        <img class="brandImage" src="../svg/plane_sky.svg" alt="photo_brand" />
-      </div>
     </div>
   </header>
   <section>
@@ -342,8 +417,58 @@ const dragStop = (e) => {
           </div>
         </div>
       </div>
-    </div>
 
+      <div class="accordion fontSecondary">
+        <div class="accordion-item">
+          <div class="accordion-header">
+            Qu'est ce qu'Envoyage ?
+            <lord-icon
+              src="https://cdn.lordicon.com/xcrjfuzb.json"
+              trigger="hover"
+              colors="primary:#767676"
+              style="width:50px;height: 50px">
+            </lord-icon>
+          </div>
+          <div class="accordion-content text-basic">
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. A,
+              dolorum optio? Voluptatibus nesciunt vitae tempore voluptate fuga,
+              vel quo animi pariatur.</p>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header">
+            Quel est notre but ?
+            <lord-icon
+              src="https://cdn.lordicon.com/xcrjfuzb.json"
+              trigger="hover"
+              colors="primary:#767676"
+              style="width:50px;height: 50px">
+            </lord-icon>
+          </div>
+          <div class="accordion-content text-basic">
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. A,
+              dolorum optio? Voluptatibus nesciunt vitae tempore voluptate fuga,
+              vel quo animi pariatur.</p>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header">
+            Pourquoi Envoyage ?
+            <lord-icon
+              src="https://cdn.lordicon.com/xcrjfuzb.json"
+              trigger="hover"
+              colors="primary:#767676"
+              style="width:50px;height: 50px">
+            </lord-icon>
+          </div>
+          <div class="accordion-content text-basic">
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. A,
+              dolorum optio? Voluptatibus nesciunt vitae tempore voluptate fuga,
+              vel quo animi pariatur.</p>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="steps stepsPart1">
       <div class="arrow arrowAboutSteps" data-aos="fade-down">
         <svg
@@ -413,7 +538,7 @@ const dragStop = (e) => {
       </div>
       <div class="wrapper" data-aos="fade" data-aos-delay="650">
         <i id="left" class="fa-solid fa-angle-left text-darkSecondary">&lt</i>
-        <div class="carousel">
+        <div class="carousel fontSecondary">
           <div class="col">
             <div href="" class="card h-100 redirection-div">
               <div class="card-body">
@@ -667,16 +792,17 @@ const dragStop = (e) => {
               </div>
               <div class="text fw-bold" data-aos="fade-up" data-aos-delay="550">
                 Remettez lui votre
-                <div
-                  class="highlight bg-primary text-white"
-                  data-aos="flip-up"
-                  data-aos-delay="1000"
-                >
-                  <p class="m-0" data-aos="flip-down" data-aos-delay="1500">
-                    paquet
-                  </p>
-                </div>
+             
               </div>
+              <div
+              class="highlight bg-primary text-white"
+              data-aos="flip-up"
+              data-aos-delay="1000"
+            >
+              <p class="m-0" data-aos="flip-down" data-aos-delay="1500">
+                paquet
+              </p>
+            </div>
             </div>
             <div
               class="stepText fs-5 fontPrimary"
@@ -734,7 +860,9 @@ const dragStop = (e) => {
                   data-aos-delay="550"
                 >
                   Récupérez le de l'
-                  <div
+               
+                </div>
+                   <div
                     class="reverseHighlight text-white"
                     data-aos="flip-up"
                     data-aos-delay="1000"
@@ -743,7 +871,6 @@ const dragStop = (e) => {
                       autre coté
                     </p>
                   </div>
-                </div>
               </div>
               <div
                 class="stepText fs-5 fontPrimary"
@@ -800,20 +927,23 @@ const dragStop = (e) => {
                   class="text fw-bold"
                   data-aos="fade-up"
                   data-aos-delay="550"
-                >
+                 >
                   Devenez vous-même
-                  <div
-                    class="highlight bg-primary text-white"
-                    data-aos="flip-up"
-                    data-aos-delay="1000"
-                  >
-                    <p class="m-0" data-aos="flip-down" data-aos-delay="1500">
-                      expéditeur
-                    </p>
-                  </div>
-                  <div class="" data-aos="zoom-out-down"
-                  data-aos-delay="1550">!</div>
+                  
+                
                 </div>
+                <div
+                class="highlight bg-primary text-white"
+                data-aos="flip-up"
+                data-aos-delay="1000"
+              >
+                <p class="m-0" data-aos="flip-down" data-aos-delay="1500">
+                  expéditeur
+                </p>
+              </div>
+              
+              <div class="" data-aos="zoom-out-down"
+              data-aos-delay="1550">!</div>
               </div>
               <div
                 class="stepText fs-5 fontPrimary"
@@ -920,79 +1050,124 @@ const dragStop = (e) => {
 </main>
 
 <style>
-
+  @import './responsive.css';
+  @import './responsive_fp.css';
   main {
-    overflow-x: hidden;
-  }
-  .landingPage {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  overflow-x: hidden;
+}
 
-    height: 100vh;
-    width: 100%;
-    position: relative;
-  }
-  .bgImage {
-    position: absolute;
-    left: -10%;
-    width: 100%;
-    opacity: 15%;
-    z-index: -1;
-  }
+section {
+  background-color: white;
+}
 
-  .bgImage::after {
-    content: "";
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      to top,
-      rgba(255, 255, 255, 1) 5%,
-      rgba(255, 255, 255, 0) 50%,
-      rgba(255, 255, 255, 0) 100%
-    );
-    pointer-events: none;
-  }
-  .headerContent {
-    position: relative;
-    display: grid;
-    align-items: center;
-    grid-template-columns: 1.5fr 0.5fr 1fr;
-    margin: 0 auto;
-    margin-right: 0;
-    margin-left: 50px;
-    justify-content: end;
-  }
-  .headerText {
-    width: 90%;
-    margin: 0 auto;
-  }
-  .brandName {
-    font-size: 7rem;
-    font-weight: 700;
-  }
-  .logo {
-    z-index: 1;
-    position: absolute;
-    top: 50%;
-    left: 60%;
-    transform: translate(-50%, -50%);
-  }
-  .brandImage {
-    height: 100vh;
-  }
-  .gridBrandImage {
-    position: relative;
-  }
-  .brandSlogan {
-    margin-left: 5px;
-    font-size: 2rem;
-    font-weight: 700;
-  }
+.landingPage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+  position: relative;
+}
+
+.bgImage {
+  position: absolute;
+  left: -10%;
+  width: 110%;
+  opacity: 15%;
+  z-index: -1;
+}
+
+.bgImage::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 1) 5%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.headerContent {
+  position: relative;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 0.5fr 1fr;
+  margin: 0 auto;
+  margin-right: 0;
+  margin-left: 50px;
+  justify-content: end;
+}
+
+.headerText {
+  margin: 0 auto;
+  text-align: start;
+}
+
+.brandName {
+  font-size: 7rem;
+  font-weight: 700;
+}
+.headerButtons {
+  margin-left: 5px;
+  padding: 20px 0;
+}
+.headerButtons button {
+  background-color: #4fe1f9;
+  border: 0;
+  appearance: none;
+  text-align: center;
+  align-items: center;
+  border-radius: 12px;
+  padding: 12px 30px;
+  box-shadow: 1px 2px 8px 0 rgba(0,0 ,0, 0.5);
+  transition: all 0.3s ease;
+}
+.headerButtons button:hover {
+  background-color: #24e2ff;
+  border-radius: 20px;
+  box-shadow: 1px 2px 15px 0 rgba(0,0 ,0, 0.5);
+}
+.headerButtons a {
+  appearance: none;
+  text-decoration: none;
+  font-size: 1.1rem;
+  color: white;
+}
+.logo {
+  z-index: 1;
+  position: absolute;
+  top: 50%;
+  left: 65%;
+  transform: translate(-50%, -50%);
+}
+
+.logo_envoyage {
+  width: 80%;
+}
+
+.brandImage {
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.gridBrandImage {
+  position: relative;
+}
+
+.brandSlogan {
+  margin-left: 5px;
+  font-size: 2rem;
+  font-weight: 700;
+}
   .about {
     display: flex;
     flex-direction: column;
@@ -1004,7 +1179,7 @@ const dragStop = (e) => {
     gap: 70px;
   }
   .aboutSectionsContainer {
-    display: flex;
+    display: none;
     flex-direction: column;
     gap: 400px;
   }
@@ -1287,23 +1462,13 @@ const dragStop = (e) => {
     border-radius: 40px;
   }
 
-  @media screen and (max-width: 900px) {
-    .wrapper .carousel {
-      grid-auto-columns: calc((100% / 2) - 9px);
-    }
-  }
-  @media screen and (max-width: 600px) {
-    .wrapper .carousel {
-      grid-auto-columns: 100%;
-    }
-  }
 
   /* Step 02 */
   .parentHexaSVGWhite {
     position: absolute;
-    left: -10%;
-    bottom: 45%;
-    z-index: 3;
+    left: -15%;
+    bottom: -40%;
+    z-index: 6;
   }
   .HexaSVGWhite {
     width: 700px;
@@ -1311,20 +1476,20 @@ const dragStop = (e) => {
   .step02 {
     padding: 100px 0 200px 0;
     align-items: flex-end;
+    position: relative;
   }
   .step02Top {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 60%;
-  }
-  .step02Top .stepText {
-    width: 100%;
+   
   }
 
   .arrowStep2Step3 {
     left: 50%;
-    bottom: 44%;
+    top: 100%;
+    z-index: 5;
   }
   .arrowStep2Step3 svg {
   }
@@ -1337,7 +1502,7 @@ const dragStop = (e) => {
   }
   .parentHexaSVGBlue {
     position: absolute;
-    right: -10%;
+    right: -15%;
     bottom: 40%;
   }
   .HexaSVGBlue {
@@ -1346,6 +1511,7 @@ const dragStop = (e) => {
 
   .step03 {
     padding: 200px 0;
+    position: relative;
   }
   .stepsPart2 {
     z-index: 2;
@@ -1364,7 +1530,7 @@ const dragStop = (e) => {
   .step03 .stepText {
     width: 60%;
   }
-  .step03 .stepTitle .text .reverseHighlight {
+.reverseHighlight {
     background-color: #1a849c;
   }
   
@@ -1404,7 +1570,7 @@ const dragStop = (e) => {
     z-index: 1;
     display: flex;
     align-items: center;
-    padding: 100px 0px 250px 200px;
+    padding: 100px 0px 250px 100px;
   }
   .faqContent {
     display: flex;
@@ -1481,5 +1647,64 @@ const dragStop = (e) => {
     border-radius: 30px;
     background-color: #4fe1f9;
   }
+  .accordion {
+  /* display: none; */
+  width: 100%;
+z-index: 2;
+}
 
+.accordion-item {
+  border: 0;
+  background: none;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  color: #767676;
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.accordion-header.active {
+  color: #21A5C3; /* Change font color when active */
+}
+
+.accordion-content {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  background-image: url('../svg/bg-acordeon.svg');
+  border: 0;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.accordion-content.active {
+  max-height: 500px; /* Arbitrary value that can accommodate your content */
+  opacity: 1;
+}
+
+.accordion-content p {
+  margin: 0;
+}
+
+/* Media Query for smaller screens */
+@media (max-width: 600px) {
+  .aboutSectionsContainer {
+    display: none;
+  }
+
+  .accordion {
+    display: block;
+  }
+}
 </style>

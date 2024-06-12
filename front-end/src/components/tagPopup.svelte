@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from "svelte";
   import { onMount } from "svelte";
-  import Tag from "../components/Tag.svelte";
+  import Tag from "./Tag.svelte";
   import { alreadySelectedConditions } from "../stores/alreadySelectedConditions.js"; // Import du store
   const dispatch = createEventDispatcher();
   export let filteredConditions = []; // Initialisation des conditions filtrées avec toutes les conditions disponibles
