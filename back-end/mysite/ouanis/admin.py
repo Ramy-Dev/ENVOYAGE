@@ -3,7 +3,8 @@ from django.urls import path
 from django.shortcuts import render
 from django.utils import timezone
 from datetime import timedelta
-from .models import Utilisateur, Annonce, DemandeAnnonce, DemandeDeCompteVoyageur
+from django.db.models import Sum
+from .models import Utilisateur, Annonce, DemandeAnnonce, DemandeDeCompteVoyageur, Payment, Tag, AnnonceTag, Palier, AnnoncePalier
 
 class MyAdminSite(admin.AdminSite):
     site_header = 'My Administration'
@@ -22,34 +23,30 @@ class MyAdminSite(admin.AdminSite):
         annonce_count = Annonce.objects.count()
         demande_annonce_count = DemandeAnnonce.objects.count()
         demande_compte_voyageur_count = DemandeDeCompteVoyageur.objects.count()
-        voyageur_count = Utilisateur.objects.filter(is_voyageur=True).count()
-        non_voyageur_count = user_count - voyageur_count
-        annonces_completed = Annonce.objects.filter(is_completed=True).count()
-        annonces_pending = Annonce.objects.filter(is_completed=False).count()
+        payment_count = Payment.objects.count()
+        total_amount = Payment.objects.aggregate(Sum('amount'))['amount__sum']
 
         current_date = timezone.now()
         last_six_months = [current_date - timedelta(days=30 * i) for i in range(6)]
         user_trends = [Utilisateur.objects.filter(date_joined__month=month.month).count() for month in last_six_months]
         annonce_trends = [Annonce.objects.filter(created_at__month=month.month).count() for month in last_six_months]
+        payment_trends = [Payment.objects.filter(created_at__month=month.month).count() for month in last_six_months]
         month_labels = [month.strftime("%B") for month in last_six_months]
 
-        data = {
-            'labels': ['Users', 'Annonces', 'Demande Annonces', 'Demande Compte Voyageurs'],
-            'data': [user_count, annonce_count, demande_annonce_count, demande_compte_voyageur_count],
-        }
-
         context = {
-            'data': data,
+            'data': {
+                'labels': ['Users', 'Annonces', 'Demande Annonces', 'Demande Compte Voyageurs', 'Payments'],
+                'data': [user_count, annonce_count, demande_annonce_count, demande_compte_voyageur_count, payment_count],
+            },
             'user_count': user_count,
             'annonce_count': annonce_count,
             'demande_annonce_count': demande_annonce_count,
             'demande_compte_voyageur_count': demande_compte_voyageur_count,
-            'voyageur_count': voyageur_count,
-            'non_voyageur_count': non_voyageur_count,
-            'annonces_completed': annonces_completed,
-            'annonces_pending': annonces_pending,
+            'payment_count': payment_count,
+            'total_amount': total_amount,
             'user_trends': user_trends,
             'annonce_trends': annonce_trends,
+            'payment_trends': payment_trends,
             'month_labels': month_labels,
         }
         return render(request, 'admin/dashboard.html', context)
@@ -59,10 +56,6 @@ admin_site = MyAdminSite(name='myadmin')
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.utils.html import format_html
-from .models import (
-    Utilisateur, Annonce, DemandeAnnonce, DemandeDeCompteVoyageur, 
-    Tag, AnnonceTag, Palier, AnnoncePalier
-)
 
 try:
     admin_site.unregister(Group)
@@ -120,7 +113,7 @@ class AnnonceAdmin(admin.ModelAdmin):
     actions = ['mark_as_completed']
 
     def mark_as_completed(self, request, queryset):
-        queryset.update(statut='completed')
+        queryset.update(is_completed=True)
     mark_as_completed.short_description = "Mark selected annonces as completed"
 
 class DemandeAnnonceAdmin(admin.ModelAdmin):
@@ -131,7 +124,7 @@ class DemandeAnnonceAdmin(admin.ModelAdmin):
     actions = ['approve_demand']
     
     def approve_demand(self, request, queryset):
-        queryset.update(statut='approved')
+        queryset.update(statut='accepte')
     approve_demand.short_description = "Approve selected demands"
 
 class DemandeDeCompteVoyageurAdmin(admin.ModelAdmin):
@@ -190,6 +183,12 @@ class AnnoncePalierAdmin(admin.ModelAdmin):
     list_filter = ('annonce', 'palier')
     search_fields = ('annonce__lieu_depart', 'palier__prix')
 
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ('utilisateur', 'annonce', 'amount', 'currency', 'status', 'created_at')
+    list_filter = ('status', 'created_at')
+    search_fields = ('utilisateur__username', 'annonce__lieu_depart')
+    ordering = ('-created_at',)
+
 admin_site.register(Utilisateur, UtilisateurAdmin)
 admin_site.register(Annonce, AnnonceAdmin)
 admin_site.register(DemandeAnnonce, DemandeAnnonceAdmin)
@@ -198,3 +197,4 @@ admin_site.register(Tag, TagAdmin)
 admin_site.register(AnnonceTag, AnnonceTagAdmin)
 admin_site.register(Palier, PalierAdmin)
 admin_site.register(AnnoncePalier, AnnoncePalierAdmin)
+admin_site.register(Payment, PaymentAdmin)

@@ -9,6 +9,7 @@ from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
+from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import (
     Utilisateur, DemandeDeCompteVoyageur,
@@ -202,3 +203,76 @@ class AnnoncePalierViewSet(viewsets.ModelViewSet):
     queryset = AnnoncePalier.objects.all()
     serializer_class = AnnoncePalierSerializer
     permission_classes = [IsAuthenticated]
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.conf import settings
+import stripe
+from .models import Payment, Annonce
+from .serializers import PaymentIntentSerializer, PaymentSerializer
+from rest_framework.permissions import IsAuthenticated
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
+class CreatePaymentIntentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = PaymentIntentSerializer(data=request.data)
+        if serializer.is_valid():
+            annonce_id = serializer.validated_data['annonce_id']
+            amount = serializer.validated_data['amount']
+            currency = serializer.validated_data['currency']
+            
+            try:
+                annonce = Annonce.objects.get(id=annonce_id)
+                if annonce:
+                    intent = stripe.PaymentIntent.create(
+                        amount=int(amount * 100),  # Convert to cents
+                        currency=currency,
+                        metadata={'user_id': request.user.id, 'annonce_id': annonce.id}
+                    )
+                    payment = Payment.objects.create(
+                        utilisateur=request.user,
+                        annonce=annonce,
+                        stripe_payment_intent_id=intent['id'],
+                        amount=amount,
+                        currency=currency,
+                        status=intent['status']
+                    )
+                    return Response({"client_secret": intent['client_secret']}, status=status.HTTP_201_CREATED)
+            except Annonce.DoesNotExist:
+                return Response({"error": "Annonce not found"}, status=status.HTTP_404_NOT_FOUND)
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class StripeWebhookView(APIView):
+    def post(self, request):
+        payload = request.body
+        sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+        endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
+
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, endpoint_secret
+            )
+        except ValueError as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        except stripe.error.SignatureVerificationError as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        if event['type'] == 'payment_intent.succeeded':
+            intent = event['data']['object']
+            payment = Payment.objects.get(stripe_payment_intent_id=intent['id'])
+            payment.status = 'succeeded'
+            payment.save()
+        elif event['type'] == 'payment_intent.payment_failed':
+            intent = event['data']['object']
+            payment = Payment.objects.get(stripe_payment_intent_id=intent['id'])
+            payment.status = 'failed'
+            payment.save()
+
+        return Response(status=status.HTTP_200_OK)
