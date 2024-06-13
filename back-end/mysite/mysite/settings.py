@@ -142,6 +142,10 @@ AUTH_USER_MODEL = 'ouanis.Utilisateur'
 
 # settings.py
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Add your frontend's origin
+    "http://127.0.0.1:5173",  # Add this if you're using another localhost port
+]
 
 # settings.py
 
