@@ -1,7 +1,6 @@
 <script>
   import Popup from "../../components/Popup.svelte";
-  import { onMount } from "svelte";
-  import { tick } from "svelte";
+  import { onMount, tick } from "svelte";
 
   let userData = [];
   let isEditing = false;
@@ -9,36 +8,37 @@
   let fieldName = "";
   let title = "";
   let isProfileActive = true;
-let is_voyageur = true;
-  
+  let is_voyageur = true;
+  let profileImageUrl = "../svg/image_profil.svg"; // Default profile image
+
   onMount(async () => {
     const token = localStorage.getItem("authToken");
     userData = await fetchUserData(token);
     // Now userData should be populated
     console.log("User data loaded:", userData);
-});
+  });
 
-async function fetchUserData(token) {
+  async function fetchUserData(token) {
     try {
-        const response = await fetch("http://127.0.0.1:8000/utilisateurs/", {
-            headers: {
-                "Authorization": `Token ${token}`
-            }
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            console.log("Fetched user data:", data);
-            return data; // Ensure to return the fetched data
-        } else {
-            console.error("Failed to fetch user info.");
-            return {}; // Return an empty object or handle the error as needed
+      const response = await fetch("http://127.0.0.1:8000/utilisateurs/", {
+        headers: {
+          "Authorization": `Token ${token}`
         }
-    } catch (error) {
-        console.error("Error fetching user info:", error);
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Fetched user data:", data);
+        return data; // Ensure to return the fetched data
+      } else {
+        console.error("Failed to fetch user info.");
         return {}; // Return an empty object or handle the error as needed
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+      return {}; // Return an empty object or handle the error as needed
     }
-}
+  }
 
   function toggleProfile() {
     isProfileActive = true;
@@ -145,13 +145,24 @@ async function fetchUserData(token) {
     isEditing = false;
 
     tick().then(() => {
-    // Optionally, you can perform additional operations here if needed
-  });
+      // Optionally, you can perform additional operations here if needed
+    });
   }
 
   function handleChangesSaved(event) {
     const { fieldName, newValue } = event.detail;
     userData[fieldName] = newValue;
+  }
+
+  function handleFileChange(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        profileImageUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   $: {
@@ -229,30 +240,31 @@ async function fetchUserData(token) {
 
       {#if isProfileActive}
         <div class="ProfileDisplay card-shadow-gray">
-          <div class="ProfileDisplayTopCard">
-            <img src="../svg/image_profil.svg" alt="Photo de profile" />
-            <button class="ImageEdit btn text-light fontSecondary"
-              >upload image</button
-            >
+          <div class="ProfileDisplayTopCard mb-4">
+            <div class="profile-image-container">
+              <img src={profileImageUrl} alt="Photo de profile" />
+            </div>
+            <input type="file" id="file-input" accept="image/*" on:change={handleFileChange} style="display: none;" />
+            <button class="ImageEdit btn text-light fontSecondary" on:click={() => document.getElementById('file-input').click()}>
+              upload image
+            </button>
           </div>
           {#if is_voyageur}
           <div class="demande_compte_voyageur fontSecondary">
             <div class="ProfileContainerDisplay ProfileContainerDisplayVoyageur">
-              
-            <p class="text-basic fs-2 mb-5">Demande de compte <span class="text-primary">voyageur</span></p>
-            <div class="container_infos">
-            <p class="text-secondary fs-5 mb-4">
-              Vous n'êtes pas encore un voyageur, pour devenir un voyageur veuillez remplir le formulaire suivant
-            </p>
-         
-            <button
-              id="edit-name"
-              class="ButtonEdit btn border-0 text-white">
-              <a href="/demande-voyageur" class="fw-semibold">
-              Remplir le formulaire
-            </a>
-            </button>
-          </div>
+              <p class="text-basic fs-2 mb-5">Demande de compte <span class="text-primary">voyageur</span></p>
+              <div class="container_infos">
+                <p class="text-secondary fs-5 mb-4">
+                  Vous n'êtes pas encore un voyageur, pour devenir un voyageur veuillez remplir le formulaire suivant
+                </p>
+                <button
+                  id="edit-name"
+                  class="ButtonEdit btn border-0 text-white">
+                  <a href="/demande-voyageur" class="fw-semibold">
+                    Remplir le formulaire
+                  </a>
+                </button>
+              </div>
             </div>
           </div>
           {/if}
@@ -261,12 +273,11 @@ async function fetchUserData(token) {
             <div class="ProfileInfo fs-5">
               <p class="text-secondary">Your Name</p>
               <div class="ProfileEditInfo">
-                <span id="info-name">{userData[0]?.first_name}</span>
+                <span id="info-name" class="fw-bold">{userData[0]?.first_name}</span>
                 <button
                   id="edit-name"
                   class="ButtonEdit btn border-0 bg-light text-white"
-                  on:click={() => openPopup("name")}>edit</button
-                >
+                  on:click={() => openPopup("name")}>edit</button>
               </div>
             </div>
             <div class="ProfileInfo fs-5">
@@ -275,8 +286,7 @@ async function fetchUserData(token) {
                 <span class="fw-bold">{userData[0]?.email}</span>
                 <button
                   class="ButtonEdit btn border-0 bg-light text-white"
-                  on:click={() => openPopup("email")}>edit</button
-                >
+                  on:click={() => openPopup("email")}>edit</button>
               </div>
             </div>
             <div class="ProfileInfo fs-5">
@@ -285,8 +295,7 @@ async function fetchUserData(token) {
                 <span class="fw-bold">{userData[0]?.numero_telephone}</span>
                 <button
                   class="ButtonEdit btn border-0 bg-light text-white"
-                  on:click={() => openPopup("phone")}>edit</button
-                >
+                  on:click={() => openPopup("phone")}>edit</button>
               </div>
             </div>
           </div>
@@ -301,8 +310,7 @@ async function fetchUserData(token) {
                 <span class="fw-bold">{userData[0]?.date_de_naissance}</span>
                 <button
                   class="ButtonEdit btn border-0 bg-light text-white"
-                  on:click={() => openPopup("dateOfBirth")}>edit</button
-                >
+                  on:click={() => openPopup("dateOfBirth")}>edit</button>
               </div>
             </div>
             <div class="ProfileInfo fs-5">
@@ -311,8 +319,7 @@ async function fetchUserData(token) {
                 <span class="fw-bold">{userData[0]?.adresse}</span>
                 <button
                   class="ButtonEdit btn border-0 bg-light text-white"
-                  on:click={() => openPopup("address")}>edit</button
-                >
+                  on:click={() => openPopup("address")}>edit</button>
               </div>
             </div>
             <div class="ProfileInfo fs-5">
@@ -321,8 +328,7 @@ async function fetchUserData(token) {
                 <span class="fw-bold">********</span>
                 <button
                   class="ButtonEdit btn border-0 bg-light text-white"
-                  on:click={() => openPopup("password")}>edit</button
-                >
+                  on:click={() => openPopup("password")}>edit</button>
               </div>
             </div>
 
@@ -333,8 +339,7 @@ async function fetchUserData(token) {
                   <span class="fw-bold">{userData[0]?.numero_passeport}</span>
                   <button
                     class="ButtonEdit btn border-0 bg-primary text-white"
-                    on:click={() => openPopup("passport")}>edit</button
-                  >
+                    on:click={() => openPopup("passport")}>edit</button>
                 </div>
               </div>
             {/if}
@@ -353,10 +358,10 @@ async function fetchUserData(token) {
                   id="cardsContainer"
                >
          
+               </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
       {/if}
     </div>
   </div>
@@ -392,7 +397,31 @@ async function fetchUserData(token) {
     align-items: center;
     padding: 0px 90px 0 60px;
   }
+  .ProfileDisplayTopCard .profile-image-container {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+  }
 
+  .ProfileDisplayTopCard .profile-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .ProfileDisplayTopCard .ImageEdit {
+    margin-top: 10px;
+  }
+
+  .ProfileDisplayTopCard img {
+    max-width: 150px; /* Adjust the size as needed */
+    border-radius: 50%;
+  }
   .ButtonEdit {
     padding: 0.5rem 2.5rem;
     border-radius: 20px;

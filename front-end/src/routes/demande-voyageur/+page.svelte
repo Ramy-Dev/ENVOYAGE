@@ -6,6 +6,7 @@
   let passwordType = writable("password");
   let confirmPasswordType = writable("password");
   let phoneInput;
+  let passportPhotoUrl = ""; // Store the image URL for preview
 
   async function handleSubmit(event) {
     event.preventDefault(); // Prevent the default form submission
@@ -56,6 +57,22 @@
         value === "password" ? "text" : "password"
       );
     }
+  }
+
+  function handleFileChange(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        passportPhotoUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function deletePhoto() {
+    passportPhotoUrl = "";
+    document.getElementById("passeport-photo-user").value = ""; // Reset file input
   }
 
   onMount(() => {
@@ -154,6 +171,7 @@
                 type="file"
                 id="passeport-photo-user"
                 name="passport-photo"
+                on:change={handleFileChange}
                 required
               />
               <img
@@ -162,6 +180,20 @@
                 alt=""
               />
             </div>
+            {#if passportPhotoUrl}
+            <div class="photo-preview">
+              <img src={passportPhotoUrl} alt="Passport Preview" />
+              <button type="button" class="delete-photo" on:click={deletePhoto}>
+                <lord-icon
+                  class="animated-cross"
+                  src="https://cdn.lordicon.com/zxvuvcnc.json"
+                  colors="primary:#4FE1F9"
+                  style="background-color: transparent;"
+                  trigger="hover">
+                </lord-icon>
+              </button>
+            </div>
+            {/if}
             <div class="bottom-form">
               <a href="/log-in" class="login-redirect text-light">
                 Vous avez déjà un compte ?
@@ -174,6 +206,7 @@
     </section>
   </div>
 </main>
+
 
 <style>
   @import "./responsive.css";
@@ -193,8 +226,9 @@
     justify-content: center;
     align-items: center;
     position: relative;
-    padding-top: 30px;
+    padding-top: 0px;
     gap: 300px;
+    height:85vh;
   }
   .image_hexa {
     user-select: none; /* Prevents selection of the image */
@@ -283,6 +317,7 @@
   }
 
   .bottom-form button {
+    margin-top: 10px;
     padding: 10px 25px;
     background-color: #4fe1f9;
     border: 3px solid #4fe1f9;
@@ -370,16 +405,15 @@
   }
   .passeport-user {
     position: relative;
-    margin-bottom: 50px;
+    margin-bottom: 30px;
   }
   .passeport-user input {
     border: 3px dashed #4fe1f9;
     appearance: none;
     padding: 10px 15px !important;
+    padding-right: 60px!important;
     border-radius: 15px;
     transition: all 0.1s ease-in-out;
-    user-select: none; /* Prevents selection of the image */
-    pointer-events: none; /* Disables all mouse events, including dragging */
   }
   .passeport-user input::placeholder {
     color: #4fe1f9;
@@ -400,4 +434,30 @@
     user-select: none; /* Prevents selection of the image */
     pointer-events: none; /* Disables all mouse events, including dragging */
   }
+  .photo-preview {
+  position: relative;
+  display: inline-block;
+}
+
+.photo-preview img {
+  width: 100px; /* Adjust the size as needed */
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 15px;
+}
+
+.delete-photo {
+  position: absolute;
+  top: 0; /* Align with the top of the image */
+  right: calc(100% - 100px); /* Align with the right side of the image */
+  transform: translate(50%, -50%); /* Slight adjustment to place button correctly */
+  border: none;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%; /* Optional: make it circular */
+}
 </style>
