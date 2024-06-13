@@ -1,3 +1,4 @@
+# views.py
 from datetime import timezone
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
@@ -154,32 +155,6 @@ class AnnonceViewSet(viewsets.ModelViewSet):
         """Set the creator to the logged-in user."""
         serializer.save(createur=self.request.user)
 
-# ViewSet for managing announcement requests
-class DemandeAnnonceViewSet(viewsets.ModelViewSet):
-    queryset = DemandeAnnonce.objects.all()
-    serializer_class = DemandeAnnonceSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        """Filter requests by the authenticated user."""
-        return DemandeAnnonce.objects.filter(utilisateur=self.request.user)
-
-    @action(detail=True, methods=['post'])
-    def accept(self, request, pk=None):
-        """Accept an announcement request."""
-        demande = self.get_object()
-        demande.statut = 'accepte'
-        demande.save()
-        return Response({'status': 'Demande acceptée'}, status=status.HTTP_200_OK)
-
-    @action(detail=True, methods=['post'])
-    def reject(self, request, pk=None):
-        """Reject an announcement request."""
-        demande = self.get_object()
-        demande.statut = 'rejete'
-        demande.save()
-        return Response({'status': 'Demande rejetée'}, status=status.HTTP_200_OK)
-
 # ViewSet for managing tags
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
@@ -204,75 +179,89 @@ class AnnoncePalierViewSet(viewsets.ModelViewSet):
     serializer_class = AnnoncePalierSerializer
     permission_classes = [IsAuthenticated]
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.conf import settings
-import stripe
-from .models import Payment, Annonce
-from .serializers import PaymentIntentSerializer, PaymentSerializer
-from rest_framework.permissions import IsAuthenticated
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 
-class CreatePaymentIntentView(APIView):
+import requests
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from rest_framework.decorators import action
+
+import requests
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from rest_framework.decorators import action
+
+class DemandeAnnonceViewSet(viewsets.ModelViewSet):
+    queryset = DemandeAnnonce.objects.all()
+    serializer_class = DemandeAnnonceSerializer
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
-        serializer = PaymentIntentSerializer(data=request.data)
-        if serializer.is_valid():
-            annonce_id = serializer.validated_data['annonce_id']
-            amount = serializer.validated_data['amount']
-            currency = serializer.validated_data['currency']
+    def get_queryset(self):
+        return DemandeAnnonce.objects.filter(utilisateur=self.request.user)
+
+    @action(detail=False, methods=['post'], url_path='confirm_requests')
+    def confirm_requests(self, request):
+        """Confirm multiple requests and send payment details."""
+        request_ids = request.data.get('request_ids', [])
+        demandes = DemandeAnnonce.objects.filter(id__in=request_ids, statut='en_attente')
+        
+        if not demandes:
+            return Response({'status': 'No valid requests found.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        for demande in demandes:
+            annonce = demande.annonce
+            total_price = demande.poids * annonce.prix_kg * 1.10  # Adding 10% commission
             
-            try:
-                annonce = Annonce.objects.get(id=annonce_id)
-                if annonce:
-                    intent = stripe.PaymentIntent.create(
-                        amount=int(amount * 100),  # Convert to cents
-                        currency=currency,
-                        metadata={'user_id': request.user.id, 'annonce_id': annonce.id}
-                    )
-                    payment = Payment.objects.create(
-                        utilisateur=request.user,
-                        annonce=annonce,
-                        stripe_payment_intent_id=intent['id'],
-                        amount=amount,
-                        currency=currency,
-                        status=intent['status']
-                    )
-                    return Response({"client_secret": intent['client_secret']}, status=status.HTTP_201_CREATED)
-            except Annonce.DoesNotExist:
-                return Response({"error": "Annonce not found"}, status=status.HTTP_404_NOT_FOUND)
-            except Exception as e:
-                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Generate payment link via Lemon Squeezy API
+            payment_link = self.create_payment_link(demande.utilisateur.email, total_price)
 
-@method_decorator(csrf_exempt, name='dispatch')
-class StripeWebhookView(APIView):
-    def post(self, request):
-        payload = request.body
-        sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-        endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
+            # Update demande status
+            demande.statut = 'accepte'
+            demande.save()
 
-        try:
-            event = stripe.Webhook.construct_event(
-                payload, sig_header, endpoint_secret
-            )
-        except ValueError as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        except stripe.error.SignatureVerificationError as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            # Send confirmation email
+            self.send_confirmation_email(demande.utilisateur, annonce, total_price, payment_link)
 
-        if event['type'] == 'payment_intent.succeeded':
-            intent = event['data']['object']
-            payment = Payment.objects.get(stripe_payment_intent_id=intent['id'])
-            payment.status = 'succeeded'
-            payment.save()
-        elif event['type'] == 'payment_intent.payment_failed':
-            intent = event['data']['object']
-            payment = Payment.objects.get(stripe_payment_intent_id=intent['id'])
-            payment.status = 'failed'
-            payment.save()
+        return Response({'status': 'Requests confirmed and emails sent.'}, status=status.HTTP_200_OK)
 
-        return Response(status=status.HTTP_200_OK)
+    @action(detail=True, methods=['post'])
+    def reject(self, request, pk=None):
+        demande = self.get_object()
+        demande.statut = 'rejete'
+        demande.save()
+        return Response({'status': 'Demande rejetée'}, status=status.HTTP_200_OK)
+
+    def create_payment_link(self, email, amount):
+        """Create a payment link using Lemon Squeezy API."""
+        url = 'https://api.lemonsqueezy.com/v1/payment_links'
+        headers = {
+            'Authorization': f'Bearer {settings.LEMON_SQUEEZY_API_KEY}',
+            'Content-Type': 'application/json',
+        }
+        data = {
+            'email': email,
+            'amount': amount,
+            'currency': 'USD',
+        }
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code == 201:
+            return response.json().get('url')
+        return None
+
+    def send_confirmation_email(self, user, annonce, total_price, payment_link):
+        """Send confirmation email with payment details."""
+        html_message = render_to_string('emails/payment_confirmation.html', {
+            'user': user,
+            'annonce': annonce,
+            'total_price': total_price,
+            'payment_link': payment_link,
+            'year': timezone.now().year,
+        })
+        plain_message = strip_tags(html_message)
+        send_mail(
+            'Payment Confirmation',
+            plain_message,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            html_message=html_message,
+            fail_silently=False,
+        )

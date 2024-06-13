@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 
 # User model with additional fields
 class Utilisateur(AbstractUser):
+    email = models.EmailField(unique=True)
     numero_telephone = models.CharField(
         max_length=200, 
         blank=True, 
@@ -115,21 +116,3 @@ class AnnoncePalier(models.Model):
 
     def __str__(self):
         return f"{self.annonce} {self.palier}"
-from decimal import Decimal
-
-from django.db import models
-from django.utils import timezone
-from decimal import Decimal
-from django.conf import settings
-
-class Payment(models.Model):
-    utilisateur = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    annonce = models.ForeignKey(Annonce, on_delete=models.CASCADE)
-    stripe_payment_intent_id = models.CharField(max_length=200, unique=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    currency = models.CharField(max_length=10, default='usd')
-    status = models.CharField(max_length=50, default='pending')
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.utilisateur} - {self.annonce} - {self.amount} {self.currency}"

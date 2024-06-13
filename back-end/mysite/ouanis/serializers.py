@@ -1,3 +1,4 @@
+import email
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
@@ -39,21 +40,21 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
 
 class UserLoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
+    email = serializers.EmailField(write_only=True)
     password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
-        username = attrs.get('username')
+        email = attrs.get('email')
         password = attrs.get('password')
 
-        if username and password:
-            user = authenticate(username=username, password=password)
-            if not user:
+        if email and password:
+            email = authenticate(email=email, password=password)
+            if not email:
                 raise serializers.ValidationError("Invalid credentials.")
         else:
-            raise serializers.ValidationError("Both username and password are required.")
+            raise serializers.ValidationError("Both email and password are required.")
         
-        attrs['user'] = user
+        attrs['email'] = email
         return attrs
 
 class UtilisateurSerializer(serializers.ModelSerializer):
@@ -256,16 +257,3 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         if not any(char.isalpha() for char in attrs['new_password']):
             raise serializers.ValidationError({"new_password": "Password must contain at least one letter."})
         return attrs
-
-from rest_framework import serializers
-from .models import Payment
-
-class PaymentIntentSerializer(serializers.Serializer):
-    annonce_id = serializers.IntegerField()
-    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
-    currency = serializers.CharField(max_length=10, default='usd')
-
-class PaymentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Payment
-        fields = '__all__'

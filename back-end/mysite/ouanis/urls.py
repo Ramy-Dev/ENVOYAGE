@@ -5,8 +5,8 @@ from rest_framework.authtoken.views import obtain_auth_token
 from .views import (
     UtilisateurViewSet, DemandeDeCompteVoyageurViewSet, 
     AnnonceViewSet, DemandeAnnonceViewSet, TagViewSet, UserRegistrationView, UserLoginView,
-    AnnonceTagViewSet, PalierViewSet, AnnoncePalierViewSet, PasswordResetRequestView, PasswordResetConfirmView,CreatePaymentIntentView, StripeWebhookView
-)
+    AnnonceTagViewSet, PalierViewSet, AnnoncePalierViewSet, PasswordResetRequestView, PasswordResetConfirmView
+    )
 
 router = DefaultRouter()
 router.register(r'utilisateurs', UtilisateurViewSet)
@@ -20,8 +20,6 @@ router.register(r'annonce_paliers', AnnoncePalierViewSet)
 
 urlpatterns = [
     # In your urls.py (add this view to the admin urls)
-    path('create-payment-intent/', CreatePaymentIntentView.as_view(), name='create-payment-intent'),
-    path('stripe-webhook/', StripeWebhookView.as_view(), name='stripe-webhook'),
     path('reset_password/', PasswordResetRequestView.as_view(), name='reset_password'),
     path('reset_password_confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='reset_password_confirm'),
     path('register/', UserRegistrationView.as_view(), name='register'),
