@@ -133,17 +133,21 @@ function togglePassword(type) {
             <p class="soustitre-form">Votre colis est prêt à décoller ? Connectez-vous et trouvez le vol 
               <span class="text-primary">parfait</span> pour son voyage.</p>
           </div>
-         
-          <form class="form-user" on:submit={handleSubmit}>
-            {#if $errors.email}
+          {#if $errors.email}
             <span class="error">{$errors.email}</span>
-          {/if}
-          {#if $errors.password}
-          <span class="error">{$errors.password}</span>
-        {/if}
-        {#if $errors.non_field_errors}
-        <div class="error">{$errors.non_field_errors}</div>
-      {/if}
+          
+            {:else if $errors.password}
+
+                <span class="error">{$errors.password}</span>
+      
+            {:else if $errors.non_field_errors} 
+
+                <div class="error">{$errors.non_field_errors}</div>
+            {:else} 
+                <div class="error videFrom text-white">z</div>
+            {/if}
+          <form class="form-user" on:submit={handleSubmit}>
+           
             <div class="input-unit username-user">
               <label class="text-basic" for="mail-user">Adresse E-mail</label>
               <input type="email" id="mail-user" name="email" required>
@@ -227,7 +231,7 @@ function togglePassword(type) {
     width: 420px;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 10px;
   }
 
   .titre-form {
@@ -306,7 +310,7 @@ function togglePassword(type) {
   .links-container {
    display: flex;
    flex-direction: column;
-   text-align: left;
+   align-items: flex-start;
 }
   .bgImage {
     position: absolute;
@@ -380,5 +384,10 @@ function togglePassword(type) {
     color: red;
     font-size: 0.9rem;
     margin-top: 5px;
+  }
+  .videFrom {
+    color: transparent;
+    user-select: none; /* Prevents selection of the image */
+    pointer-events: none; /* Disables all mouse events, including dragging */
   }
 </style>
