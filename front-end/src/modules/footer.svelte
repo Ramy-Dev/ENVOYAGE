@@ -36,7 +36,7 @@
   <div class="row">
     <div class="col">
       <a class="link-mention" href="https://lordicon.com/">Icons by Lordicon.com</a>
-      <p>&copy;2023 RAMY IMS / AMINE IZEM | All Rights Reserved</p>
+      <p>&copy;2024 RAMY IMS / AMINE IZEM | All Rights Reserved</p>
     </div>
   </div>
 </footer>

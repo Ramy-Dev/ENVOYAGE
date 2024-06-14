@@ -28,6 +28,8 @@
   let poidsMax = 0;
   let volumeMax = 0;
   let poidsPaliers = [];
+
+
   let prixPaliers = [];
   let message = "";
   let formErrors = {};
@@ -41,10 +43,18 @@
   let arrivalDate = "";
   let arrivalTime = "";
 
+  onMount(() => {
+  const poidsPaliersUnsubscribe = poidsPaliersStore.subscribe((value) => {
+    poidsPaliers = value;
+  });
+
+  return poidsPaliersUnsubscribe;
+  });
  onMount(() => {
     const unsubscribe = alreadySelectedConditions.subscribe((value) => {
       tags = value;
     });
+    
     return unsubscribe;
   });
 
@@ -72,8 +82,8 @@
     event.preventDefault(); // Prevent the default form submission
 
     // Combine date and time into a single datetime string
-    const departureDateTime = `${departureDate}T${departureTime}`;
-    const arrivalDateTime = `${arrivalDate}T${arrivalTime}`;
+    const departureDateTime = `${departureDate}T${departureTime}:00Z`;
+    const arrivalDateTime = `${arrivalDate}T${arrivalTime}:00Z`;
 
     console.log(poidsMax, volumeMax);
     // Prepare data object
@@ -85,6 +95,7 @@
       date_heure_depart: departureDateTime,
       date_heure_arrivee: arrivalDateTime,
       tags: tags,
+      paliers : poidsPaliers
     };
     console.log(data);
     // Validation
@@ -161,10 +172,11 @@
     console.log("Nouvelle valeur de volumeMax:", volumeMax);
   }
 
-  const poidsPaliersUnsubscribe = poidsPaliersStore.subscribe((value) => {
-    poidsPaliers = value;
-  });
+  function updatePaliers (event) {
 
+poidsPaliers = event.detail;
+console.log("Nouvelle valeur de poidsPaliers:", poidsPaliers);
+}
   const prixPaliersUnsubscribe = prixPaliersStore.subscribe((value) => {
     prixPaliers = value;
   });
@@ -545,7 +557,7 @@
                   </button>
                 </div>
                 <div class={isKgActive ? "active" : "inactive"}>
-                  <PricingByWeight on:valueMaxChange={handlePoidsMaxChange} />
+                  <PricingByWeight on:valueMaxChange={handlePoidsMaxChange} on:paliersMaxChange={updatePaliers} />
                 </div>
                 <div class={isVolumeActive ? "active" : "inactive"}>
                   <PricingByVolume on:valueMaxChange={handleVolumeMaxChange} />
@@ -787,11 +799,11 @@
   .PostBtn {
     border-radius: 40px;
     padding: 1rem 4rem;
-    background-color: #21a5c3;
+    background-color: #4fe1f9;
     transition: background-color 0.2s ease-in-out;
   }
   .PostBtn:hover {
-    background-color: #4fe1f9;
+    background-color: #21a5c3;
   }
   .active {
     display: block;

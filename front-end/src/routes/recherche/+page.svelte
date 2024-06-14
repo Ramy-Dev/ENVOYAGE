@@ -107,7 +107,7 @@
    </div>
    <section class="section-annonces">
       <div class="textAnnonces text-secondary fontSecondary">
-         annonce trouvées
+         annonces trouvées
       </div>
       <div class="ads-container">
          {#each paginatedAds as ad}

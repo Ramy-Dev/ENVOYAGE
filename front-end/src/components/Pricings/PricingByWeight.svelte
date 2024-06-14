@@ -5,7 +5,7 @@
   // import { calculatePricing } from "../../lib/calculatePricing.js";
   import { poidsPaliersStore } from "../../stores/paliersStore.js";
   import { pricingDataStore } from "../../stores/pricingDataStore.js";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import { writable } from "svelte/store";
   // Utilisation des stores locaux pour les poidsPaliers et les prix
   export let valueMax = 0;
@@ -26,10 +26,13 @@ function getPoidsMax(newPoidsMax) {
   let erreurMessage = "";
   let firstPalierMax;
 
-  
-poidsPaliersStore.subscribe(value => {
+  onMount(() => {
+
+    poidsPaliersStore.subscribe(value => {
   poidsPaliers = value;
 });
+  });
+
 
   function updatePricing() {
     if (valueMax > 0) {
@@ -43,7 +46,7 @@ poidsPaliersStore.subscribe(value => {
 
       // Mise à jour du store poidsPaliersStore avec les nouveaux poidsPaliers
       poidsPaliersStore.set(poidsPaliers);
-
+      dispatch('paliersMaxChange', poidsPaliers); // Émettre l'événement avec la nouvelle valeur
       poidsMaxEntered = true;
       console.log("paliers ::::::", poidsPaliers);
       console.log("Mise à jour des poidsPaliers effectuée.");
@@ -79,6 +82,7 @@ poidsPaliersStore.subscribe(value => {
     poidsPaliers.push(palier);
     poidsPaliersStore.set(poidsPaliers); // Mettre à jour le store avec les nouveaux poidsPaliers
     pricingDataStore.update(data => ({ ...data, pricingByWeight: poidsPaliers }));
+    dispatch('paliersMaxChange', poidsPaliers); 
     updatePricing();
     console.log("Nouveau palier ajouté :", palier);
     valueInterm = $poidsPaliersStore[i - 1] ? $poidsPaliersStore[i - 1].max : 0;
@@ -92,6 +96,7 @@ poidsPaliersStore.subscribe(value => {
     }
     updatePricing();
     pricingDataStore.update(data => ({ ...data, pricingByWeight: $poidsPaliersStore }));
+    dispatch('paliersMaxChange', poidsPaliers); 
     console.log(index);
 }
 
@@ -245,8 +250,16 @@ poidsPaliersStore.subscribe(value => {
                 </div>
                 <div class="inputPalier">
                   <button
-                    class="deleteButton fw-normal text-white bg-primary fontSecondary"
-                    on:click={() => removePalier(i)}>x</button
+                    class="deleteButton fw-normal text-white fontSecondary"
+                    on:click={() => removePalier(i)}>
+                    <lord-icon
+              class="animated-cross"
+              src="https://cdn.lordicon.com/zxvuvcnc.json"
+              colors="primary:#4FE1F9"
+              style="background-color: white; border-radius:50%;"
+              trigger="hover">
+            </lord-icon>
+                    </button
                   >
                   <input
                     type="number"
@@ -341,6 +354,7 @@ poidsPaliersStore.subscribe(value => {
     gap: 30px;
   }
   .inputPalier {
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -383,9 +397,10 @@ poidsPaliersStore.subscribe(value => {
     justify-content: center;
   }
   .deleteButton {
+    position: absolute;
+    top: -30%;
+    right: 15%;
     border: none;
-    border-radius: 20px;
-    padding: 0.5rem 0.7rem;
     cursor: pointer;
   }
   .colorTopAnnonce {
