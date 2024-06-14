@@ -406,4 +406,76 @@ function getPoidsMax(newPoidsMax) {
   .colorTopAnnonce {
     height: 0;
   }
+  /* Responsive Styles for Component 2 */
+@media (max-width: 1200px) {
+  .choicePricingOptions {
+    padding: 20px 30px;
+  }
+
+  .palierPricing,
+  .ajoutPalierBtnEtage1,
+  .ajoutPalierBtnEtage2 {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .inputPalier {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .deleteButton {
+    top: 0;
+    right: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .choicePricingOptions {
+    padding: 15px 20px;
+    border-radius: 20px;
+  }
+
+  .informationsPricing {
+    gap: 20px;
+  }
+
+  .prixPalier {
+    gap: 15px;
+  }
+
+  .ajoutPalierBtn {
+    gap: 10px;
+  }
+
+  .textPalier {
+    font-size: 1.2rem;
+  }
+
+  .inputPalier input {
+    padding: 0.4rem 0.1rem;
+    border-radius: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .choicePricingOptions {
+    padding: 10px 15px;
+    border-radius: 10px;
+  }
+
+  .ajoutPalierBtn button {
+    font-size: 0.9rem;
+  }
+
+  .textPalier {
+    font-size: 1rem;
+  }
+
+  .inputPalier input {
+    padding: 0.3rem 0.1rem;
+    border-radius: 10px;
+  }
+}
+
 </style>

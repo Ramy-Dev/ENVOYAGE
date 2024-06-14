@@ -15,43 +15,38 @@
       
   //  });
 async function handleSubmit(event) {
-    event.preventDefault();
+  event.preventDefault();
+  errors.set({});
+  const formData = new FormData(event.target);
+  const data = Object.fromEntries(formData.entries());
+  console.log("Sending data:", data); // Log data to verify structure
 
-    errors.set({});
+  try {
+    const response = await fetch("http://127.0.0.1:8000/login/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData.entries());
-
-    try {
-        const response = await fetch("http://127.0.0.1:8000/login/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            message = "Login successful!";
-            localStorage.setItem("authToken", result.token);
-            console.log("Success:", result);
-            // Fetch and store user info
-            fetchUserInfo(result.token);
-            // Redirect to the home page  
-            window.location.href = '/'
-            } else {
-            const error = await response.json();
-            message = "Login failed!";
-            errors.set(error);
-            console.error("Error:", error);
-        }
-    } catch (error) {
-      message = "An error occurred!";
-      console.error("Error:", error);
-      errors.set({ general: 'An unexpected error occurred. Please try again later.' });
+    if (response.ok) {
+      const result = await response.json();
+      message = "Login successful!";
+      localStorage.setItem("authToken", result.token);
+      console.log("Success:", result);
+      window.location.href = '/';
+    } else {
+      const error = await response.json();
+      message = "Login failed!";
+      errors.set(error);
+      console.error("Error:", error, message); // Enhanced error logging
     }
+  } catch (error) {
+    message = "An error occurred!";
+    console.error("Error:", error);
+    errors.set({ general: 'An unexpected error occurred. Please try again later.' });
+  }
 }
 
 
@@ -142,9 +137,11 @@ function togglePassword(type) {
       
             {:else if $errors.non_field_errors} 
 
-                <div class="error">{$errors.non_field_errors}</div>
+                <div class="error">Identifiants incorrects</div>
             {:else} 
-                <div class="error videFrom text-white">z</div>
+                <div class="error videFrom text-white">
+                  easter egg
+                </div>
             {/if}
           <form class="form-user" on:submit={handleSubmit}>
            
