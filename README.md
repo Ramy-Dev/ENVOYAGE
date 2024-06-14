@@ -72,20 +72,24 @@ The En Voyage Admin Panel provides an interface for administrators to manage use
    DEBUG=True  # Set to False in production
    ALLOWED_HOSTS=localhost,127.0.0.1  # Add your domain for production
    ```
+5. **Make Migrations:**
 
-5. **Apply Migrations:**
+   ```sh
+   python manage.py makemigrations
+   ```
+6. **Apply Migrations:**
 
    ```sh
    python manage.py migrate
    ```
 
-6. **Create a Superuser:**
+7. **Create a Superuser:**
 
    ```sh
    python manage.py createsuperuser
    ```
 
-7. **Run the Development Server:**
+8. **Run the Development Server:**
 
    ```sh
    python manage.py runserver
