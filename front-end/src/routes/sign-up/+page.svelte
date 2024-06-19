@@ -17,10 +17,10 @@
     const data = Object.fromEntries(formData.entries());
 
     // Validate passwords locally
-    if (data.password !== data["confirm-password"]) {
+    if (data.password !== data.password2) {
       errors.update(currentErrors => ({
         ...currentErrors,
-        "confirm-password": "Les mots de passe ne correspondent pas."
+        password2: "Les mots de passe ne correspondent pas."
       }));
       return;
     }
@@ -131,7 +131,7 @@
             <div class="input-unit username-user">
               <label class="text-basic" for="confirm-password-user">Confirmer votre mot de passe</label>
               <div class="password-container">
-                <input type={$confirmPasswordType} id="confirm-password-user" name="confirm-password" required>
+                <input type={$confirmPasswordType} id="confirm-password-user" name="password2" required>
                 <span class="toggle-password" on:click={() => togglePassword('confirmPassword')}>
                   {#if $confirmPasswordType === 'password'}
                   <img src="../svg/eye-off.svg" alt="Hide" class="icon">
@@ -140,8 +140,8 @@
                   {/if}
                 </span>
               </div>
-              {#if $errors['confirm-password']}
-                <span class="error">{$errors['confirm-password']}</span>
+              {#if $errors.password2}
+                <span class="error">{$errors.password2}</span>
               {/if}
             </div>
             <div class="bottom-form">
@@ -158,7 +158,6 @@
     </section>
   </div>
 </main>
-
 
 <style>
   @import "./responsive.css";

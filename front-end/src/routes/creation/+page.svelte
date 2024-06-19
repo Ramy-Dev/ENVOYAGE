@@ -28,6 +28,8 @@
   let poidsMax = 0;
   let volumeMax = 0;
   let poidsPaliers = [];
+
+
   let prixPaliers = [];
   let message = "";
   let formErrors = {};
@@ -41,10 +43,18 @@
   let arrivalDate = "";
   let arrivalTime = "";
 
+  onMount(() => {
+  const poidsPaliersUnsubscribe = poidsPaliersStore.subscribe((value) => {
+    poidsPaliers = value;
+  });
+
+  return poidsPaliersUnsubscribe;
+  });
  onMount(() => {
     const unsubscribe = alreadySelectedConditions.subscribe((value) => {
       tags = value;
     });
+    
     return unsubscribe;
   });
 
@@ -72,8 +82,8 @@
     event.preventDefault(); // Prevent the default form submission
 
     // Combine date and time into a single datetime string
-    const departureDateTime = `${departureDate}T${departureTime}`;
-    const arrivalDateTime = `${arrivalDate}T${arrivalTime}`;
+    const departureDateTime = `${departureDate}T${departureTime}:00Z`;
+    const arrivalDateTime = `${arrivalDate}T${arrivalTime}:00Z`;
 
     console.log(poidsMax, volumeMax);
     // Prepare data object
@@ -85,6 +95,7 @@
       date_heure_depart: departureDateTime,
       date_heure_arrivee: arrivalDateTime,
       tags: tags,
+      paliers : poidsPaliers
     };
     console.log(data);
     // Validation
@@ -161,10 +172,11 @@
     console.log("Nouvelle valeur de volumeMax:", volumeMax);
   }
 
-  const poidsPaliersUnsubscribe = poidsPaliersStore.subscribe((value) => {
-    poidsPaliers = value;
-  });
+  function updatePaliers (event) {
 
+poidsPaliers = event.detail;
+console.log("Nouvelle valeur de poidsPaliers:", poidsPaliers);
+}
   const prixPaliersUnsubscribe = prixPaliersStore.subscribe((value) => {
     prixPaliers = value;
   });
@@ -268,7 +280,7 @@
     <div class="Profile-background">
       <div class="ProfileTopCard">
         <p class="text-primary fw-semibold fs-2 fontPrimary">
-          Post your Ad
+          Publiez votre annonce
           <span class="text-white bg-primary rounded px-2">Ramy</span>
         </p>
       </div>
@@ -277,7 +289,7 @@
         <div class="ProfileDisplay card-shadow-gray">
           <div class="pt-5 ProfileDisplayTopCard">
             <p class="fs-1 fw-bold text-darkPrimary fontPrimary">
-              General informations
+              Informations generals
             </p>
           </div>
 
@@ -317,8 +329,8 @@
               </div>
               <div class="placeCreation">
                 <div class="departureCreation cardCreation">
-                  <p class="fs-3 fw-bold text-primary fontPrimary my-4">
-                    Departure :
+                  <p class="titreCreation fs-3 fw-bold text-primary fontPrimary my-4">
+                    Depart :
                   </p>
                   <div class="placeCreationContainer">
                     <div class="parentGridCreation">
@@ -340,7 +352,7 @@
                             id="departure-location"
                             class="fw-normal text-primary fontSecondary"
                             type="text"
-                            placeholder={`choose an ${isAirportActive ? "airport" : "port"}`}
+                            placeholder={`choisissez un ${isAirportActive ? "airport" : "port"}`}
                             bind:value={departurePlace}
                             required
                           />
@@ -379,8 +391,8 @@
                   </div>
                 </div>
                 <div class="arrivalCreation cardCreation">
-                  <p class="fs-3 fw-bold text-primary fontPrimary my-4">
-                    Arrival :
+                  <p class="titreCreation fs-3 fw-bold text-primary fontPrimary my-4">
+                    Arrivée :
                   </p>
                   <div class="placeCreationContainer">
                     <div class="parentGridCreation">
@@ -402,7 +414,7 @@
                             id="arrival-location"
                             class="fw-normal text-primary fontSecondary"
                             type="text"
-                            placeholder={`choose an ${isAirportActive ? "airport" : "port"}`}
+                            placeholder={`choisissez un ${isAirportActive ? "airport" : "port"}`}
                             bind:value={arrivalPlace}
                             required
                           />
@@ -510,7 +522,7 @@
             </div>
             <div class="pt-5 ProfileDisplayTopCard">
               <p class="fs-1 fw-bold text-darkPrimary fontPrimary">
-                Pricing informations
+                Infomartions des tarifs
               </p>
             </div>
             <div class="pricingCreation">
@@ -545,7 +557,7 @@
                   </button>
                 </div>
                 <div class={isKgActive ? "active" : "inactive"}>
-                  <PricingByWeight on:valueMaxChange={handlePoidsMaxChange} />
+                  <PricingByWeight on:valueMaxChange={handlePoidsMaxChange} on:paliersMaxChange={updatePaliers} />
                 </div>
                 <div class={isVolumeActive ? "active" : "inactive"}>
                   <PricingByVolume on:valueMaxChange={handleVolumeMaxChange} />
@@ -558,7 +570,7 @@
                 type="submit"
                 on:click={handleSubmit}
               >
-                Post
+                Publier
               </button>
             </div>
           </form>
@@ -569,6 +581,11 @@
 </main>
 
 <style>
+  @import "./responsive.css";
+
+  p{
+    margin-bottom: 0!important;
+  }
   .overlay {
     position: fixed;
     top: 0;
@@ -626,6 +643,9 @@
     display: flex;
     flex-direction: column;
     gap: 40px;
+  }
+  .titreCreation {
+    padding-bottom: 5px;
   }
   .placeCreation {
     display: flex;
@@ -773,11 +793,12 @@
     width: 50%;
   }
   .choicePricing {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 1fr;
-    grid-column-gap: 150px;
-    grid-row-gap: 0px;
+    display: flex;
+  justify-content: space-evenly;
+  gap: 10px;
+  }
+  .choiceProfileBtn {
+    width: 200px;
   }
   .postCreation {
     display: flex;
@@ -787,11 +808,11 @@
   .PostBtn {
     border-radius: 40px;
     padding: 1rem 4rem;
-    background-color: #21a5c3;
+    background-color: #4fe1f9;
     transition: background-color 0.2s ease-in-out;
   }
   .PostBtn:hover {
-    background-color: #4fe1f9;
+    background-color: #21a5c3;
   }
   .active {
     display: block;
@@ -804,4 +825,124 @@
     width: 28px;
     height: 28px;
   }
+  /* Responsive styles */
+@media (max-width: 1800px) {
+    .ProfileDisplay {
+        padding: 40px 100px;
+    }
+
+    .pricingCreationDisplay {
+        padding: 30px 100px;
+    }
+
+    .placeCreationContainer {
+        padding: 20px 30px;
+    } 
+      .parentGridCreation {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(5, auto);
+        grid-column-gap: 0;
+        grid-row-gap: 20px;
+    }
+
+
+    .airportDepartureCreation {
+    grid-area: 1 / 1 / 2 / 2;
+    
+  }
+  .airportDepartureCreationInput {
+    grid-area: 1 / 2 / 2 / 4;
+  }
+  .dateDepartureCreation {
+    grid-area: 3 / 1 / 3 / 2;
+
+  }
+  .DateDepartureCreationInput {
+    grid-area: 2 / 2 / 3 / 3;
+    
+  }
+  .DateDepartureCreationInput input {
+    width: 100%;
+  }
+  .hoursMinutesDateDepartureCreationInput {
+    grid-area: 2 / 3 / 3 / 4;
+  }
+  .hoursMinutesDateDepartureCreationInput input {
+    width: 100%;
+  }
+
+    .airportDepartureCreationInput,
+    .DateDepartureCreationInput,
+    .hoursMinutesDateDepartureCreationInput {
+        grid-area: auto / auto / auto / auto;
+    }
+
+    
+}
+
+@media (max-width: 992px) {
+    .ProfileDisplay {
+        padding: 30px 80px;
+    }
+
+    .pricingCreationDisplay {
+        padding: 20px 80px;
+    }
+
+    .placeCreationContainer {
+        padding: 15px 80px;
+        
+    }
+    .departureCreation.cardCreation, 
+    .arrivalCreation.cardCreation
+    {
+        width: calc(100% - 50px);
+    }
+    .ProfileDisplay {
+      width: 90%;
+    }
+    .placeCreation {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+}
+
+@media (max-width: 768px) {
+    .ProfileDisplay {
+        padding: 20px 50px;
+    }
+
+    .pricingCreationDisplay {
+        padding: 15px 50px;
+    }
+
+    .placeCreation {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .choiceTransportToggle {
+        gap: 15px;
+    }
+
+    .choicePricing {
+        grid-template-columns: 1fr;
+        grid-row-gap: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .ProfileDisplay {
+        padding: 10px 30px;
+    }
+
+    .pricingCreationDisplay {
+        padding: 10px 30px;
+    }
+
+    .placeCreationContainer {
+        padding: 10px 15px;
+    }
+}
 </style>
