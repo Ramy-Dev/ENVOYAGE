@@ -19,6 +19,7 @@ class Utilisateur(AbstractUser):
     numero_passeport = models.CharField(max_length=200, blank=True, null=True)
     photos_passeport = models.ImageField(upload_to='passport_images/', blank=True, null=True)
     is_voyageur = models.BooleanField(default=False)
+    total_money = models.FloatField(default=0.0, validators=[MinValueValidator(0.0)])
 
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
 
@@ -62,6 +63,7 @@ class DemandeAnnonce(models.Model):
     date_creation = models.DateTimeField(auto_now_add=True)
     poids = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0.1)])
     volume = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0.1)])
+    prix_total = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0.0)])
 
     def __str__(self):
         return f"Demande de {self.utilisateur.first_name} {self.utilisateur.last_name} pour {self.annonce}"
@@ -72,7 +74,7 @@ class DemandeAnnonce(models.Model):
             raise ValidationError("Weight must be positive.")
         if self.volume and self.volume < 0:
             raise ValidationError("Volume must be positive.")
-
+        
 class DemandeDeCompteVoyageur(models.Model):
     utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name='demandes_compte_voyageur')
     date_de_creation = models.DateTimeField(auto_now_add=True)
@@ -98,9 +100,9 @@ class AnnonceTag(models.Model):
         return f"{self.annonce} {self.tag}"
 
 class Palier(models.Model):
-    from_poids = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0.0)])
-    to_poids = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0.1)])
-    prix = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0.0)])
+    min = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0.0)])
+    max = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0.1)])
+    price = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0.0)])
 
     def __str__(self):
         return f"Palier from {self.from_poids} to {self.to_poids} priced at {self.prix}"

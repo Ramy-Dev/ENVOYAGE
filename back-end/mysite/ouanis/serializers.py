@@ -48,15 +48,14 @@ class UserLoginSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         if email and password:
-            email = authenticate(email=email, password=password)
-            if not email:
+            user = authenticate(username=email, password=password)  # Use username=email here for email-based authentication
+            if not user:
                 raise serializers.ValidationError("Invalid credentials.")
         else:
             raise serializers.ValidationError("Both email and password are required.")
         
-        attrs['email'] = email
+        attrs['user'] = user
         return attrs
-
 class UtilisateurSerializer(serializers.ModelSerializer):
     class Meta:
         model = Utilisateur
@@ -106,7 +105,7 @@ class TagSerializer(serializers.ModelSerializer):
 class PalierSerializer(serializers.ModelSerializer):
     class Meta:
         model = Palier
-        fields = ['id', 'from_poids', 'to_poids', 'prix']
+        fields = ['id', 'min', 'max', 'price']
 
     def validate(self, data):
         if data['from_poids'] >= data['to_poids']:

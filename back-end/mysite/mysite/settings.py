@@ -85,11 +85,11 @@ JAZZMIN_SETTINGS = {
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
     "topmenu_links": [
-        {"name": "AR Panel", "url": "", "permissions": ["auth.view_user"]},
+        {"name": "AR Panel", "permissions": ["auth.view_user"]},
         {"app": "auth"},
     ],
     "usermenu_links": [
-        {"name": "Support", "url": "Mail:imansoura.ramy@gmail.com", "new_window": True},
+        {"name": "Support", "url": "", "new_window": True},
     ],
     "show_sidebar": True,
     "order_with_respect_to": ["auth", "ouanis", "settings"],
@@ -130,6 +130,10 @@ JAZZMIN_SETTINGS = {
         "custom_css": "css/custom_admin.css",  # Add this line
 
 }
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'ouanis.backends.EmailBackend',
+]
 
 
 REST_FRAMEWORK = {
@@ -236,4 +240,4 @@ STATICFILES_DIRS = [
 
 
 
-LEMON_SQUEEZY_API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5NGQ1OWNlZi1kYmI4LTRlYTUtYjE3OC1kMjU0MGZjZDY5MTkiLCJqdGkiOiJjMmZlODBkMjczMjgwODNhNTEyZDA1M2FjNTNhZDZhYTMyODlmYjVjNzMzNjQ3ZjM0ODA2ZjBlMTcyNzNhZjQ2YzQ2ZDViOTEyMzNiMDBiYiIsImlhdCI6MTcxODMxOTA4Mi4zMjYyOTYsIm5iZiI6MTcxODMxOTA4Mi4zMjYyOTksImV4cCI6MjAzMzg1MTg4Mi4yOTI0ODEsInN1YiI6IjI1NDI2NDEiLCJzY29wZXMiOltdfQ.NVSXv8sKZM4nkBrLlG7I2eDPKwOhtVsT4mg442xf5pBfQkg4nbIEEaCTkN4pN7pzJMOs0yLmrybEMze88F43pQF04aezMGDo8Fb3l2TgbG6Xx0wjul4fNvqbTzRvmEhfB5knM9gDxm7Y1FOIgzjGj3w3CvlTvxNMEu4-UmbWTEwYxYNe7DWilE-AdLkOip9lwy6jHCNS_qlTbF1zxBGZ1ODADFXphoqYOdiA7jDij_cFvhHsXycNj3AL5GlVvgK_ZzbkPRgQ4UubBM3Y7G_UKD8c-s2aqUwvRpclI3NXyT0vuQ01Cy2ymmu02ehZqbWUSB-l0Xh0EBnHZ_a410379WOdcsHyleCmqnYF0fE3AZHjG8_nw_zVTH4eiasPAmzyerk9R6cuv3Zktup224YbBW4Eh335hWtXUsLXEfRKzFjOOapovjRO0QNa2fC9ZFG9-X1AY5L4GobqkZT2IrK3_Yf7d_g3gUJ8Fr5Y1n2iiho3wjmlkwdJbpmvBEEYlc6Q'
+LEMON_SQUEEZY_API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5NGQ1OWNlZi1kYmI4LTRlYTUtYjE3OC1kMjU0MGZjZDY5MTkiLCJqdGkiOiIyZjBmMmYwZjc2YmFiZmYxZWQ5Y2VjMDllMWNkOWU1ZWE3ZTU5YTJhODVjNGVkYmRhOTZlNTg3NTM1NmE2NWU3ZDkxZDU4NmQwYTUzNzAzMyIsImlhdCI6MTcxODMyNjQ3Ni4zMzY5OCwibmJmIjoxNzE4MzI2NDc2LjMzNjk4MiwiZXhwIjoyMDMzODU5Mjc2LjMyMjU2Mywic3ViIjoiMjU0MjY0MSIsInNjb3BlcyI6W119.LBZD9Z1NQyXp3z07LZqmGaqN6yHR72f7s-wnHKgv4irX89cVdOvoDw8wddQ9Ffma50adm0L7xNjizVOcfJYu0gA3CSwQS5cLAIXZaLeO0Ed4gybpHf8leqZBrkyOTjLT49JN6XJhFcaldd5-3QDPH8gOipo3nkOE_WRtd3DSyiMo4lETGdb4hrUzZR0-MRCqtXgVwAovZryDXJ4DJiaJ_d8e0-M-NqLfgK_aVndH8DHAkiON_m-iMCRJ0OeJjdKmQMqwXM63_SAPe2D-vZTmcGETNS6ddQJV_G3UnTYAD4LP5OvuimR26TMgbSE0EfPcjJ1mtsYJSJDrropWD77gkuGCPTSufmdQLldoV4QBX5x-iMX8yBjMOyy6MGw5owaoT-oba7yPHgXVISuEI7Erigc-aph1cEIdY_74kTXIF9ycYF_NCeNjppuACHYWn3j34lUB7uk_aWZ5KxOwQ-5rHdWMLJHE0w9sPquZKwhQNR-8DNJxCKipFU_WcQcVog6C'

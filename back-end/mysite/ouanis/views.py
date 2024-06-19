@@ -93,15 +93,19 @@ class UserRegistrationView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # User login view
+from django.contrib.auth import authenticate
+
 class UserLoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        serializer = UserLoginSerializer(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key, 'user_id': user.pk, 'email': user.email})
+        serializer = UserLoginSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
 # ViewSet for managing users
 class UtilisateurViewSet(viewsets.ModelViewSet):
@@ -181,14 +185,15 @@ class AnnoncePalierViewSet(viewsets.ModelViewSet):
 
 
 import requests
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
+from django.conf import settings
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
-
-import requests
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .models import DemandeAnnonce
+from .serializers import DemandeAnnonceSerializer
+from .services import LemonSqueezyService, EmailService
+from rest_framework.exceptions import PermissionDenied
 
 class DemandeAnnonceViewSet(viewsets.ModelViewSet):
     queryset = DemandeAnnonce.objects.all()
@@ -200,68 +205,29 @@ class DemandeAnnonceViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path='confirm_requests')
     def confirm_requests(self, request):
-        """Confirm multiple requests and send payment details."""
         request_ids = request.data.get('request_ids', [])
         demandes = DemandeAnnonce.objects.filter(id__in=request_ids, statut='en_attente')
-        
+
+        for demande in demandes:
+            if demande.annonce.createur != request.user:
+                raise PermissionDenied("Vous n'êtes pas autorisé à confirmer cette demande.")
+
         if not demandes:
             return Response({'status': 'No valid requests found.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        for demande in demandes:
-            annonce = demande.annonce
-            total_price = demande.poids * annonce.prix_kg * 1.10  # Adding 10% commission
-            
-            # Generate payment link via Lemon Squeezy API
-            payment_link = self.create_payment_link(demande.utilisateur.email, total_price)
+        lemon_squeezy = LemonSqueezyService()
+        email_service = EmailService()
 
-            # Update demande status
+        for demande in demandes:
+            total_price = demande.prix_total 
+            payment_link = lemon_squeezy.create_payment_link(demande.utilisateur.email, total_price, demande.id)
+
+            if not payment_link:
+                continue  # Log error internally within the service
+
             demande.statut = 'accepte'
             demande.save()
 
-            # Send confirmation email
-            self.send_confirmation_email(demande.utilisateur, annonce, total_price, payment_link)
+            email_service.send_confirmation_email(demande.utilisateur, demande.annonce, total_price, payment_link)
 
         return Response({'status': 'Requests confirmed and emails sent.'}, status=status.HTTP_200_OK)
-
-    @action(detail=True, methods=['post'])
-    def reject(self, request, pk=None):
-        demande = self.get_object()
-        demande.statut = 'rejete'
-        demande.save()
-        return Response({'status': 'Demande rejetée'}, status=status.HTTP_200_OK)
-
-    def create_payment_link(self, email, amount):
-        """Create a payment link using Lemon Squeezy API."""
-        url = 'https://api.lemonsqueezy.com/v1/payment_links'
-        headers = {
-            'Authorization': f'Bearer {settings.LEMON_SQUEEZY_API_KEY}',
-            'Content-Type': 'application/json',
-        }
-        data = {
-            'email': email,
-            'amount': amount,
-            'currency': 'USD',
-        }
-        response = requests.post(url, headers=headers, json=data)
-        if response.status_code == 201:
-            return response.json().get('url')
-        return None
-
-    def send_confirmation_email(self, user, annonce, total_price, payment_link):
-        """Send confirmation email with payment details."""
-        html_message = render_to_string('emails/payment_confirmation.html', {
-            'user': user,
-            'annonce': annonce,
-            'total_price': total_price,
-            'payment_link': payment_link,
-            'year': timezone.now().year,
-        })
-        plain_message = strip_tags(html_message)
-        send_mail(
-            'Payment Confirmation',
-            plain_message,
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-            html_message=html_message,
-            fail_silently=False,
-        )

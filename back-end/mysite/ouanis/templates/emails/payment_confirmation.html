@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Confirmation</title>
+</head>
+<body>
+    <p>Dear {{ user.first_name }},</p>
+    <p>Thank you for your request.</p>
+    <p>The total price is ${{ total_price }}.</p>
+    <p>Please complete the payment using the following link:</p>
+    <p><a href="{{ payment_link }}">{{ payment_link }}</a></p>
+    <p>Thank you!</p>
+    <p>Best regards,</p>
+    <p>Your Company</p>
+</body>
+</html>

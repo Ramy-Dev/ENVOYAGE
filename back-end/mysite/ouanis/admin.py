@@ -58,11 +58,11 @@ except admin.sites.NotRegistered:
 
 class UtilisateurAdmin(UserAdmin):
     model = Utilisateur
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_voyageur', 'date_de_naissance', 'date_joined', 'last_login', 'profile_picture_tag', 'status_indicator', 'photos_passeport_tag')
+    list_display = ('username', 'email', 'first_name','total_money', 'last_name', 'is_voyageur', 'date_de_naissance', 'date_joined', 'last_login', 'profile_picture_tag', 'status_indicator', 'photos_passeport_tag')
     list_filter = ('is_voyageur', 'date_de_naissance', 'date_joined', 'last_login')
     search_fields = ('username', 'email', 'first_name', 'last_name', 'numero_telephone')
     ordering = ('username',)
-    readonly_fields = ('date_joined', 'last_login', 'profile_picture_tag', 'photos_passeport_tag')
+    readonly_fields = ('date_joined', 'last_login','total_money', 'profile_picture_tag', 'photos_passeport_tag')
     fieldsets = (
         (None, {'fields': ('username', 'email', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name', 'date_de_naissance', 'numero_telephone', 'profile_picture', 'photos_passeport')}),
@@ -99,7 +99,7 @@ class AnnoncePalierInline(admin.TabularInline):
     extra = 1
 
 class AnnonceAdmin(admin.ModelAdmin):
-    list_display = ('createur', 'lieu_depart', 'destination', 'poids_max', 'volume_max', 'date_heure_depart', 'date_heure_arrivee', 'created_at', 'updated_at')
+    list_display = ('id','createur', 'lieu_depart', 'destination', 'poids_max', 'volume_max', 'date_heure_depart', 'date_heure_arrivee', 'created_at', 'updated_at')
     list_filter = ('createur', 'lieu_depart', 'destination', 'date_heure_depart', 'date_heure_arrivee')
     search_fields = ('createur__username', 'lieu_depart', 'destination')
     ordering = ('-created_at',)
@@ -116,11 +116,12 @@ class DemandeAnnonceAdmin(admin.ModelAdmin):
     search_fields = ('utilisateur__username', 'annonce__lieu_depart', 'annonce__destination')
     ordering = ('-date_creation',)
     actions = ['approve_demand']
-    
+    list_editable = ('statut',)  # Add this line to make the 'statut' field editable in the list view
+
     def approve_demand(self, request, queryset):
         queryset.update(statut='accepte')
     approve_demand.short_description = "Approve selected demands"
-
+    
 class DemandeDeCompteVoyageurAdmin(admin.ModelAdmin):
     list_display = ('utilisateur_full_name', 'date_de_creation', 'numero_passeport', 'est_approuve', 'photos_passeport_tag')
     list_filter = ('est_approuve', 'date_de_creation')
@@ -168,9 +169,9 @@ class AnnonceTagAdmin(admin.ModelAdmin):
     search_fields = ('annonce__lieu_depart', 'tag__nom')
 
 class PalierAdmin(admin.ModelAdmin):
-    list_display = ('from_poids', 'to_poids', 'prix')
-    list_filter = ('from_poids', 'to_poids')
-    search_fields = ('prix',)
+    list_display = ('min', 'max', 'price')
+    list_filter = ('min', 'max')
+    search_fields = ('price',)
 
 class AnnoncePalierAdmin(admin.ModelAdmin):
     list_display = ('annonce', 'palier')
