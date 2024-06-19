@@ -59,6 +59,8 @@ ADMIN_INTERFACE_THEME = {
         'footer': 'text-gray-200',
     }
 }
+# Define the Svelte app URL
+SVELTE_APP_URL = 'localhost:5173'
 
 JAZZMIN_SETTINGS = {
     "site_title": "En voyage",
@@ -241,3 +243,20 @@ STATICFILES_DIRS = [
 
 
 LEMON_SQUEEZY_API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5NGQ1OWNlZi1kYmI4LTRlYTUtYjE3OC1kMjU0MGZjZDY5MTkiLCJqdGkiOiIyZjBmMmYwZjc2YmFiZmYxZWQ5Y2VjMDllMWNkOWU1ZWE3ZTU5YTJhODVjNGVkYmRhOTZlNTg3NTM1NmE2NWU3ZDkxZDU4NmQwYTUzNzAzMyIsImlhdCI6MTcxODMyNjQ3Ni4zMzY5OCwibmJmIjoxNzE4MzI2NDc2LjMzNjk4MiwiZXhwIjoyMDMzODU5Mjc2LjMyMjU2Mywic3ViIjoiMjU0MjY0MSIsInNjb3BlcyI6W119.LBZD9Z1NQyXp3z07LZqmGaqN6yHR72f7s-wnHKgv4irX89cVdOvoDw8wddQ9Ffma50adm0L7xNjizVOcfJYu0gA3CSwQS5cLAIXZaLeO0Ed4gybpHf8leqZBrkyOTjLT49JN6XJhFcaldd5-3QDPH8gOipo3nkOE_WRtd3DSyiMo4lETGdb4hrUzZR0-MRCqtXgVwAovZryDXJ4DJiaJ_d8e0-M-NqLfgK_aVndH8DHAkiON_m-iMCRJ0OeJjdKmQMqwXM63_SAPe2D-vZTmcGETNS6ddQJV_G3UnTYAD4LP5OvuimR26TMgbSE0EfPcjJ1mtsYJSJDrropWD77gkuGCPTSufmdQLldoV4QBX5x-iMX8yBjMOyy6MGw5owaoT-oba7yPHgXVISuEI7Erigc-aph1cEIdY_74kTXIF9ycYF_NCeNjppuACHYWn3j34lUB7uk_aWZ5KxOwQ-5rHdWMLJHE0w9sPquZKwhQNR-8DNJxCKipFU_WcQcVog6C'
+
+import django_heroku
+import dj_database_url
+from decouple import config
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
+
+# Configure Database
+DATABASES = {
+    'default': dj_database_url.config(default=config('DATABASE_URL'))
+}
+
+# Security settings
+DEBUG = config('DEBUG', default=False, cast=bool)
+
+ALLOWED_HOSTS = ['*']  # Make sure to restrict this in production

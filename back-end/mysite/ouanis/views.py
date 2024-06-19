@@ -38,7 +38,7 @@ class PasswordResetRequestView(APIView):
             if user:
                 token = default_token_generator.make_token(user)
                 uid = urlsafe_base64_encode(force_bytes(user.pk))
-                reset_link = f"{request.scheme}://{request.get_host()}/reset_password_confirm/{uid}/{token}/"
+                reset_link = f"{request.scheme}://{settings.SVELTE_APP_URL}/reset_password_confirm/{uid}/{token}/"
 
                 # Render the HTML email template
                 html_message = render_to_string('emails/password_reset_email.html', {
@@ -60,8 +60,21 @@ class PasswordResetRequestView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Password reset confirm view
+
 class PasswordResetConfirmView(APIView):
     permission_classes = [AllowAny]
+
+    def get(self, request, uidb64, token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = Utilisateur.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, Utilisateur.DoesNotExist):
+            user = None
+
+        if user is not None and default_token_generator.check_token(user, token):
+            return Response({"message": "Token is valid."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Invalid token or user ID."}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, uidb64, token):
         serializer = PasswordResetConfirmSerializer(data=request.data)
