@@ -248,4 +248,4 @@ LEMON_SQUEEZY_API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5NGQ1OW
 # Security settings
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['*']  # Make sure to restrict this in production
+ALLOWED_HOSTS = ['.vercel.app']  # Make sure to restrict this in production
