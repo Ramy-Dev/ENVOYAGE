@@ -1,6 +1,7 @@
 
 from pathlib import Path
 from decouple import config
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,8 +32,6 @@ INSTALLED_APPS = [
     'jazzmin',
     'admin_interface',
     'colorfield',
-    'flat_responsive',
-    'flat',
     'ouanis',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -148,10 +147,6 @@ AUTH_USER_MODEL = 'ouanis.Utilisateur'
 
 # settings.py
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Add your frontend's origin
-    "http://127.0.0.1:5173",  # Add this if you're using another localhost port
-]
 
 # settings.py
 
@@ -188,13 +183,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
+from dotenv import load_dotenv
+import os
+
+# Charger les variables d'environnement depuis le fichier .env
+load_dotenv()
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PWD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
@@ -226,7 +230,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-import os
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -248,4 +251,4 @@ LEMON_SQUEEZY_API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5NGQ1OW
 # Security settings
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['.vercel.app']  # Make sure to restrict this in production
+ALLOWED_HOSTS = ['*']  # Make sure to restrict this in production
